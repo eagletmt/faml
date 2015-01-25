@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'fast_haml/cli'
+
+FastHaml::CLI.start(ARGV)

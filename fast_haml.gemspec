@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = FastHaml::VERSION
   spec.authors       = ["Kohei Suzuki"]
   spec.email         = ["eagletmt@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{Fast version of Haml}
+  spec.description   = %q{Fast version of Haml}
+  spec.homepage      = "https://github.com/eagletmt/fast_haml"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -18,7 +18,12 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "temple"
+  spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "bundler"
+  spec.add_development_dependency "coveralls"
+  spec.add_development_dependency "haml"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", ">= 3"
+  spec.add_development_dependency "simplecov"
 end

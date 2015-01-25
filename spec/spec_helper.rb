@@ -1,3 +1,26 @@
+require 'simplecov'
+require 'coveralls'
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter,
+]
+SimpleCov.start do
+  add_filter File.dirname(__FILE__)
+end
+
+require 'fast_haml'
+
+module ParserSpecHelper
+  def parse_string(str)
+    FastHaml::Parser.new.call(str)
+  end
+
+  def render_string(str)
+    eval(FastHaml::Engine.new.call(str))
+  end
+end
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
@@ -23,4 +46,6 @@ RSpec.configure do |config|
   config.order = :random
 
   Kernel.srand config.seed
+
+  config.include(ParserSpecHelper, type: :parser)
 end
