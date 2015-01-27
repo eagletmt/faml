@@ -14,7 +14,7 @@ HAML
     end
 
     it 'parses nested elements' do
-      expect(render_string(<<HAML)).to eq("<span>\n<b>\nhello\n</b>\n<i><small>world</small>\n</i>\n</span>")
+      expect(render_string(<<HAML)).to eq("<span>\n<b>\nhello\n</b>\n<i>\n<small>world</small>\n</i>\n</span>")
 %span
   %b
     hello

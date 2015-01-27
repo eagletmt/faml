@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe FastHaml::Parser, type: :parser do
   describe 'silent script' do
     it 'parses silent script' do
-      expect(render_string(<<HAML)).to eq("<span>0</span>\n<span>1</span>\n")
+      expect(render_string(<<HAML)).to eq("<span>0</span>\n<span>1</span>")
 - 2.times do |i|
   %span= i
 HAML

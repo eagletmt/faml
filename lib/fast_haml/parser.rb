@@ -17,7 +17,9 @@ module FastHaml
       template_str.each_line.with_index do |line, lineno|
         parse_line(line.chomp, lineno)
       end
-      indent_leave(0, '', -1)
+      if @indent_levels.last > 0
+        indent_leave(0, '', -1)
+      end
       @temple_ast
     end
 
@@ -27,6 +29,8 @@ module FastHaml
       @temple_ast = [:multi]
       @stack = []
       @indent_levels = [0]
+      @indent_is_silent = [false]
+      @prev_silent = false
     end
 
     DOCTYPE_PREFIX = '!'
@@ -50,21 +54,31 @@ module FastHaml
 
       case text[0]
       when ELEMENT_PREFIX
+        insert_newline(@temple_ast)
         parse_element(text, lineno)
+        @prev_silent = false
       when DOCTYPE_PREFIX
+        insert_newline(@temple_ast)
         if text.start_with?('!!!')
           parse_doctype(text, lineno)
         else
           raise SyntaxError.new("Illegal doctype declaration", lineno)
         end
+        @prev_silent = false
       when SCRIPT_PREFIX
+        insert_newline(@temple_ast)
         parse_script(text, lineno)
+        @prev_silent = false
       when SILENT_SCRIPT_PREFIX
         parse_silent_script(text, lineno)
+        @prev_silent = true
       when DIV_ID_PREFIX, DIV_CLASS_PREFIX
         parse_line("#{indent}%div#{text}", lineno)
+        @prev_silent = false
       else
+        insert_newline(@temple_ast)
         parse_plain(text, lineno)
+        @prev_silent = false
       end
     end
 
@@ -73,7 +87,6 @@ module FastHaml
     end
 
     def parse_plain(text, lineno)
-      insert_newline(@temple_ast)
       @temple_ast << [:static, text]
     end
 
@@ -131,10 +144,6 @@ module FastHaml
             ast << [:static, rest]
           end
         end
-      else
-        if @indent_levels.last > 0
-          insert_newline(@temple_ast)
-        end
       end
 
       @temple_ast << ast
@@ -185,7 +194,6 @@ module FastHaml
       if script.empty?
         raise SyntaxError.new("No Ruby code to evaluate", lineno)
       end
-      insert_newline(@temple_ast)
       @temple_ast << [:dynamic, script]
     end
 
@@ -248,6 +256,7 @@ module FastHaml
 
     def indent_enter(indent_level, lineno)
       @indent_levels.push(indent_level)
+      @indent_is_silent.push(@prev_silent)
       @stack.push(@temple_ast)
       @temple_ast = [:multi]
     end
@@ -255,11 +264,13 @@ module FastHaml
     def indent_leave(indent_level, text, lineno)
       while indent_level < @indent_levels.last
         @indent_levels.pop
+        was_silent = @indent_is_silent.pop
+        unless was_silent
+          insert_newline(@temple_ast)
+        end
         ast = @temple_ast
         @temple_ast = @stack.pop
         last_ast = @temple_ast.last
-
-        insert_newline(ast)
 
         case last_ast[0]
         when :html
@@ -279,9 +290,7 @@ module FastHaml
     end
 
     def insert_newline(ast)
-      if ast.last != [:code, 'end']
-        ast << [:static, "\n"]
-      end
+      ast << [:static, "\n"]
     end
   end
 end
