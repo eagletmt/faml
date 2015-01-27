@@ -126,7 +126,9 @@ module FastHaml
           end
           ast << [:dynamic, script]
         else
-          ast << [:static, rest]
+          unless rest.empty?
+            ast << [:static, rest]
+          end
         end
       else
         if @indent_levels.last > 0
