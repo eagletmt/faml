@@ -15,6 +15,17 @@ module FastHaml
       end
     end
 
+    def on_html_attr(name, value)
+      if empty_exp?(value)
+        [:static, " #{name}"]
+      else
+        [:multi,
+         [:static, " #{name}=#{options[:attr_quote]}"],
+        compile(value),
+          [:static, options[:attr_quote]]]
+      end
+    end
+
     def on_haml_attr(code)
       [:code, "#{@sym}.merge!(#{code})"]
     end

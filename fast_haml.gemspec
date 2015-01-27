@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "parser"
   spec.add_dependency "temple"
   spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "bundler"

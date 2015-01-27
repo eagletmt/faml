@@ -6,6 +6,7 @@ module FastHaml
   class Engine < Temple::Engine
     use Parser
     use Html
+    filter :Escapable
     filter :ControlFlow
     generator :ArrayBuffer
   end

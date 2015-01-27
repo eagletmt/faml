@@ -1,4 +1,5 @@
 require 'temple'
+require 'fast_haml/static_hash_parser'
 
 module FastHaml
   class Parser < Temple::Parser
@@ -115,7 +116,7 @@ module FastHaml
         end
 
         if old_attributes_hash
-          html_attrs << [:haml, :attr, old_attributes_hash]
+          html_attrs.concat(try_static_hash(old_attributes_hash))
         end
 
         case rest[0]
@@ -153,6 +154,30 @@ module FastHaml
         end
       end
       [s.pre_match + s.matched, s.rest.lstrip]
+    end
+
+    def try_static_hash(text)
+      attrs = []
+      parser = StaticHashParser.new
+      if parser.parse(text)
+        keys = parser.static_attributes.keys + parser.dynamic_attributes.keys
+        keys.sort.each do |k|
+          if parser.static_attributes.has_key?(k)
+            v = parser.static_attributes[k]
+            if v == true
+              attrs << [:html, :attr, k, [:multi]]
+            else
+              attrs << [:html, :attr, k, [:static, Temple::Utils.escape_html(v)]]
+            end
+          else
+            v = parser.dynamic_attributes[k]
+            attrs << [:html, :attr, k, [:escape, true, [:dynamic, v]]]
+          end
+        end
+      else
+        attrs << [:haml, :attr, text]
+      end
+      attrs
     end
 
     def parse_script(text, lineno)
