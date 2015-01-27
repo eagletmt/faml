@@ -1,11 +1,11 @@
 require 'temple'
+require 'fast_haml/html'
 require 'fast_haml/parser'
 
 module FastHaml
   class Engine < Temple::Engine
     use Parser
-    html :AttributeSorter
-    html :Fast
+    use Html
     filter :ControlFlow
     generator :ArrayBuffer
   end

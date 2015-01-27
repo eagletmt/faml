@@ -76,6 +76,9 @@ module FastHaml
       @temple_ast << [:static, text]
     end
 
+    OLD_ATTRIBUTE_BEGIN = '{'
+    OLD_ATTRIBUTE_END = '}'
+
     def parse_element(text, lineno)
       m = text.match(/\A%([-:\w]+)([-:\w.#]*)(.+)?\z/)
       unless m
@@ -86,9 +89,35 @@ module FastHaml
       rest = m[3]
 
       ast = [:html, :tag, tag_name]
-      ast << [:html, :attrs].concat(parse_class_and_id(attributes))
+      html_attrs = [:html, :attrs].concat(parse_class_and_id(attributes))
+      ast << html_attrs
       if rest
         rest = rest.lstrip
+
+        old_attributes_hash = nil
+        new_attributes_hash = nil
+
+        loop do
+          case rest[0]
+          when OLD_ATTRIBUTE_BEGIN
+            if old_attributes_hash
+              break
+            end
+            old_attributes_hash, rest = parse_old_attributes(rest)
+          when '('
+            if new_attributes_hash
+              break
+            end
+            new_attributes_hash, rest = parse_new_attributes(rest)
+          else
+            break
+          end
+        end
+
+        if old_attributes_hash
+          html_attrs << [:haml, :attr, old_attributes_hash]
+        end
+
         case rest[0]
         when '='
           script = rest[1 .. -1].lstrip
@@ -106,6 +135,22 @@ module FastHaml
       end
 
       @temple_ast << ast
+    end
+
+    OLD_ATTRIBUTE_REGEX = /[{}]/o
+
+    def parse_old_attributes(text)
+      s = StringScanner.new(text)
+      s.pos = 1
+      depth = 1
+      while depth > 0 && s.scan_until(OLD_ATTRIBUTE_REGEX)
+        if s.matched == OLD_ATTRIBUTE_BEGIN
+          depth += 1
+        else
+          depth -= 1
+        end
+      end
+      [s.pre_match + s.matched, s.rest.lstrip]
     end
 
     def parse_script(text, lineno)
