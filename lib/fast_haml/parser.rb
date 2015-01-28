@@ -129,7 +129,7 @@ module FastHaml
         end
 
         if old_attributes_hash
-          html_attrs.concat(try_static_hash("{#{old_attributes_hash}}"))
+          html_attrs.concat(try_static_hash(old_attributes_hash))
         end
 
         case rest[0]
@@ -169,7 +169,7 @@ module FastHaml
     def try_static_hash(text)
       attrs = []
       parser = StaticHashParser.new
-      if parser.parse(text)
+      if parser.parse("{#{text}}")
         keys = parser.static_attributes.keys + parser.dynamic_attributes.keys
         keys.sort.each do |k|
           if parser.static_attributes.has_key?(k)

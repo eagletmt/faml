@@ -12,7 +12,11 @@ module FastHaml
     end
 
     def parse(text)
-      walk(::Parser::CurrentRuby.parse(text))
+      parser = ::Parser::CurrentRuby.new
+      parser.diagnostics.consumer = nil
+      buffer = ::Parser::Source::Buffer.new('(fast_haml)')
+      buffer.source = text
+      walk(parser.parse(buffer))
     rescue ::Parser::SyntaxError
       false
     end
