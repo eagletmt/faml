@@ -13,6 +13,8 @@ module FastHaml
 
     def parse(text)
       walk(::Parser::CurrentRuby.parse(text))
+    rescue ::Parser::SyntaxError
+      false
     end
 
     def walk(node)

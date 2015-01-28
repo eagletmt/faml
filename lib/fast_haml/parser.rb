@@ -162,7 +162,8 @@ module FastHaml
           depth -= 1
         end
       end
-      [s.pre_match + s.matched, s.rest.lstrip]
+      attr = s.pre_match + s.matched
+      [attr[1, attr.size-2], s.rest.lstrip]
     end
 
     def try_static_hash(text)
