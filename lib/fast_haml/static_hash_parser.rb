@@ -69,6 +69,8 @@ module FastHaml
         @static_attributes[key_static] = node.location.expression.source
       when :true, :false, :nil, :int, :float, :str
         @static_attributes[key_static] = eval(node.location.expression.source)
+      when :dstr
+        @dynamic_attributes[key_static] = node.location.expression.source
       when :hash
         parser = self.class.new
         if parser.walk(node)
@@ -81,7 +83,6 @@ module FastHaml
         else
           throw FAILURE_TAG
         end
-        # TODO: Add dstr case
         # TODO: Add array case
       else
         throw FAILURE_TAG

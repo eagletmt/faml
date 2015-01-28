@@ -35,5 +35,19 @@ HAML
 %span{data: data} hello
 HAML
     end
+
+    it 'renders nested dynamic hash attributes' do
+      expect(render_string(<<HAML)).to eq('<span data-fuga-bar="2" data-fuga-foo="1" data-hoge="3">hello</span>')
+- data = { foo: 1, bar: 2 }
+%span{data: {hoge: 3, fuga: data}} hello
+HAML
+    end
+
+    it 'renders dstr attributes' do
+      expect(render_string(<<HAML)).to eq('<span data="x{:foo=&gt;1}y">hello</span>')
+- data = { foo: 1 }
+%span{data: "x\#{data}y"} hello
+HAML
+    end
   end
 end
