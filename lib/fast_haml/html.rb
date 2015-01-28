@@ -8,7 +8,7 @@ module FastHaml
       else
         @sym = unique_name
         [:multi,
-         [:code, "#{@sym} = ::FastHaml::AttributeBuilder.new(#{options.to_h.inspect})"],
+         [:code, "#{@sym} = ::FastHaml::AttributeBuilder.new(#{options.to_hash.inspect})"],
          *attrs.map { |attr| compile(attr) },
            [:dynamic, "#{@sym}.build"],
         ]
