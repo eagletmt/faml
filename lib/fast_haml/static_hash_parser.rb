@@ -79,12 +79,12 @@ module FastHaml
             @dynamic_attributes["#{key_static}-#{k}"] = v
           end
         else
-          @dynamic_attributes[key_static] = node.location.expression.source
+          throw FAILURE_TAG
         end
         # TODO: Add dstr case
         # TODO: Add array case
       else
-        @dynamic_attributes[key_static] = node.location.expression.source
+        throw FAILURE_TAG
       end
     end
   end

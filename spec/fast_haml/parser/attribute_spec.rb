@@ -28,5 +28,12 @@ RSpec.describe FastHaml::Parser, type: :parser do
 %span{data} hello
 HAML
     end
+
+    it 'renders nested code attributes' do
+      expect(render_string(<<HAML)).to eq('<span data-bar="2" data-foo="1">hello</span>')
+- data = { foo: 1, bar: 2 }
+%span{data: data} hello
+HAML
+    end
   end
 end
