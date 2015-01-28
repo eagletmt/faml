@@ -129,7 +129,7 @@ module FastHaml
         end
 
         if old_attributes_hash
-          html_attrs.concat(try_static_hash(old_attributes_hash))
+          html_attrs.concat(try_static_hash("{#{old_attributes_hash}}"))
         end
 
         case rest[0]
