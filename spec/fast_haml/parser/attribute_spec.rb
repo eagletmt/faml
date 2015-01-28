@@ -49,5 +49,11 @@ HAML
 %span{data: "x\#{data}y"} hello
 HAML
     end
+
+    context 'with unmatched brace' do
+      it 'raises error' do
+        expect { render_string('%span{foo hello') }.to raise_error(FastHaml::Parser::SyntaxError)
+      end
+    end
   end
 end

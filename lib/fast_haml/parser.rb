@@ -117,7 +117,7 @@ module FastHaml
             if old_attributes_hash
               break
             end
-            old_attributes_hash, rest = parse_old_attributes(rest)
+            old_attributes_hash, rest = parse_old_attributes(rest, lineno)
           when '('
             if new_attributes_hash
               break
@@ -151,7 +151,7 @@ module FastHaml
 
     OLD_ATTRIBUTE_REGEX = /[{}]/o
 
-    def parse_old_attributes(text)
+    def parse_old_attributes(text, lineno)
       s = StringScanner.new(text)
       s.pos = 1
       depth = 1
@@ -162,8 +162,12 @@ module FastHaml
           depth -= 1
         end
       end
-      attr = s.pre_match + s.matched
-      [attr[1, attr.size-2], s.rest.lstrip]
+      if depth == 0
+        attr = s.pre_match + s.matched
+        [attr[1, attr.size-2], s.rest.lstrip]
+      else
+        raise SyntaxError.new('Unmatched brace', lineno)
+      end
     end
 
     def try_static_hash(text)
