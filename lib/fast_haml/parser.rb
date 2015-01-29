@@ -37,6 +37,7 @@ module FastHaml
     DOCTYPE_PREFIX = '!'
     ELEMENT_PREFIX = '%'
     SCRIPT_PREFIX = '='
+    COMMENT_PREFIX = '/'
     SILENT_SCRIPT_PREFIX = '-'
     DIV_ID_PREFIX = '#'
     DIV_CLASS_PREFIX = '.'
@@ -66,6 +67,10 @@ module FastHaml
           raise SyntaxError.new("Illegal doctype declaration", lineno)
         end
         @prev_silent = false
+      when COMMENT_PREFIX
+        insert_newline(@temple_ast)
+        parse_comment(text, lineno)
+        @prev_silent = false
       when SCRIPT_PREFIX
         insert_newline(@temple_ast)
         parse_script(text, lineno)
@@ -85,6 +90,11 @@ module FastHaml
 
     def parse_doctype(text, lineno)
       @temple_ast << [:html, :doctype, 'html']
+    end
+
+    def parse_comment(text, lineno)
+      comment = text[1, text.size-1].strip
+      @temple_ast << [:html, :comment, [:static, " #{comment} "]]
     end
 
     def parse_plain(text, lineno)
