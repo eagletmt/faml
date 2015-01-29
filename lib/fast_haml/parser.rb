@@ -149,7 +149,8 @@ module FastHaml
           if script.empty?
             raise SyntaxError.new("No Ruby code to evaluate", lineno)
           end
-          ast << [:dynamic, script]
+          sym = unique_name
+          ast << [:multi, [:code, "#{sym} = #{script}"], [:newline], [:dynamic, sym]]
         else
           unless rest.empty?
             ast << [:static, rest]
@@ -229,7 +230,8 @@ module FastHaml
       if script.empty?
         raise SyntaxError.new("No Ruby code to evaluate", lineno)
       end
-      @temple_ast << [:dynamic, script]
+      sym = unique_name
+      @temple_ast << [:code, "#{sym} = #{script}"] << [:newline] << [:dynamic, sym]
     end
 
     def parse_silent_script(text, lineno)

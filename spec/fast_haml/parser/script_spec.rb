@@ -22,6 +22,19 @@ HAML
 HAML
     end
 
+    it 'can contain Ruby comment' do
+      expect(render_string('%span= 1 + 2 # comments')).to eq('<span>3</span>')
+    end
+
+    it 'can contain Ruby comment in multi-line' do
+      expect(render_string(<<HAML)).to eq("<span>\n3\n3\n9\n</span>")
+%span
+  = 1 + 2 # comment
+  3
+  = 4 + 5 # comment
+HAML
+    end
+
     context 'without Ruby code' do
       it 'raises error' do
         expect { render_string('%span=') }.to raise_error(FastHaml::Parser::SyntaxError)
