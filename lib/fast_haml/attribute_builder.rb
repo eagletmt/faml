@@ -23,17 +23,19 @@ module FastHaml
     private
 
     def normalize(attrs)
-      h = {}
-      attrs.each do |k, v|
-        if v.is_a?(Hash)
-          normalize(v).each do |k2, v2|
-            h["#{k}-#{k2}"] = v2
+      {}.tap do |h|
+        attrs.each do |k, v|
+          k = k.to_s
+          if v.is_a?(Hash) && k == 'data'
+            data = AttributeNormalizer.normalize_data(v)
+            data.keys.sort.each do |k2|
+              h["data-#{k2}"] = data[k2]
+            end
+          else
+            h[k] = v.to_s
           end
-        else
-          h[k.to_s] = v
         end
       end
-      h
     end
   end
 end

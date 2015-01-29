@@ -48,7 +48,7 @@ module FastHaml
       val = node.children[1]
 
       if key_static = try_static_key(key)
-        try_static_value(key_static.to_s, val)
+        try_static_value(key_static, val)
       else
         throw FAILURE_TAG
       end
@@ -57,16 +57,16 @@ module FastHaml
     def try_static_key(node)
       case node.type
       when :sym
-        node.location.expression.source.gsub(/\A:/, '')
+        node.location.expression.source.gsub(/\A:/, '').to_sym
       when :int, :float, :str
-        eval(node.location.expression.source).to_s
+        eval(node.location.expression.source)
       end
     end
 
     def try_static_value(key_static, node)
       case node.type
       when :sym
-        @static_attributes[key_static] = node.location.expression.source
+        @static_attributes[key_static] = node.location.expression.source.gsub(/\A:/, '').to_sym
       when :true, :false, :nil, :int, :float, :str
         @static_attributes[key_static] = eval(node.location.expression.source)
       when :dstr
@@ -74,13 +74,14 @@ module FastHaml
       when :hash
         parser = self.class.new
         if parser.walk(node)
-          parser.static_attributes.each do |k, v|
-            @static_attributes["#{key_static}-#{k}"] = v
+          unless parser.static_attributes.empty?
+            @static_attributes[key_static] = parser.static_attributes
           end
-          parser.dynamic_attributes.each do |k, v|
-            @dynamic_attributes["#{key_static}-#{k}"] = v
+          unless parser.dynamic_attributes.empty?
+            @dynamic_attributes[key_static] = parser.dynamic_attributes
           end
         else
+          # TODO: Is it really impossible to optimize?
           throw FAILURE_TAG
         end
         # TODO: Add array case

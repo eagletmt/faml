@@ -1,4 +1,5 @@
 require 'temple'
+require 'fast_haml/attribute_normalizer'
 require 'fast_haml/static_hash_parser'
 
 module FastHaml
@@ -174,18 +175,37 @@ module FastHaml
       attrs = []
       parser = StaticHashParser.new
       if parser.parse("{#{text}}")
-        keys = parser.static_attributes.keys + parser.dynamic_attributes.keys
-        keys.sort.each do |k|
-          if parser.static_attributes.has_key?(k)
-            v = parser.static_attributes[k]
-            if v == true
-              attrs << [:html, :attr, k, [:multi]]
+        static_attributes = {}
+        parser.static_attributes.each do |k, v|
+          static_attributes[k.to_s] = v;
+        end
+        dynamic_attributes = {}
+        parser.dynamic_attributes.each do |k, v|
+          dynamic_attributes[k.to_s] = v
+        end
+
+        if dynamic_attributes.has_key?('data')
+          # XXX: Quit optimization...
+          attrs << [:haml, :attr, text]
+        else
+          keys = static_attributes.keys + dynamic_attributes.keys
+          keys.sort.each do |k|
+            if static_attributes.has_key?(k)
+              v = static_attributes[k]
+              if v == true
+                attrs << [:html, :attr, k, [:multi]]
+              elsif v.is_a?(Hash) && k == 'data'
+                data = AttributeNormalizer.normalize_data(v)
+                data.keys.sort.each do |k2|
+                  attrs << [:html, :attr, "data-#{k2}", [:static, Temple::Utils.escape_html(data[k2])]]
+                end
+              else
+                attrs << [:html, :attr, k, [:static, Temple::Utils.escape_html(v)]]
+              end
             else
-              attrs << [:html, :attr, k, [:static, Temple::Utils.escape_html(v)]]
+              v = dynamic_attributes[k]
+              attrs << [:html, :attr, k, [:escape, true, [:dynamic, v]]]
             end
-          else
-            v = parser.dynamic_attributes[k]
-            attrs << [:html, :attr, k, [:escape, true, [:dynamic, v]]]
           end
         end
       else
