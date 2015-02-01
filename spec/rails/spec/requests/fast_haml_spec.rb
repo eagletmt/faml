@@ -16,4 +16,13 @@ RSpec.describe 'FastHaml with Rails', type: :request do
     expect(response).to render_template('layouts/application')
     expect(response.body).to include('<p>nanika</p>')
   end
+
+  it 'escapes non-html_safe string' do
+    get '/books/with_variables?title=<script>alert(1)</script>'
+    expect(response).to be_ok
+    expect(response).to render_template('books/with_variables')
+    expect(response).to render_template('layouts/application')
+    expect(response.body).to include('<a href="/books/hello">hello</a>')
+    expect(response.body).to include('<p>&lt;script&gt;alert(1)&lt;/script&gt;</p>')
+  end
 end

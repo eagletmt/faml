@@ -147,7 +147,7 @@ module FastHaml
       if !ast.children.empty? && !ast.mid_block_keyword
         temple << [:code, 'end']
       end
-      temple << [:dynamic, sym]
+      temple << [:escape, true, [:dynamic, sym]]
       temple
     end
 

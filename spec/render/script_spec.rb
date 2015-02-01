@@ -42,6 +42,13 @@ HAML
 HAML
   end
 
+  it 'escapes unsafe string' do
+    expect(render_string(<<HAML)).to eq("<p>&lt;script&gt;alert(1)&lt;/script&gt;</p>\n")
+- title = '<script>alert(1)</script>'
+%p= title
+HAML
+  end
+
   context 'without Ruby code' do
     it 'raises error' do
       expect { render_string('%span=') }.to raise_error(FastHaml::Parser::SyntaxError)
