@@ -18,7 +18,9 @@ RSpec.describe 'FastHaml with Rails', type: :request do
   end
 
   it 'escapes non-html_safe string' do
-    get '/books/with_variables?title=<script>alert(1)</script>'
+    uri = URI.parse('/books/with_variables')
+    uri.query = URI.encode_www_form(title: '<script>alert(1)</script>')
+    get uri.to_s
     expect(response).to be_ok
     expect(response).to render_template('books/with_variables')
     expect(response).to render_template('layouts/application')
