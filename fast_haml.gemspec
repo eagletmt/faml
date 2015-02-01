@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "parser"
   spec.add_dependency "temple"
+  spec.add_development_dependency "appraisal"
   spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "coveralls"

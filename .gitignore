@@ -12,3 +12,5 @@
 *.o
 *.a
 *.log
+
+spec/rails/tmp
