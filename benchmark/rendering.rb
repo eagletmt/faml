@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'benchmark/ips'
-require 'fast_haml'
 require 'haml'
+require 'fast_haml'
 
 template = ARGV[0]
 unless template
