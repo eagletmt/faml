@@ -16,4 +16,4 @@ matrix:
     - gemfile: gemfiles/rails_edge.gemfile
     # https://github.com/rspec/rspec-rails/pull/1264
     - rvm: 2.2
-      gemfiles: gemfiles/rails_4.0.gemfile
+      gemfile: gemfiles/rails_4.0.gemfile
