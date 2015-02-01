@@ -27,4 +27,10 @@ RSpec.describe 'FastHaml with Rails', type: :request do
     expect(response.body).to include('<a href="/books/hello">hello</a>')
     expect(response.body).to include('<p>&lt;script&gt;alert(1)&lt;/script&gt;</p>')
   end
+
+  it 'works with capture method' do
+    get '/books/with_capture'
+    expect(response).to be_ok
+    expect(response.body).to include("<div><div>\n<p>Hello</p>\n</div>\n</div>\n")
+  end
 end
