@@ -12,7 +12,7 @@ end
 Benchmark.ips do |x|
   obj = Object.new
 
-  Haml::Engine.new(File.read(template)).def_method(obj, :haml)
+  Haml::Engine.new(File.read(template), ugly: true).def_method(obj, :haml)
   code = FastHaml::Engine.new.call(File.read(template))
   obj.instance_eval("def fast_haml; #{code}; end")
 
