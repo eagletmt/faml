@@ -62,7 +62,6 @@ module FastHaml
         else
           raise SyntaxError.new("Illegal doctype declaration", lineno)
         end
-        @prev_silent = false
       when COMMENT_PREFIX
         parse_comment(text, lineno)
       when SCRIPT_PREFIX
@@ -179,25 +178,6 @@ module FastHaml
       @ast << Ast::SilentScript.new([], script)
     end
 
-    MID_BLOCK_KEYWORDS = %w[else elsif rescue ensure end when]
-    START_BLOCK_KEYWORDS = %w[if begin case unless]
-    # Try to parse assignments to block starters as best as possible
-    START_BLOCK_KEYWORD_REGEX = /(?:\w+(?:,\s*\w+)*\s*=\s*)?(#{Regexp.union(START_BLOCK_KEYWORDS)})/
-    BLOCK_KEYWORD_REGEX = /^-?\s*(?:(#{Regexp.union(MID_BLOCK_KEYWORDS)})|#{START_BLOCK_KEYWORD_REGEX.source})\b/
-
-    def block_keyword(text)
-      m = text.match(BLOCK_KEYWORD_REGEX)
-      if m
-        m[1] || m[2]
-      else
-        nil
-      end
-    end
-
-    def mid_block_keyword?(text)
-      MID_BLOCK_KEYWORDS.include?(block_keyword(text))
-    end
-
     def parse_class_and_id(class_and_id)
       classes = []
       id = ''
@@ -233,9 +213,7 @@ module FastHaml
         parent_ast = @stack.pop
         case @ast
         when Ast::Script, Ast::SilentScript
-          unless mid_block_keyword?(text)
-            parent_ast << Ast::SilentScript.new([], 'end')
-          end
+          @ast.mid_block_keyword = mid_block_keyword?(text)
         end
         @ast = parent_ast
       end
@@ -243,5 +221,25 @@ module FastHaml
         raise SyntaxError.new("Unexpected indent level: #{indent_level}: indent_level=#{@indent_levels}", lineno)
       end
     end
+
+    MID_BLOCK_KEYWORDS = %w[else elsif rescue ensure end when]
+    START_BLOCK_KEYWORDS = %w[if begin case unless]
+    # Try to parse assignments to block starters as best as possible
+    START_BLOCK_KEYWORD_REGEX = /(?:\w+(?:,\s*\w+)*\s*=\s*)?(#{Regexp.union(START_BLOCK_KEYWORDS)})/
+    BLOCK_KEYWORD_REGEX = /^-?\s*(?:(#{Regexp.union(MID_BLOCK_KEYWORDS)})|#{START_BLOCK_KEYWORD_REGEX.source})\b/
+
+    def block_keyword(text)
+      m = text.match(BLOCK_KEYWORD_REGEX)
+      if m
+        m[1] || m[2]
+      else
+        nil
+      end
+    end
+
+    def mid_block_keyword?(text)
+      MID_BLOCK_KEYWORDS.include?(block_keyword(text))
+    end
+
   end
 end

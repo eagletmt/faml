@@ -37,12 +37,26 @@ module FastHaml
       end
     end
 
-    class Script < Struct.new(:children, :script)
+    class Script < Struct.new(:children, :script, :mid_block_keyword)
       include HasChildren
+
+      def initialize(*)
+        super
+        if self.mid_block_keyword.nil?
+          self.mid_block_keyword = false
+        end
+      end
     end
 
-    class SilentScript < Struct.new(:children, :script)
+    class SilentScript < Struct.new(:children, :script, :mid_block_keyword)
       include HasChildren
+
+      def initialize(*)
+        super
+        if self.mid_block_keyword.nil?
+          self.mid_block_keyword = false
+        end
+      end
     end
 
     class HtmlComment < Struct.new(:comment)

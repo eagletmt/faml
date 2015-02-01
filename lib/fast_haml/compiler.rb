@@ -144,6 +144,9 @@ module FastHaml
       sym = unique_name
       temple = [:multi, [:code, "#{sym} = #{ast.script}"], [:newline]]
       compile_children(ast, temple)
+      if !ast.children.empty? && !ast.mid_block_keyword
+        temple << [:code, 'end']
+      end
       temple << [:dynamic, sym]
       temple
     end
@@ -151,6 +154,9 @@ module FastHaml
     def compile_silent_script(ast)
       temple = [:multi, [:code, ast.script]]
       compile_children(ast, temple)
+      if !ast.children.empty? && !ast.mid_block_keyword
+        temple << [:code, 'end']
+      end
       temple
     end
   end

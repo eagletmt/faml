@@ -35,6 +35,14 @@ HAML
 HAML
     end
 
+    it 'can have children' do
+      expect(render_string(<<HAML)).to eq("<span>0</span>\n1<span>end</span>\n")
+= 1.times do |i|
+  %span= i
+%span end
+HAML
+    end
+
     context 'without Ruby code' do
       it 'raises error' do
         expect { render_string('%span=') }.to raise_error(FastHaml::Parser::SyntaxError)
