@@ -13,10 +13,16 @@ module FastHaml
       puts compile_file(file)
     end
 
-    desc 'parse FILE', 'Render temple AST'
+    desc 'parse FILE', 'Render fast_haml AST'
     def parse(file)
       require 'pp'
       pp parse_file(file)
+    end
+
+    desc 'temple FILE', 'Render temple AST'
+    def temple(file)
+      require 'pp'
+      pp FastHaml::Compiler.new.call(parse_file(file))
     end
 
     private

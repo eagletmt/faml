@@ -3,14 +3,14 @@ require 'spec_helper'
 RSpec.describe FastHaml::Parser, type: :parser do
   describe 'silent script' do
     it 'parses silent script' do
-      expect(render_string(<<HAML)).to eq("<span>0</span>\n<span>1</span>")
+      expect(render_string(<<HAML)).to eq("<span>0</span>\n<span>1</span>\n")
 - 2.times do |i|
   %span= i
 HAML
     end
 
     it 'parses if' do
-      expect(render_string(<<HAML)).to eq("<div>\neven\n</div>")
+      expect(render_string(<<HAML)).to eq("<div>\neven\n</div>\n")
 %div
   - if 2.even?
     even
@@ -18,7 +18,7 @@ HAML
     end
 
     it 'parses if and text' do
-      expect(render_string(<<HAML)).to eq("<div>\neven\nok\n</div>")
+      expect(render_string(<<HAML)).to eq("<div>\neven\nok\n</div>\n")
 %div
   - if 2.even?
     even
@@ -27,7 +27,7 @@ HAML
     end
 
     it 'parses if and else' do
-      expect(render_string(<<HAML)).to eq("<div>\nodd\n</div>")
+      expect(render_string(<<HAML)).to eq("<div>\nodd\n</div>\n")
 %div
   - if 1.even?
     even
@@ -37,7 +37,7 @@ HAML
     end
 
     it 'parses if and elsif' do
-      expect(render_string(<<HAML)).to eq("<div>\n2\neven\n</div>")
+      expect(render_string(<<HAML)).to eq("<div>\n2\neven\n</div>\n")
 %div
   - if 1.even?
     even
@@ -50,7 +50,7 @@ HAML
     end
 
     it 'parses case-when' do
-      expect(render_string(<<HAML)).to eq("<div>\n2\neven\n</div>")
+      expect(render_string(<<HAML)).to eq("<div>\n2\neven\n</div>\n")
 %div
   - case
   - when 1.even?

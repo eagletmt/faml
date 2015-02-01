@@ -3,18 +3,18 @@ require 'spec_helper'
 RSpec.describe FastHaml::Parser, type: :parser do
   describe 'script' do
     it 'parses script' do
-      expect(render_string('%span= 1 + 2')).to eq('<span>3</span>')
+      expect(render_string('%span= 1 + 2')).to eq("<span>3</span>\n")
     end
 
     it 'parses multi-line script' do
-      expect(render_string(<<HAML)).to eq("<span>\n3\n</span>")
+      expect(render_string(<<HAML)).to eq("<span>\n3\n</span>\n")
 %span
   = 1 + 2
 HAML
     end
 
     it 'parses script and text' do
-      expect(render_string(<<HAML)).to eq("<span>\n3\n3\n9\n</span>")
+      expect(render_string(<<HAML)).to eq("<span>\n3\n3\n9\n</span>\n")
 %span
   = 1 + 2
   3
@@ -23,11 +23,11 @@ HAML
     end
 
     it 'can contain Ruby comment' do
-      expect(render_string('%span= 1 + 2 # comments')).to eq('<span>3</span>')
+      expect(render_string('%span= 1 + 2 # comments')).to eq("<span>3</span>\n")
     end
 
     it 'can contain Ruby comment in multi-line' do
-      expect(render_string(<<HAML)).to eq("<span>\n3\n3\n9\n</span>")
+      expect(render_string(<<HAML)).to eq("<span>\n3\n3\n9\n</span>\n")
 %span
   = 1 + 2 # comment
   3

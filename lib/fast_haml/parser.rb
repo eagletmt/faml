@@ -1,9 +1,7 @@
-require 'temple'
-require 'fast_haml/attribute_normalizer'
-require 'fast_haml/static_hash_parser'
+require 'fast_haml/ast'
 
 module FastHaml
-  class Parser < Temple::Parser
+  class Parser
     class SyntaxError < StandardError
       attr_reader :lineno
 
@@ -11,6 +9,9 @@ module FastHaml
         super("#{message} at line #{lineno}")
         @lineno = lineno
       end
+    end
+
+    def initialize(options = {})
     end
 
     def call(template_str)
@@ -21,17 +22,15 @@ module FastHaml
       if @indent_levels.last > 0
         indent_leave(0, '', -1)
       end
-      @temple_ast
+      @ast
     end
 
     private
 
     def reset
-      @temple_ast = [:multi]
+      @ast = Ast::Root.new
       @stack = []
       @indent_levels = [0]
-      @indent_is_silent = [false]
-      @prev_silent = false
     end
 
     DOCTYPE_PREFIX = '!'
@@ -56,11 +55,8 @@ module FastHaml
 
       case text[0]
       when ELEMENT_PREFIX
-        insert_newline(@temple_ast)
         parse_element(text, lineno)
-        @prev_silent = false
       when DOCTYPE_PREFIX
-        insert_newline(@temple_ast)
         if text.start_with?('!!!')
           parse_doctype(text, lineno)
         else
@@ -68,79 +64,65 @@ module FastHaml
         end
         @prev_silent = false
       when COMMENT_PREFIX
-        insert_newline(@temple_ast)
         parse_comment(text, lineno)
-        @prev_silent = false
       when SCRIPT_PREFIX
-        insert_newline(@temple_ast)
         parse_script(text, lineno)
-        @prev_silent = false
       when SILENT_SCRIPT_PREFIX
         parse_silent_script(text, lineno)
-        @prev_silent = true
       when DIV_ID_PREFIX, DIV_CLASS_PREFIX
         parse_line("#{indent}%div#{text}", lineno)
-        @prev_silent = false
       else
-        insert_newline(@temple_ast)
         parse_plain(text, lineno)
-        @prev_silent = false
       end
     end
 
     def parse_doctype(text, lineno)
-      @temple_ast << [:html, :doctype, 'html']
+      @ast << Ast::Doctype.new(text)
     end
 
     def parse_comment(text, lineno)
-      comment = text[1, text.size-1].strip
-      @temple_ast << [:html, :comment, [:static, " #{comment} "]]
+      @ast << Ast::HtmlComment.new(text[1, text.size-1].strip)
     end
 
     def parse_plain(text, lineno)
-      @temple_ast << [:static, text]
+      @ast << Ast::Text.new(text)
     end
 
     OLD_ATTRIBUTE_BEGIN = '{'
     OLD_ATTRIBUTE_END = '}'
+    ELEMENT_REGEXP = /\A%([-:\w]+)([-:\w.#]*)(.+)?\z/o
 
     def parse_element(text, lineno)
-      m = text.match(/\A%([-:\w]+)([-:\w.#]*)(.+)?\z/)
+      m = text.match(ELEMENT_REGEXP)
       unless m
         raise SyntaxError.new("Invalid element declaration", lineno)
       end
-      tag_name = m[1]
-      attributes = m[2]
+
+      element = Ast::Element.new
+      element.tag_name = m[1]
+      element.static_class, element.static_id = parse_class_and_id(m[2])
       rest = m[3]
 
-      ast = [:html, :tag, tag_name]
-      html_attrs = [:html, :attrs].concat(parse_class_and_id(attributes))
-      ast << html_attrs
       if rest
         rest = rest.lstrip
 
-        old_attributes_hash = nil
         new_attributes_hash = nil
 
         loop do
           case rest[0]
           when OLD_ATTRIBUTE_BEGIN
-            if old_attributes_hash
+            unless element.old_attributes.empty?
               break
             end
-            old_attributes_hash, rest = parse_old_attributes(rest, lineno)
+            element.old_attributes, rest = parse_old_attributes(rest, lineno)
           when '('
-            if new_attributes_hash
+            unless element.new_attributes.empty?
               break
             end
-            new_attributes_hash, rest = parse_new_attributes(rest)
+            element.new_attributes, rest = parse_new_attributes(rest)
           else
             break
           end
-        end
-
-        if old_attributes_hash
-          html_attrs.concat(try_static_hash(old_attributes_hash))
         end
 
         case rest[0]
@@ -149,16 +131,15 @@ module FastHaml
           if script.empty?
             raise SyntaxError.new("No Ruby code to evaluate", lineno)
           end
-          sym = unique_name
-          ast << [:multi, [:code, "#{sym} = #{script}"], [:newline], [:dynamic, sym]]
+          element.oneline_child = Ast::Script.new([], script)
         else
           unless rest.empty?
-            ast << [:static, rest]
+            element.oneline_child = Ast::Text.new(rest)
           end
         end
       end
 
-      @temple_ast << ast
+      @ast << element
     end
 
     OLD_ATTRIBUTE_REGEX = /[{}]/o
@@ -182,56 +163,12 @@ module FastHaml
       end
     end
 
-    def try_static_hash(text)
-      attrs = []
-      parser = StaticHashParser.new
-      if parser.parse("{#{text}}")
-        static_attributes = {}
-        parser.static_attributes.each do |k, v|
-          static_attributes[k.to_s] = v;
-        end
-        dynamic_attributes = {}
-        parser.dynamic_attributes.each do |k, v|
-          dynamic_attributes[k.to_s] = v
-        end
-
-        if dynamic_attributes.has_key?('data')
-          # XXX: Quit optimization...
-          attrs << [:haml, :attr, text]
-        else
-          keys = static_attributes.keys + dynamic_attributes.keys
-          keys.sort.each do |k|
-            if static_attributes.has_key?(k)
-              v = static_attributes[k]
-              if v == true
-                attrs << [:html, :attr, k, [:multi]]
-              elsif v.is_a?(Hash) && k == 'data'
-                data = AttributeNormalizer.normalize_data(v)
-                data.keys.sort.each do |k2|
-                  attrs << [:html, :attr, "data-#{k2}", [:static, Temple::Utils.escape_html(data[k2])]]
-                end
-              else
-                attrs << [:html, :attr, k, [:static, Temple::Utils.escape_html(v)]]
-              end
-            else
-              v = dynamic_attributes[k]
-              attrs << [:html, :attr, k, [:escape, true, [:dynamic, v]]]
-            end
-          end
-        end
-      else
-        attrs << [:haml, :attr, text]
-      end
-      attrs
-    end
-
     def parse_script(text, lineno)
       script = text[/\A= *(.*)\z/, 1]
       if script.empty?
         raise SyntaxError.new("No Ruby code to evaluate", lineno)
       end
-      sym = unique_name
-      @temple_ast << [:code, "#{sym} = #{script}"] << [:newline] << [:dynamic, sym]
+      @ast << Ast::Script.new([], script)
     end
 
     def parse_silent_script(text, lineno)
@@ -239,7 +176,7 @@ module FastHaml
       if script.empty?
         raise SyntaxError.new("No Ruby code to evaluate", lineno)
       end
-      @temple_ast << [:code, script]
+      @ast << Ast::SilentScript.new([], script)
     end
 
     MID_BLOCK_KEYWORDS = %w[else elsif rescue ensure end when]
@@ -273,14 +210,7 @@ module FastHaml
         end
       end
 
-      ast = []
-      unless classes.empty?
-        ast << [:html, :attr, 'class', [:static, classes.join(' ')]]
-      end
-      unless id.empty?
-        ast << [:html, :attr, 'id', [:static, id]]
-      end
-      ast
+      [classes.join(' '), id]
     end
 
     def process_indent(indent_level, text, lineno)
@@ -293,41 +223,25 @@ module FastHaml
 
     def indent_enter(indent_level, lineno)
       @indent_levels.push(indent_level)
-      @indent_is_silent.push(@prev_silent)
-      @stack.push(@temple_ast)
-      @temple_ast = [:multi]
+      @stack.push(@ast)
+      @ast = @ast.children.last
     end
 
     def indent_leave(indent_level, text, lineno)
       while indent_level < @indent_levels.last
         @indent_levels.pop
-        was_silent = @indent_is_silent.pop
-        unless was_silent
-          insert_newline(@temple_ast)
-        end
-        ast = @temple_ast
-        @temple_ast = @stack.pop
-        last_ast = @temple_ast.last
-
-        case last_ast[0]
-        when :html
-          last_ast << ast
-        when :code
-          @temple_ast << ast
+        parent_ast = @stack.pop
+        case @ast
+        when Ast::Script, Ast::SilentScript
           unless mid_block_keyword?(text)
-            @temple_ast << [:code, 'end']
+            parent_ast << Ast::SilentScript.new([], 'end')
           end
-        else
-          raise "Unexpected: #{last_ast}"
         end
+        @ast = parent_ast
       end
       if indent_level != @indent_levels.last
         raise SyntaxError.new("Unexpected indent level: #{indent_level}: indent_level=#{@indent_levels}", lineno)
       end
-    end
-
-    def insert_newline(ast)
-      ast << [:static, "\n"]
     end
   end
 end
