@@ -18,6 +18,7 @@ end
 
 appraise 'rails-edge' do
   gem 'rails', git: 'https://github.com/rails/rails'
+  gem 'arel', git: 'https://github.com/rails/arel'
   gem 'rspec-rails'
   gem 'sqlite3'
 end
