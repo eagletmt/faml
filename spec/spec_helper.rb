@@ -11,11 +11,7 @@ end
 
 require 'fast_haml'
 
-module ParserSpecHelper
-  def parse_string(str)
-    FastHaml::Parser.new.call(str)
-  end
-
+module RenderSpecHelper
   def render_string(str)
     eval(FastHaml::Engine.new.call(str))
   end
@@ -47,5 +43,5 @@ RSpec.configure do |config|
 
   Kernel.srand config.seed
 
-  config.include(ParserSpecHelper, type: :parser)
+  config.include(RenderSpecHelper, type: :render)
 end
