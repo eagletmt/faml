@@ -61,4 +61,11 @@ HAML
     else
 HAML
   end
+
+  it 'parses Ruby comment' do
+    expect(render_string(<<HAML)).to eq("<span>Print me</span>\n")
+- # Ruby comment here
+%span Print me
+HAML
+  end
 end

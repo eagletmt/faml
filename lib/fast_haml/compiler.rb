@@ -152,7 +152,7 @@ module FastHaml
     end
 
     def compile_silent_script(ast)
-      temple = [:multi, [:code, ast.script]]
+      temple = [:multi, [:code, ast.script], [:newline]]
       compile_children(ast, temple)
       if !ast.children.empty? && !ast.mid_block_keyword
         temple << [:code, 'end']
