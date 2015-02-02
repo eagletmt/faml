@@ -16,8 +16,31 @@ module FastHaml
 
     def call(template_str)
       reset
-      template_str.each_line.with_index do |line, lineno|
-        parse_line(line.chomp, lineno)
+      multiline_buf = []
+      multiline_index = 0
+      template_str.each_line.with_index do |line, index|
+        line = line.chomp.rstrip
+        if is_multiline?(line)
+          line = line[0, line.size-1]
+          if multiline_buf.empty?
+            # multiline start
+            multiline_buf << line
+            multiline_index = index
+          else
+            # multiline continues
+            multiline_buf << line.lstrip
+          end
+        else
+          unless multiline_buf.empty?
+            # multiline ended
+            parse_line(multiline_buf.join, multiline_index+1)
+            multiline_buf = []
+          end
+          parse_line(line, index+1)
+        end
+      end
+      unless multiline_buf.empty?
+        parse_line(multiline_buf.join, multiline_index+1)
       end
       if @indent_levels.last > 0
         indent_leave(0, '', -1)
@@ -31,6 +54,20 @@ module FastHaml
       @ast = Ast::Root.new
       @stack = []
       @indent_levels = [0]
+    end
+
+    MULTILINE_SUFFIX = ' |'
+
+    # Regex to check for blocks with spaces around arguments. Not to be confused
+    # with multiline script.
+    # For example:
+    #     foo.each do | bar |
+    #       = bar
+    #
+    BLOCK_WITH_SPACES = /do\s*\|\s*[^\|]*\s+\|\z/o
+
+    def is_multiline?(line)
+      line.end_with?(MULTILINE_SUFFIX) && line !~ BLOCK_WITH_SPACES
     end
 
     DOCTYPE_PREFIX = '!'
