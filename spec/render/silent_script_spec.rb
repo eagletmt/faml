@@ -68,4 +68,15 @@ HAML
 %span Print me
 HAML
   end
+
+  it 'parses Ruby multiline' do
+    expect(render_string(<<HAML)).to eq("<div>\n<span>ne</span>\n</div>\n")
+%div
+  - if 1 == Complex(2,
+3)
+    %span eq
+  - else
+    %span ne
+HAML
+  end
 end

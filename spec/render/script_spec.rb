@@ -49,6 +49,15 @@ HAML
 HAML
   end
 
+  it 'parses Ruby multiline' do
+    expect(render_string(<<HAML)).to eq("<div>\n<span>\n2+3i\n</span>\n</div>\n")
+%div
+  %span
+    = Complex(2,
+3)
+HAML
+  end
+
   context 'without Ruby code' do
     it 'raises error' do
       expect { render_string('%span=') }.to raise_error(FastHaml::Parser::SyntaxError)

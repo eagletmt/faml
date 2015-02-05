@@ -176,6 +176,7 @@ module FastHaml
           if script.empty?
             raise SyntaxError.new("No Ruby code to evaluate", lineno)
           end
+          script += handle_ruby_multiline(script)
           element.oneline_child = Ast::Script.new([], script)
         else
           unless rest.empty?
@@ -213,6 +214,7 @@ module FastHaml
       if script.empty?
         raise SyntaxError.new("No Ruby code to evaluate", lineno)
       end
+      script += handle_ruby_multiline(script)
       @ast << Ast::Script.new([], script)
     end
 
@@ -221,6 +223,7 @@ module FastHaml
       if script.empty?
         raise SyntaxError.new("No Ruby code to evaluate", lineno)
       end
+      script += handle_ruby_multiline(script)
       @ast << Ast::SilentScript.new([], script)
     end
 
@@ -266,6 +269,25 @@ module FastHaml
       if indent_level != @indent_levels.last
         raise SyntaxError.new("Unexpected indent level: #{indent_level}: indent_level=#{@indent_levels}", lineno)
       end
+    end
+
+    def handle_ruby_multiline(current_text)
+      buf = []
+      while is_ruby_multiline?(current_text)
+        current_text = next_line
+        buf << current_text
+      end
+      buf.join(' ')
+    end
+
+    # `text' is a Ruby multiline block if it:
+    # - ends with a comma
+    # - but not "?," which is a character literal
+    #   (however, "x?," is a method call and not a literal)
+    # - and not "?\," which is a character literal
+    def is_ruby_multiline?(text)
+      text && text.length > 1 && text[-1] == ?, &&
+        !((text[-3, 2] =~ /\W\?/) || text[-3, 2] == "?\\")
     end
 
     MID_BLOCK_KEYWORDS = %w[else elsif rescue ensure end when]

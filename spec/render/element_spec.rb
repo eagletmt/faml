@@ -67,4 +67,12 @@ HAML
   it 'parses .' do
     expect(render_string('.wrapper.main')).to eq(%Q{<div class="wrapper main" />\n})
   end
+
+  it 'parses Ruby multiline' do
+    expect(render_string(<<HAML)).to eq("<div>\n<span>2+3i</span>\n</div>\n")
+%div
+  %span= Complex(2,
+3)
+HAML
+  end
 end
