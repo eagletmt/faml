@@ -17,15 +17,17 @@ module FastHaml
     def call(template_str)
       reset
       multiline_buf = []
-      multiline_index = 0
-      template_str.each_line.with_index do |line, index|
-        line = line.chomp.rstrip
+      multiline_lineno = 0
+      @lines = template_str.each_line.map { |line| line.chomp.rstrip }
+      @lineno = 0
+      while @lineno < @lines.size
+        line = next_line
         if is_multiline?(line)
           line = line[0, line.size-1]
           if multiline_buf.empty?
             # multiline start
             multiline_buf << line
-            multiline_index = index
+            multiline_lineno = @lineno
           else
             # multiline continues
             multiline_buf << line.lstrip
@@ -33,15 +35,16 @@ module FastHaml
         else
           unless multiline_buf.empty?
             # multiline ended
-            parse_line(multiline_buf.join, multiline_index+1)
+            parse_line(multiline_buf.join, multiline_lineno)
             multiline_buf = []
           end
-          parse_line(line, index+1)
+          parse_line(line, @lineno)
         end
       end
       unless multiline_buf.empty?
-        parse_line(multiline_buf.join, multiline_index+1)
+        parse_line(multiline_buf.join, multiline_lineno)
       end
+      @lines.clear
       if @indent_levels.last > 0
         indent_leave(0, '', -1)
       end
@@ -54,6 +57,12 @@ module FastHaml
       @ast = Ast::Root.new
       @stack = []
       @indent_levels = [0]
+    end
+
+    def next_line
+      @lines[@lineno].tap do
+        @lineno += 1
+      end
     end
 
     MULTILINE_SUFFIX = ' |'
