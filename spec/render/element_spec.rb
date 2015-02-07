@@ -56,7 +56,7 @@ HAML
 
   context 'with invalid tag name' do
     it 'raises error' do
-      expect { render_string('%.foo') }.to raise_error(FastHaml::Parser::SyntaxError)
+      expect { render_string('%.foo') }.to raise_error(FastHaml::SyntaxError)
     end
   end
 

@@ -1,20 +1,13 @@
 require 'fast_haml/ast'
+require 'fast_haml/element_parser'
 require 'fast_haml/filter_parser'
 require 'fast_haml/indent_tracker'
 require 'fast_haml/line_parser'
 require 'fast_haml/ruby_multiline'
+require 'fast_haml/syntax_error'
 
 module FastHaml
   class Parser
-    class SyntaxError < StandardError
-      attr_reader :lineno
-
-      def initialize(message, lineno)
-        super("#{message} at line #{lineno}")
-        @lineno = lineno
-      end
-    end
-
     def initialize(options = {})
     end
 
@@ -101,80 +94,8 @@ module FastHaml
       @ast << Ast::Text.new(text)
     end
 
-    OLD_ATTRIBUTE_BEGIN = '{'
-    OLD_ATTRIBUTE_END = '}'
-    ELEMENT_REGEXP = /\A%([-:\w]+)([-:\w.#]*)(.+)?\z/o
-
     def parse_element(text, lineno)
-      m = text.match(ELEMENT_REGEXP)
-      unless m
-        raise SyntaxError.new("Invalid element declaration", lineno)
-      end
-
-      element = Ast::Element.new
-      element.tag_name = m[1]
-      element.static_class, element.static_id = parse_class_and_id(m[2])
-      rest = m[3]
-
-      if rest
-        rest = rest.lstrip
-
-        new_attributes_hash = nil
-
-        loop do
-          case rest[0]
-          when OLD_ATTRIBUTE_BEGIN
-            unless element.old_attributes.empty?
-              break
-            end
-            element.old_attributes, rest = parse_old_attributes(rest, lineno)
-          when '('
-            unless element.new_attributes.empty?
-              break
-            end
-            element.new_attributes, rest = parse_new_attributes(rest)
-          else
-            break
-          end
-        end
-
-        case rest[0]
-        when '='
-          script = rest[1 .. -1].lstrip
-          if script.empty?
-            raise SyntaxError.new("No Ruby code to evaluate", lineno)
-          end
-          script += RubyMultiline.read(@line_parser, script)
-          element.oneline_child = Ast::Script.new([], script)
-        else
-          unless rest.empty?
-            element.oneline_child = Ast::Text.new(rest)
-          end
-        end
-      end
-
-      @ast << element
-    end
-
-    OLD_ATTRIBUTE_REGEX = /[{}]/o
-
-    def parse_old_attributes(text, lineno)
-      s = StringScanner.new(text)
-      s.pos = 1
-      depth = 1
-      while depth > 0 && s.scan_until(OLD_ATTRIBUTE_REGEX)
-        if s.matched == OLD_ATTRIBUTE_BEGIN
-          depth += 1
-        else
-          depth -= 1
-        end
-      end
-      if depth == 0
-        attr = s.pre_match + s.matched
-        [attr[1, attr.size-2], s.rest.lstrip]
-      else
-        raise SyntaxError.new('Unmatched brace', lineno)
-      end
+      @ast << ElementParser.new(text, lineno, @line_parser).parse
     end
 
     def parse_script(text, lineno)
@@ -201,21 +122,6 @@ module FastHaml
         raise SyntaxError.new("Invalid filter name: #{text}")
       end
       @filter_parser.start(filter_name)
-    end
-
-    def parse_class_and_id(class_and_id)
-      classes = []
-      id = ''
-      class_and_id.scan(/([#.])([-:_a-zA-Z0-9]+)/) do |type, prop|
-        case type
-        when '.'
-          classes << prop
-        when '#'
-          id = prop
-        end
-      end
-
-      [classes.join(' '), id]
     end
 
     def indent_enter(text)

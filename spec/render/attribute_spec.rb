@@ -41,7 +41,7 @@ HAML
 
   context 'with unmatched brace' do
     it 'raises error' do
-      expect { render_string('%span{foo hello') }.to raise_error(FastHaml::Parser::SyntaxError)
+      expect { render_string('%span{foo hello') }.to raise_error(FastHaml::SyntaxError)
     end
   end
 
