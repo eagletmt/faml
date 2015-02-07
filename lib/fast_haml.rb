@@ -1,4 +1,5 @@
 require 'fast_haml/engine'
+require 'fast_haml/tilt'
 require 'fast_haml/version'
 
 begin
