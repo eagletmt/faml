@@ -3,9 +3,15 @@ require 'fast_haml/ast'
 require 'fast_haml/attribute_normalizer'
 require 'fast_haml/filter_compilers'
 require 'fast_haml/static_hash_parser'
+require 'fast_haml/text_compiler'
 
 module FastHaml
   class Compiler < Temple::Parser
+    def initialize(*)
+      super
+      @text_compiler = TextCompiler.new
+    end
+
     def call(ast)
       compile(ast)
     end
@@ -63,7 +69,7 @@ module FastHaml
     end
 
     def compile_text(ast)
-      [:static, ast.text]
+      @text_compiler.compile(ast.text)
     end
 
     def compile_doctype(ast)

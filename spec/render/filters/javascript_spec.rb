@@ -26,4 +26,11 @@ HAML
   %span world
 HAML
   end
+
+  it 'parses string interpolation' do
+    expect(render_string(<<'HAML')).to eq("<script>\n  var x = 3;\n</script>\n")
+:javascript
+  var x = #{1 + 2};
+HAML
+  end
 end

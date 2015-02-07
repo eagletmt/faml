@@ -75,4 +75,12 @@ HAML
 3)
 HAML
   end
+
+  it 'parses string interpolation' do
+    expect(render_string(%q|%span hello <span> #{'</span>'} </span>|)).to eq("<span>hello <span> &lt;/span&gt; </span></span>\n")
+    expect(render_string(<<'HAML')).to eq("<span>\nhello <span> &lt;/span&gt; </span>\n</span>\n")
+%span
+  hello <span> #{'</span>'} </span>
+HAML
+  end
 end

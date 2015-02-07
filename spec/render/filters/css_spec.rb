@@ -28,4 +28,11 @@ HAML
   %span hello
 HAML
   end
+
+  it 'parses string interpolation' do
+    expect(render_string(<<'HAML')).to eq("<style>\n  html { font-size: 12px; }\n</style>\n")
+:css
+  html { font-size: #{10 + 2}px; }
+HAML
+  end
 end
