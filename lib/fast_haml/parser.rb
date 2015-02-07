@@ -1,4 +1,5 @@
 require 'fast_haml/ast'
+require 'fast_haml/indent_tracker'
 require 'fast_haml/line_parser'
 
 module FastHaml
@@ -18,6 +19,7 @@ module FastHaml
     def call(template_str)
       reset
       @line_parser = LineParser.new(template_str)
+      @indent_tracker = IndentTracker.new(on_enter: method(:indent_enter), on_leave: method(:indent_leave))
       while @line_parser.has_next?
         line = @line_parser.next_line
         if @filter_ast
@@ -31,9 +33,7 @@ module FastHaml
         @ast << @filter_ast
         @filter_ast = nil
       end
-      if @indent_levels.last > 0
-        indent_leave(0, '', -1)
-      end
+      @indent_tracker.finish
       @ast
     end
 
@@ -42,7 +42,6 @@ module FastHaml
     def reset
       @ast = Ast::Root.new
       @stack = []
-      @indent_levels = [0]
       @filter_ast = nil
       @filter_indent = nil
     end
@@ -57,16 +56,11 @@ module FastHaml
     FILTER_PREFIX = ':'
 
     def parse_line(line, lineno)
-      m = line.match(/\A( *)(.*)\z/)
-      indent = m[1]
-      indent_level = indent.size
-      text = m[2]
+      text, indent = @indent_tracker.process(line, lineno)
 
       if text.empty?
         return
       end
-
-      process_indent(indent_level, text, lineno)
 
       case text[0]
       when ELEMENT_PREFIX
@@ -208,10 +202,8 @@ module FastHaml
     end
 
     def append_filter(line)
-      m = line.match(/\A( *)(.*)\z/)
-      indent = m[1]
+      indent, text = @indent_tracker.split(line)
       indent_level = indent.size
-      text = m[2]
 
       if @filter_indent
         if indent_level < @filter_indent
@@ -222,7 +214,7 @@ module FastHaml
           return false
         end
       else
-        if indent_level > @indent_levels.last
+        if indent_level > @indent_tracker.current_level
           # Start filter
           @filter_indent = indent_level
         else
@@ -252,33 +244,18 @@ module FastHaml
       [classes.join(' '), id]
     end
 
-    def process_indent(indent_level, text, lineno)
-      if indent_level > @indent_levels.last
-        indent_enter(indent_level, lineno)
-      elsif indent_level < @indent_levels.last
-        indent_leave(indent_level, text, lineno)
-      end
-    end
-
-    def indent_enter(indent_level, lineno)
-      @indent_levels.push(indent_level)
+    def indent_enter(text)
       @stack.push(@ast)
       @ast = @ast.children.last
     end
 
-    def indent_leave(indent_level, text, lineno)
-      while indent_level < @indent_levels.last
-        @indent_levels.pop
-        parent_ast = @stack.pop
-        case @ast
-        when Ast::Script, Ast::SilentScript
-          @ast.mid_block_keyword = mid_block_keyword?(text)
-        end
-        @ast = parent_ast
+    def indent_leave(text)
+      parent_ast = @stack.pop
+      case @ast
+      when Ast::Script, Ast::SilentScript
+        @ast.mid_block_keyword = mid_block_keyword?(text)
       end
-      if indent_level != @indent_levels.last
-        raise SyntaxError.new("Unexpected indent level: #{indent_level}: indent_level=#{@indent_levels}", lineno)
-      end
+      @ast = parent_ast
     end
 
     def handle_ruby_multiline(current_text)
