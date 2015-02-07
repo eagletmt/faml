@@ -1,6 +1,7 @@
 require 'temple'
 require 'fast_haml/ast'
 require 'fast_haml/attribute_normalizer'
+require 'fast_haml/filter_compilers'
 require 'fast_haml/static_hash_parser'
 
 module FastHaml
@@ -27,6 +28,8 @@ module FastHaml
         compile_silent_script(ast)
       when Ast::Text
         compile_text(ast)
+      when Ast::Filter
+        compile_filter(ast)
       else
         raise "InternalError: Unknown AST node #{ast.class}: #{ast.inspect}"
       end
@@ -158,6 +161,10 @@ module FastHaml
         temple << [:code, 'end']
       end
       temple
+    end
+
+    def compile_filter(ast)
+      FilterCompilers.find(ast.name).compile(ast.texts)
     end
   end
 end

@@ -22,6 +22,12 @@ module FastHaml
       @lineno = 0
       while @lineno < @lines.size
         line = next_line
+        if @filter_ast
+          if append_filter(line)
+            next
+          end
+        end
+
         if is_multiline?(line)
           line = line[0, line.size-1]
           if multiline_buf.empty?
@@ -44,6 +50,10 @@ module FastHaml
       unless multiline_buf.empty?
         parse_line(multiline_buf.join, multiline_lineno)
       end
+      if @filter_ast
+        @ast << @filter_ast
+        @filter_ast = nil
+      end
       @lines.clear
       if @indent_levels.last > 0
         indent_leave(0, '', -1)
@@ -57,6 +67,8 @@ module FastHaml
       @ast = Ast::Root.new
       @stack = []
       @indent_levels = [0]
+      @filter_ast = nil
+      @filter_indent = nil
     end
 
     def next_line
@@ -86,6 +98,7 @@ module FastHaml
     SILENT_SCRIPT_PREFIX = '-'
     DIV_ID_PREFIX = '#'
     DIV_CLASS_PREFIX = '.'
+    FILTER_PREFIX = ':'
 
     def parse_line(line, lineno)
       m = line.match(/\A( *)(.*)\z/)
@@ -116,6 +129,8 @@ module FastHaml
         parse_silent_script(text, lineno)
       when DIV_ID_PREFIX, DIV_CLASS_PREFIX
         parse_line("#{indent}%div#{text}", lineno)
+      when FILTER_PREFIX
+        parse_filter(text, lineno)
       else
         parse_plain(text, lineno)
       end
@@ -225,6 +240,45 @@ module FastHaml
       end
       script += handle_ruby_multiline(script)
       @ast << Ast::SilentScript.new([], script)
+    end
+
+    def parse_filter(text, lineno)
+      filter_name = text[/\A#{FILTER_PREFIX}(\w+)\z/, 1]
+      unless filter_name
+        raise SyntaxError.new("Invalid filter name: #{text}")
+      end
+      @filter_ast = Ast::Filter.new
+      @filter_ast.name = filter_name
+    end
+
+    def append_filter(line)
+      m = line.match(/\A( *)(.*)\z/)
+      indent = m[1]
+      indent_level = indent.size
+      text = m[2]
+
+      if @filter_indent
+        if indent_level < @filter_indent
+          # Finish filter
+          @filter_indent = nil
+          @ast << @filter_ast
+          @filter_ast = nil
+          return false
+        end
+      else
+        if indent_level > @indent_levels.last
+          # Start filter
+          @filter_indent = indent_level
+        else
+          # Empty filter
+          @filter_ast = nil
+          return false
+        end
+      end
+
+      text = line[@filter_indent .. -1]
+      @filter_ast.texts << text
+      true
     end
 
     def parse_class_and_id(class_and_id)

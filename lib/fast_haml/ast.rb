@@ -64,5 +64,12 @@ module FastHaml
 
     class Text < Struct.new(:text)
     end
+
+    class Filter < Struct.new(:name, :texts)
+      def initialize(*)
+        super
+        self.texts ||= []
+      end
+    end
   end
 end
