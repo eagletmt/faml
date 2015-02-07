@@ -1,6 +1,10 @@
+require 'singleton'
+
 module FastHaml
   class AttributeBuilder
-    def initialize(options)
+    include Singleton
+
+    def init(options)
       @attributes = {}
       @options = options
     end
@@ -9,7 +13,7 @@ module FastHaml
       @attributes.merge!(*hashes.map { |h| normalize(h) })
     end
 
-    def build
+    def build!
       @attributes.keys.sort.map do |k|
         v = @attributes[k]
         if v == true
@@ -17,7 +21,9 @@ module FastHaml
         else
           " #{k}=#{@options[:attr_quote]}#{Temple::Utils.escape_html(v)}#{@options[:attr_quote]}"
         end
-      end.join
+      end.join.tap do
+        @attributes.clear
+      end
     end
 
     private

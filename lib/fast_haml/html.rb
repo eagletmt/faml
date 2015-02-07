@@ -2,13 +2,16 @@ require 'fast_haml/attribute_builder'
 
 module FastHaml
   class Html < Temple::HTML::Fast
+    def initialize(*)
+      super
+      AttributeBuilder.instance.init(options)
+    end
+
     def on_html_attrs(*attrs)
       if has_haml_attr?(attrs)
-        @sym = unique_name
         [:multi,
-          [:code, "#{@sym} = ::FastHaml::AttributeBuilder.new(#{options.to_hash.inspect})"],
           *attrs.map { |attr| compile(attr) },
-          [:dynamic, "#{@sym}.build"],
+          [:dynamic, "::FastHaml::AttributeBuilder.instance.build!"],
         ]
       else
         super
@@ -27,7 +30,7 @@ module FastHaml
     end
 
     def on_haml_attr(code)
-      [:code, "#{@sym}.merge!(#{code})"]
+      [:code, "::FastHaml::AttributeBuilder.instance.merge!(#{code})"]
     end
 
     private
