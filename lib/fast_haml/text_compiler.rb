@@ -2,6 +2,10 @@ require 'strscan'
 
 module FastHaml
   class TextCompiler
+    def initialize(escape_html: true)
+      @escape_html = escape_html
+    end
+
     def compile(text)
       if contains_interpolation?(text)
         compile_interpolation(text)
@@ -25,10 +29,10 @@ module FastHaml
       while s.scan_until(INTERPOLATION_BEGIN)
         temple << [:static, s.string[pos ... (s.pos - s.matched.size)]]
         if s.matched == '#{'
-          temple << [:escape, true, [:dynamic, find_close_brace(s)]]
+          temple << [:escape, @escape_html, [:dynamic, find_close_brace(s)]]
         else
           s.scan(/\w+/)
-          temple << [:escape, true, [:dynamic, s.matched]]
+          temple << [:escape, @escape_html, [:dynamic, s.matched]]
         end
         pos = s.pos
       end

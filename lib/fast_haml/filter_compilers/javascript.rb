@@ -4,7 +4,7 @@ module FastHaml
   module FilterCompilers
     class Javascript
       def initialize
-        @text_compiler = TextCompiler.new
+        @text_compiler = TextCompiler.new(escape_html: false)
       end
 
       def compile(texts)

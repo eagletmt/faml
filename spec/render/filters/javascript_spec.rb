@@ -33,4 +33,11 @@ HAML
   var x = #{1 + 2};
 HAML
   end
+
+  it "doesn't escape in string interpolation" do
+    expect(render_string(<<'HAML')).to eq("<script>\n  <span/>\n</script>\n")
+:javascript
+  #{'<span/>'}
+HAML
+  end
 end

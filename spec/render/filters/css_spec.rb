@@ -35,4 +35,11 @@ HAML
   html { font-size: #{10 + 2}px; }
 HAML
   end
+
+  it "doesn't escape in string interpolation" do
+    expect(render_string(<<'HAML')).to eq("<style>\n  <span/>\n</style>\n")
+:css
+  #{'<span/>'}
+HAML
+  end
 end
