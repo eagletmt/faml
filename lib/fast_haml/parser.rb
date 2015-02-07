@@ -2,6 +2,7 @@ require 'fast_haml/ast'
 require 'fast_haml/filter_parser'
 require 'fast_haml/indent_tracker'
 require 'fast_haml/line_parser'
+require 'fast_haml/ruby_multiline'
 
 module FastHaml
   class Parser
@@ -143,7 +144,7 @@ module FastHaml
           if script.empty?
             raise SyntaxError.new("No Ruby code to evaluate", lineno)
           end
-          script += handle_ruby_multiline(script)
+          script += RubyMultiline.read(@line_parser, script)
           element.oneline_child = Ast::Script.new([], script)
         else
           unless rest.empty?
@@ -181,7 +182,7 @@ module FastHaml
       if script.empty?
         raise SyntaxError.new("No Ruby code to evaluate", lineno)
       end
-      script += handle_ruby_multiline(script)
+      script += RubyMultiline.read(@line_parser, script)
       @ast << Ast::Script.new([], script)
     end
 
@@ -190,7 +191,7 @@ module FastHaml
       if script.empty?
         raise SyntaxError.new("No Ruby code to evaluate", lineno)
       end
-      script += handle_ruby_multiline(script)
+      script += RubyMultiline.read(@line_parser, script)
       @ast << Ast::SilentScript.new([], script)
     end
 
@@ -229,25 +230,6 @@ module FastHaml
         @ast.mid_block_keyword = mid_block_keyword?(text)
       end
       @ast = parent_ast
-    end
-
-    def handle_ruby_multiline(current_text)
-      buf = []
-      while is_ruby_multiline?(current_text)
-        current_text = @line_parser.next_line
-        buf << current_text
-      end
-      buf.join(' ')
-    end
-
-    # `text' is a Ruby multiline block if it:
-    # - ends with a comma
-    # - but not "?," which is a character literal
-    #   (however, "x?," is a method call and not a literal)
-    # - and not "?\," which is a character literal
-    def is_ruby_multiline?(text)
-      text && text.length > 1 && text[-1] == ?, &&
-        !((text[-3, 2] =~ /\W\?/) || text[-3, 2] == "?\\")
     end
 
     MID_BLOCK_KEYWORDS = %w[else elsif rescue ensure end when]
