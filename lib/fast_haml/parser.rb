@@ -1,4 +1,5 @@
 require 'fast_haml/ast'
+require 'fast_haml/line_parser'
 
 module FastHaml
   class Parser
@@ -16,45 +17,20 @@ module FastHaml
 
     def call(template_str)
       reset
-      multiline_buf = []
-      multiline_lineno = 0
-      @lines = template_str.each_line.map { |line| line.chomp.rstrip }
-      @lineno = 0
-      while @lineno < @lines.size
-        line = next_line
+      @line_parser = LineParser.new(template_str)
+      while @line_parser.has_next?
+        line = @line_parser.next_line
         if @filter_ast
           if append_filter(line)
             next
           end
         end
-
-        if is_multiline?(line)
-          line = line[0, line.size-1]
-          if multiline_buf.empty?
-            # multiline start
-            multiline_buf << line
-            multiline_lineno = @lineno
-          else
-            # multiline continues
-            multiline_buf << line.lstrip
-          end
-        else
-          unless multiline_buf.empty?
-            # multiline ended
-            parse_line(multiline_buf.join, multiline_lineno)
-            multiline_buf = []
-          end
-          parse_line(line, @lineno)
-        end
-      end
-      unless multiline_buf.empty?
-        parse_line(multiline_buf.join, multiline_lineno)
+        parse_line(line, @line_parser.lineno)
       end
       if @filter_ast
         @ast << @filter_ast
         @filter_ast = nil
       end
-      @lines.clear
       if @indent_levels.last > 0
         indent_leave(0, '', -1)
       end
@@ -69,26 +45,6 @@ module FastHaml
       @indent_levels = [0]
       @filter_ast = nil
       @filter_indent = nil
-    end
-
-    def next_line
-      @lines[@lineno].tap do
-        @lineno += 1
-      end
-    end
-
-    MULTILINE_SUFFIX = ' |'
-
-    # Regex to check for blocks with spaces around arguments. Not to be confused
-    # with multiline script.
-    # For example:
-    #     foo.each do | bar |
-    #       = bar
-    #
-    BLOCK_WITH_SPACES = /do\s*\|\s*[^\|]*\s+\|\z/o
-
-    def is_multiline?(line)
-      line.end_with?(MULTILINE_SUFFIX) && line !~ BLOCK_WITH_SPACES
     end
 
     DOCTYPE_PREFIX = '!'
@@ -328,7 +284,7 @@ module FastHaml
     def handle_ruby_multiline(current_text)
       buf = []
       while is_ruby_multiline?(current_text)
-        current_text = next_line
+        current_text = @line_parser.next_line
         buf << current_text
       end
       buf.join(' ')
