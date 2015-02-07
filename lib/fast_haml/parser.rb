@@ -1,4 +1,5 @@
 require 'fast_haml/ast'
+require 'fast_haml/filter_parser'
 require 'fast_haml/indent_tracker'
 require 'fast_haml/line_parser'
 
@@ -17,21 +18,28 @@ module FastHaml
     end
 
     def call(template_str)
-      reset
+      @ast = Ast::Root.new
+      @stack = []
       @line_parser = LineParser.new(template_str)
       @indent_tracker = IndentTracker.new(on_enter: method(:indent_enter), on_leave: method(:indent_leave))
+      @filter_parser = FilterParser.new(@indent_tracker)
+
       while @line_parser.has_next?
         line = @line_parser.next_line
-        if @filter_ast
-          if append_filter(line)
-            next
+        if @filter_parser.enabled?
+          ast = @filter_parser.append(line)
+          if ast
+            @ast << ast
           end
         end
-        parse_line(line, @line_parser.lineno)
+        unless @filter_parser.enabled?
+          parse_line(line, @line_parser.lineno)
+        end
       end
-      if @filter_ast
-        @ast << @filter_ast
-        @filter_ast = nil
+
+      ast = @filter_parser.finish
+      if ast
+        @ast << ast
       end
       @indent_tracker.finish
       @ast
@@ -39,12 +47,6 @@ module FastHaml
 
     private
 
-    def reset
-      @ast = Ast::Root.new
-      @stack = []
-      @filter_ast = nil
-      @filter_indent = nil
-    end
 
     DOCTYPE_PREFIX = '!'
     ELEMENT_PREFIX = '%'
@@ -197,36 +199,7 @@ module FastHaml
       unless filter_name
         raise SyntaxError.new("Invalid filter name: #{text}")
       end
-      @filter_ast = Ast::Filter.new
-      @filter_ast.name = filter_name
-    end
-
-    def append_filter(line)
-      indent, text = @indent_tracker.split(line)
-      indent_level = indent.size
-
-      if @filter_indent
-        if indent_level < @filter_indent
-          # Finish filter
-          @filter_indent = nil
-          @ast << @filter_ast
-          @filter_ast = nil
-          return false
-        end
-      else
-        if indent_level > @indent_tracker.current_level
-          # Start filter
-          @filter_indent = indent_level
-        else
-          # Empty filter
-          @filter_ast = nil
-          return false
-        end
-      end
-
-      text = line[@filter_indent .. -1]
-      @filter_ast.texts << text
-      true
+      @filter_parser.start(filter_name)
     end
 
     def parse_class_and_id(class_and_id)
