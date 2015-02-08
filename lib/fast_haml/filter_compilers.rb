@@ -30,3 +30,4 @@ end
 
 require 'fast_haml/filter_compilers/css'
 require 'fast_haml/filter_compilers/javascript'
+require 'fast_haml/filter_compilers/plain'
