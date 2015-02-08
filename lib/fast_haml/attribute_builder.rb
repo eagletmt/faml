@@ -5,10 +5,7 @@ module FastHaml
     include Singleton
 
     def init(options)
-      @attributes = {
-        'class' => [],
-        'id' => [],
-      }
+      @attributes = { 'class' => [], 'id' => [] }
       @options = options
     end
 
@@ -51,7 +48,7 @@ module FastHaml
           put_attr(k, v)
         end
       end.join.tap do
-        @attributes.clear
+        @attributes = { 'class' => [], 'id' => [] }
       end
     end
 
