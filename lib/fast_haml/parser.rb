@@ -20,7 +20,7 @@ module FastHaml
 
       while @line_parser.has_next?
         line = @line_parser.next_line
-        if @filter_parser.enabled?
+        if !@ast.is_a?(Ast::HamlComment) && @filter_parser.enabled?
           ast = @filter_parser.append(line)
           if ast
             @ast << ast
@@ -55,6 +55,11 @@ module FastHaml
       text, indent = @indent_tracker.process(line, lineno)
 
       if text.empty?
+        return
+      end
+
+      if @ast.is_a?(Ast::HamlComment)
+        @ast << Ast::Text.new(text)
         return
       end
 
@@ -108,6 +113,10 @@ module FastHaml
     end
 
     def parse_silent_script(text, lineno)
+      if text.start_with?('-#')
+        @ast << Ast::HamlComment.new
+        return
+      end
       script = text[/\A- *(.*)\z/, 1]
       if script.empty?
         syntax_error!("No Ruby code to evaluate")
@@ -129,6 +138,9 @@ module FastHaml
       @ast = @ast.children.last
       if @ast.is_a?(Ast::Element) && @ast.self_closing
         syntax_error!('Illegal nesting: nesting within a self-closing tag is illegal')
+      end
+      if @ast.is_a?(Ast::HamlComment)
+        @indent_tracker.enter_comment!
       end
       nil
     end

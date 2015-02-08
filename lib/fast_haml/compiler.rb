@@ -26,6 +26,8 @@ module FastHaml
         compile_doctype(ast)
       when Ast::HtmlComment
         compile_html_comment(ast)
+      when Ast::HamlComment
+        [:multi]
       when Ast::Element
         compile_element(ast)
       when Ast::Script
@@ -61,7 +63,7 @@ module FastHaml
       case ast
       when Ast::Script
         ast.children.empty?
-      when Ast::SilentScript
+      when Ast::SilentScript, Ast::HamlComment
         false
       else
         true

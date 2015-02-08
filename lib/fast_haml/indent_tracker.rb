@@ -13,6 +13,7 @@ module FastHaml
       @indent_levels = [0]
       @on_enter = on_enter || lambda { |text| }
       @on_leave = on_leave || lambda { |text| }
+      @comment_level = nil
     end
 
     def process(line, lineno)
@@ -38,6 +39,10 @@ module FastHaml
       @indent_levels.last
     end
 
+    def enter_comment!
+      @comment_level = @indent_levels[-2]
+    end
+
     private
 
     def track(indent_level, text, lineno)
@@ -49,11 +54,23 @@ module FastHaml
     end
 
     def indent_enter(indent_level, text)
-      @indent_levels.push(indent_level)
-      @on_enter.call(text)
+      unless @comment_level
+        @indent_levels.push(indent_level)
+        @on_enter.call(text)
+      end
     end
 
     def indent_leave(indent_level, text, lineno)
+      if @comment_level
+        if indent_level <= @comment_level
+          # finish comment mode
+          @comment_level = nil
+        else
+          # still in comment
+          return
+        end
+      end
+
       while indent_level < @indent_levels.last
         @indent_levels.pop
         @on_leave.call(text)
