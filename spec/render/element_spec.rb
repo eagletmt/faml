@@ -84,6 +84,10 @@ HAML
 HAML
   end
 
+  it 'recognized escaped string interpolation' do
+    expect(render_string(%q|%p hello \#{1 + 2}|)).to eq("<p>hello \#{1 + 2}</p>\n")
+  end
+
   it 'parses self-closing tag' do
     expect(render_string('%p/')).to eq("<p>\n")
   end

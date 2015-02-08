@@ -27,12 +27,18 @@ module FastHaml
       temple = [:multi]
       pos = s.pos
       while s.scan_until(INTERPOLATION_BEGIN)
-        temple << [:static, s.string[pos ... (s.pos - s.matched.size)]]
-        if s.matched == '#{'
-          temple << [:escape, @escape_html, [:dynamic, find_close_brace(s)]]
+        pre = s.string[pos ... (s.pos - s.matched.size)]
+        if pre[-1] == '\\'
+          # escaped
+          temple << [:static, s.string[pos ... (s.pos - s.matched.size - 1)]] << [:static, s.matched]
         else
-          s.scan(/\w+/)
-          temple << [:escape, @escape_html, [:dynamic, s.matched]]
+          temple << [:static, pre]
+          if s.matched == '#{'
+            temple << [:escape, @escape_html, [:dynamic, find_close_brace(s)]]
+          else
+            s.scan(/\w+/)
+            temple << [:escape, @escape_html, [:dynamic, s.matched]]
+          end
         end
         pos = s.pos
       end
