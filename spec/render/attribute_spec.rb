@@ -13,6 +13,11 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string(%q|%span#main{class: "na#{'ni'}ka"} hello|)).to eq(%Q{<span class='nanika' id='main'>hello</span>\n})
   end
 
+  it 'renders array class' do
+    expect(render_string('%span.c2{class: "c1"}')).to eq("<span class='c1 c2'></span>\n")
+    expect(render_string('%span.c2{class: ["c1", "c3"]}')).to eq("<span class='c1 c2 c3'></span>\n")
+  end
+
   it 'merges classes' do
     expect(render_string(<<HAML)).to eq("<span class='c1 c2 content {}' id='main_id1_id3_id2'>hello</span>\n")
 - h1 = {class: 'c1', id: ['id1', 'id3']}
@@ -52,7 +57,7 @@ HAML
   end
 
   it 'merges static class' do
-    expect(render_string('.foo{class: "bar"} baz')).to eq("<div class='foo bar'>baz</div>\n")
+    expect(render_string('.foo{class: "bar"} baz')).to eq("<div class='bar foo'>baz</div>\n")
   end
 
   context 'with unmatched brace' do

@@ -127,7 +127,7 @@ module FastHaml
           attrs << [:haml, :attr, text]
         else
           unless static_class.empty?
-            static_attributes['class'] = [static_class, static_attributes['class']].compact.join(' ')
+            static_attributes['class'] = [static_class.split(/ +/), static_attributes['class']].compact.flatten.sort.join(' ')
           end
           unless static_id.empty?
             static_attributes['id'] = [static_id, static_attributes['id']].compact.join('_')
@@ -159,7 +159,7 @@ module FastHaml
       if attrs[0][0] == :haml
         h = {}
         unless static_class.empty?
-          h[:class] = static_class
+          h[:class] = static_class.split(/ +/)
         end
         unless static_id.empty?
           h[:id] = static_id
