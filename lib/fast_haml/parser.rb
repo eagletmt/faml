@@ -70,7 +70,7 @@ module FastHaml
         if text.start_with?('!!!')
           parse_doctype(text, lineno)
         else
-          syntax_error!("Illegal doctype declaration")
+          parse_plain(text, lineno)
         end
       when COMMENT_PREFIX
         parse_comment(text, lineno)
