@@ -7,6 +7,16 @@ module FastHaml
       AttributeBuilder.instance.init(options)
     end
 
+    def on_html_tag(name, self_closing, attrs, content = nil)
+      name = name.to_s
+      closed = self_closing && (!content || empty_exp?(content))
+      result = [:multi, [:static, "<#{name}"], compile(attrs)]
+      result << [:static, (closed && @format != :html ? ' /' : '') + '>']
+      result << compile(content) if content
+      result << [:static, "</#{name}>"] if !closed
+      result
+    end
+
     def on_html_attrs(*attrs)
       if has_haml_attr?(attrs)
         [:multi,

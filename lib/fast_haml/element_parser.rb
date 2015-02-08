@@ -55,6 +55,11 @@ module FastHaml
           end
           script += RubyMultiline.read(@line_parser, script)
           element.oneline_child = Ast::Script.new([], script)
+        when '/'
+          element.self_closing = true
+          if rest.size > 1
+            syntax_error!("Self-closing tags can't have content")
+          end
         else
           unless rest.empty?
             element.oneline_child = Ast::Text.new(rest)

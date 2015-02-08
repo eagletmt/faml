@@ -9,6 +9,10 @@ module FastHaml
       generator: Temple::Generators::ArrayBuffer,
     )
 
+    def initialize(opts = {})
+      super(opts.merge(format: :html))
+    end
+
     use Parser
     use Compiler
     use Html

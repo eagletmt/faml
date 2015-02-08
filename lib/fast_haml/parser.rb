@@ -65,7 +65,7 @@ module FastHaml
         if text.start_with?('!!!')
           parse_doctype(text, lineno)
         else
-          raise SyntaxError.new("Illegal doctype declaration", lineno)
+          syntax_error!("Illegal doctype declaration")
         end
       when COMMENT_PREFIX
         parse_comment(text, lineno)
@@ -101,7 +101,7 @@ module FastHaml
     def parse_script(text, lineno)
       script = text[/\A= *(.*)\z/, 1]
       if script.empty?
-        raise SyntaxError.new("No Ruby code to evaluate", lineno)
+        syntax_error!("No Ruby code to evaluate")
       end
       script += RubyMultiline.read(@line_parser, script)
       @ast << Ast::Script.new([], script)
@@ -110,7 +110,7 @@ module FastHaml
     def parse_silent_script(text, lineno)
       script = text[/\A- *(.*)\z/, 1]
       if script.empty?
-        raise SyntaxError.new("No Ruby code to evaluate", lineno)
+        syntax_error!("No Ruby code to evaluate")
       end
       script += RubyMultiline.read(@line_parser, script)
       @ast << Ast::SilentScript.new([], script)
@@ -119,7 +119,7 @@ module FastHaml
     def parse_filter(text, lineno)
       filter_name = text[/\A#{FILTER_PREFIX}(\w+)\z/, 1]
       unless filter_name
-        raise SyntaxError.new("Invalid filter name: #{text}")
+        syntax_error!("Invalid filter name: #{text}")
       end
       @filter_parser.start(filter_name)
     end
@@ -127,6 +127,10 @@ module FastHaml
     def indent_enter(text)
       @stack.push(@ast)
       @ast = @ast.children.last
+      if @ast.is_a?(Ast::Element) && @ast.self_closing
+        syntax_error!('Illegal nesting: nesting within a self-closing tag is illegal')
+      end
+      nil
     end
 
     def indent_leave(text)
@@ -136,6 +140,7 @@ module FastHaml
         @ast.mid_block_keyword = mid_block_keyword?(text)
       end
       @ast = parent_ast
+      nil
     end
 
     MID_BLOCK_KEYWORDS = %w[else elsif rescue ensure end when]
@@ -157,5 +162,8 @@ module FastHaml
       MID_BLOCK_KEYWORDS.include?(block_keyword(text))
     end
 
+    def syntax_error!(message)
+      raise SyntaxError.new(message, @line_parser.lineno)
+    end
   end
 end

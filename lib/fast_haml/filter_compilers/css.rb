@@ -12,7 +12,7 @@ module FastHaml
         texts.each do |text|
           temple << [:static, '  '] << @text_compiler.compile(text) << [:static, "\n"]
         end
-        [:html, :tag, 'style', [:html, :attrs], temple]
+        [:html, :tag, 'style', false, [:html, :attrs], temple]
       end
     end
 

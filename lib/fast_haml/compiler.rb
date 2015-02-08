@@ -81,7 +81,7 @@ module FastHaml
     end
 
     def compile_element(ast)
-      temple = [:html, :tag, ast.tag_name]
+      temple = [:html, :tag, ast.tag_name, ast.self_closing]
       html_attrs = [:html, :attrs]
       temple << html_attrs
 

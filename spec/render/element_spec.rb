@@ -61,11 +61,11 @@ HAML
   end
 
   it 'parses #' do
-    expect(render_string('#main')).to eq(%Q{<div id="main" />\n})
+    expect(render_string('#main')).to eq(%Q{<div id="main"></div>\n})
   end
 
   it 'parses .' do
-    expect(render_string('.wrapper.main')).to eq(%Q{<div class="wrapper main" />\n})
+    expect(render_string('.wrapper.main')).to eq(%Q{<div class="wrapper main"></div>\n})
   end
 
   it 'parses Ruby multiline' do
@@ -81,6 +81,21 @@ HAML
     expect(render_string(<<'HAML')).to eq("<span>\nhello <span> &lt;/span&gt; </span>\n</span>\n")
 %span
   hello <span> #{'</span>'} </span>
+HAML
+  end
+
+  it 'parses self-closing tag' do
+    expect(render_string('%p/')).to eq("<p>\n")
+  end
+
+  it 'raises error if self-closing tag have text' do
+    expect { render_string('%p/ hello') }.to raise_error(FastHaml::SyntaxError)
+  end
+
+  it 'raises error if self-closing tag have children' do
+    expect { render_string(<<HAML) }.to raise_error(FastHaml::SyntaxError)
+%p/
+  hello
 HAML
   end
 end
