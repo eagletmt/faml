@@ -35,11 +35,12 @@ module FastHaml
               break
             end
             element.old_attributes, rest = parse_old_attributes(rest)
-          when '('
-            unless element.new_attributes.empty?
-              break
-            end
-            element.new_attributes, rest = parse_new_attributes(rest)
+          # TODO: parse new attributes
+          #when '('
+          #  unless element.new_attributes.empty?
+          #    break
+          #  end
+          #  element.new_attributes, rest = parse_new_attributes(rest)
           else
             break
           end

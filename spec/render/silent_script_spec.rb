@@ -79,4 +79,8 @@ HAML
     %span ne
 HAML
   end
+
+  it 'raises error if no Ruby code is given' do
+    expect { render_string('-') }.to raise_error(FastHaml::SyntaxError)
+  end
 end

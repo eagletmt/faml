@@ -5,28 +5,15 @@ module FastHaml
     def initialize(template_str)
       @lines = template_str.each_line.map { |line| line.chomp.rstrip }
       @lineno = 0
-      @filter_mode = false
     end
 
     def next_line
       line = move_next
-      if @filter_mode
-        line
-      elsif is_multiline?(line)
+      if is_multiline?(line)
         next_multiline(line)
       else
         line
       end
-    end
-
-    def enter_filter_mode
-      @filter_mode = true
-      nil
-    end
-
-    def leave_filter_mode
-      @filter_mode = false
-      nil
     end
 
     def has_next?

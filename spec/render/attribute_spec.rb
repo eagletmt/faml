@@ -30,6 +30,10 @@ HAML
     expect(render_string(%q|%span{class: "x\"y'z"} hello|)).to eq(%Q{<span class='x&quot;y&#39;z'>hello</span>\n})
   end
 
+  it "doesn't parse extra brace" do
+    expect(render_string('%span{foo: 1}{bar: 2}')).to eq("<span foo='1'>{bar: 2}</span>\n")
+  end
+
   it 'renders only name if value is true' do
     expect(render_string(%q|%span{foo: true, bar: 1} hello|)).to eq(%Q{<span bar='1' foo>hello</span>\n})
   end

@@ -12,8 +12,8 @@ class HamlTest < MiniTest::Unit::TestCase
         locals           = Hash[(test["locals"] || {}).map {|x, y| [x.to_sym, y]}]
         options          = Hash[(test["config"] || {}).map {|x, y| [x.to_sym, y]}]
         options[:format] = options[:format].to_sym if options.key?(:format)
-        engine           = FastHaml::Engine.new(options)
-        result           = engine.render(haml, Object.new, locals)
+        tilt = Tilt.new("#{name}.haml") { haml }
+        result = tilt.render(Object.new, locals)
 
         assert_equal html, result.strip
       end

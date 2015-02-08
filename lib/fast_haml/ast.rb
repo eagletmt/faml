@@ -12,10 +12,6 @@ module FastHaml
       def <<(ast)
         self.children << ast
       end
-
-      def concat(ast)
-        self.children.concat(ast)
-      end
     end
 
     class Root < Struct.new(:children)

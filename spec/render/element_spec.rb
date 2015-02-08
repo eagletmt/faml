@@ -42,6 +42,15 @@ HAML
 HAML
   end
 
+  it 'raises error if indent is wrong' do
+    expect { render_string(<<HAML) }.to raise_error(FastHaml::IndentTracker::IndentMismatch)
+%div
+    %div
+      %div
+  %div
+HAML
+  end
+
   it 'parses classes' do
     expect(render_string('%span.foo.bar hello')).to eq(%Q{<span class='foo bar'>hello</span>\n})
   end
@@ -80,7 +89,7 @@ HAML
     expect(render_string(%q|%span hello <span> #{'</span>'} </span>|)).to eq("<span>hello <span> &lt;/span&gt; </span></span>\n")
     expect(render_string(<<'HAML')).to eq("<span>\nhello <span> &lt;/span&gt; </span>\n</span>\n")
 %span
-  hello <span> #{'</span>'} </span>
+  hello <span> #{{text: '</span>'}[:text]} </span>
 HAML
     expect(render_string(<<'HAML')).to eq("<span>\nhello <span> &lt;/span&gt; </span>\n</span>\n")
 - @var = '</span>'
