@@ -165,7 +165,9 @@ module FastHaml
           h[:id] = static_id
         end
         unless h.empty?
-          attrs.unshift([:haml, :attr, h.inspect])
+          t = h.inspect
+          t << ", " << text
+          text.replace(t)
         end
       end
 
