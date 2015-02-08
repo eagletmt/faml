@@ -28,8 +28,6 @@ module FastHaml
       if rest
         rest = rest.lstrip
 
-        new_attributes_hash = nil
-
         loop do
           case rest[0]
           when OLD_ATTRIBUTE_BEGIN
@@ -90,21 +88,28 @@ module FastHaml
     end
 
     def parse_old_attributes(text)
+      text = text.dup
       s = StringScanner.new(text)
       s.pos = 1
       depth = 1
-      while depth > 0 && s.scan_until(OLD_ATTRIBUTE_REGEX)
-        if s.matched == OLD_ATTRIBUTE_BEGIN
-          depth += 1
-        else
-          depth -= 1
+      loop do
+        while depth > 0 && s.scan_until(OLD_ATTRIBUTE_REGEX)
+          if s.matched == OLD_ATTRIBUTE_BEGIN
+            depth += 1
+          else
+            depth -= 1
+          end
         end
-      end
-      if depth == 0
-        attr = s.pre_match + s.matched
-        [attr[1, attr.size-2], s.rest.lstrip]
-      else
-        syntax_error!('Unmatched brace')
+        if depth == 0
+          attr = s.pre_match + s.matched
+          return [attr[1, attr.size-2], s.rest.lstrip]
+        else
+          if text[-1] == ',' && @line_parser.has_next?
+            text << @line_parser.next_line
+          else
+            syntax_error!('Unmatched brace')
+          end
+        end
       end
     end
 

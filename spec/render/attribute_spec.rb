@@ -43,6 +43,20 @@ HAML
     it 'raises error' do
       expect { render_string('%span{foo hello') }.to raise_error(FastHaml::SyntaxError)
     end
+
+    it 'tries to parse next lines' do
+      expect(render_string(<<HAML)).to eq("<span bar='2' foo='1'>hello</span>\n")
+%span{foo: 1,
+bar: 2} hello
+HAML
+    end
+
+    it "doesn't try to parse next lines without trailing comma" do
+      expect { render_string(<<HAML) }.to raise_error(FastHaml::SyntaxError)
+%span{foo: 1
+, bar: 2} hello
+HAML
+    end
   end
 
   context 'with data attributes' do
