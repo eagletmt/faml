@@ -10,7 +10,10 @@ module FastHaml
     )
 
     def initialize(opts = {})
-      super(opts.merge(format: :html))
+      super(opts.merge(
+        format: :html,
+        attr_quote: "'",
+      ))
     end
 
     use Parser
