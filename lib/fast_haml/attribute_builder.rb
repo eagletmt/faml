@@ -66,7 +66,11 @@ module FastHaml
               h["data-#{k2}"] = data[k2]
             end
           else
-            h[k] = v.to_s
+            if v == true
+              h[k] = v
+            else
+              h[k] = v.to_s
+            end
           end
         end
       end

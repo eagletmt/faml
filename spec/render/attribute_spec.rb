@@ -39,8 +39,8 @@ HAML
   end
 
   it 'renders code attributes' do
-    expect(render_string(<<HAML)).to eq(%Q|<span bar='{:hoge=&gt;:fuga}' foo='1'>hello</span>\n|)
-- attrs = { foo: 1, bar: { hoge: :fuga } }
+    expect(render_string(<<HAML)).to eq(%Q|<span bar='{:hoge=&gt;:fuga}' baz foo='1'>hello</span>\n|)
+- attrs = { foo: 1, bar: { hoge: :fuga }, baz: true }
 %span{attrs} hello
 HAML
   end
