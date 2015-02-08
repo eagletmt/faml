@@ -159,10 +159,10 @@ module FastHaml
       if attrs[0][0] == :haml
         h = {}
         unless static_class.empty?
-          h[:class] = ast.static_class
+          h[:class] = static_class
         end
         unless static_id.empty?
-          h[:id] = ast.static_id
+          h[:id] = static_id
         end
         unless h.empty?
           attrs << [:haml, :attr, h.inspect]
