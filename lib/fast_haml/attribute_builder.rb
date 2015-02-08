@@ -5,21 +5,50 @@ module FastHaml
     include Singleton
 
     def init(options)
-      @attributes = {}
+      @attributes = {
+        'class' => [],
+        'id' => [],
+      }
       @options = options
     end
 
     def merge!(*hashes)
-      @attributes.merge!(*hashes.map { |h| normalize(h) })
+      hashes.each do |h|
+        h2 = {}
+        h.keys.each do |k|
+          h2[k.to_s] = h[k]
+        end
+
+        if h2.has_key?('class')
+          @attributes['class'].concat(Array(h2.delete('class')))
+        end
+        if h2.has_key?('id')
+          @attributes['id'].concat(Array(h2.delete('id')))
+        end
+        @attributes.merge!(normalize(h2))
+      end
+      nil
     end
 
     def build!
       @attributes.keys.sort.map do |k|
         v = @attributes[k]
-        if v == true
+        if k == 'class'
+          if v.empty?
+            ''
+          else
+            put_attr('class', v.map(&:to_s).sort.join(' '))
+          end
+        elsif k == 'id'
+          if v.empty?
+            ''
+          else
+            put_attr('id', v.map(&:to_s).join('_'))
+          end
+        elsif v == true
           " #{k}"
         else
-          " #{k}=#{@options[:attr_quote]}#{Temple::Utils.escape_html(v)}#{@options[:attr_quote]}"
+          put_attr(k, v)
         end
       end.join.tap do
         @attributes.clear
@@ -31,7 +60,6 @@ module FastHaml
     def normalize(attrs)
       {}.tap do |h|
         attrs.each do |k, v|
-          k = k.to_s
           if v.is_a?(Hash) && k == 'data'
             data = AttributeNormalizer.normalize_data(v)
             data.keys.sort.each do |k2|
@@ -42,6 +70,10 @@ module FastHaml
           end
         end
       end
+    end
+
+    def put_attr(key, val)
+      " #{key}=#{@options[:attr_quote]}#{Temple::Utils.escape_html(val)}#{@options[:attr_quote]}"
     end
   end
 end

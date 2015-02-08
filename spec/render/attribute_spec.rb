@@ -13,6 +13,14 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string(%q|%span#main{class: "na#{'ni'}ka"} hello|)).to eq(%Q{<span class='nanika' id='main'>hello</span>\n})
   end
 
+  it 'merges classes' do
+    expect(render_string(<<HAML)).to eq("<span class='c1 c2 content {}' id='main_id1_id3_id2'>hello</span>\n")
+- h1 = {class: 'c1', id: ['id1', 'id3']}
+- h2 = {class: [{}, 'c2'], id: 'id2'}
+%span#main.content{h1, h2} hello
+HAML
+  end
+
   it 'escapes' do
     expect(render_string(%q|%span{class: "x\"y'z"} hello|)).to eq(%Q{<span class='x&quot;y&#39;z'>hello</span>\n})
   end

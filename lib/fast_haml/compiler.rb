@@ -165,7 +165,7 @@ module FastHaml
           h[:id] = static_id
         end
         unless h.empty?
-          attrs << [:haml, :attr, h.inspect]
+          attrs.unshift([:haml, :attr, h.inspect])
         end
       end
 
