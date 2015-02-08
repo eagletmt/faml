@@ -11,10 +11,11 @@ HAML
   end
 
   it 'keeps indent' do
-    expect(render_string(<<HAML)).to eq("<div>\n<script>\n  alert('hello');\n      alert('world');\n</script>\n</div>\n")
+    expect(render_string(<<HAML)).to eq("<div>\n<script>\n  alert('hello');\n  \n      alert('world');\n</script>\n</div>\n")
 %div
   :javascript
     alert('hello');
+
         alert('world');
 HAML
   end

@@ -17,6 +17,10 @@ module FastHaml
 
     def append(line)
       indent, text = @indent_tracker.split(line)
+      if text.empty?
+        @ast.texts << ''
+        return
+      end
       indent_level = indent.size
 
       if @indent_level
