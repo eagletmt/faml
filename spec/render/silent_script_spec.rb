@@ -83,4 +83,15 @@ HAML
   it 'raises error if no Ruby code is given' do
     expect { render_string('-') }.to raise_error(FastHaml::SyntaxError)
   end
+
+  it 'checks indent levels' do
+    expect(render_string(<<HAML)).to eq("<span>hello</span>\n")
+- if true
+  %span hello
+  - if false
+    %span world
+- else
+  %span !!!
+HAML
+  end
 end

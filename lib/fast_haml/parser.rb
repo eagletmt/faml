@@ -133,7 +133,7 @@ module FastHaml
       @filter_parser.start(filter_name)
     end
 
-    def indent_enter(text)
+    def indent_enter(_, text)
       @stack.push(@ast)
       @ast = @ast.children.last
       if @ast.is_a?(Ast::Element) && @ast.self_closing
@@ -145,11 +145,13 @@ module FastHaml
       nil
     end
 
-    def indent_leave(text)
+    def indent_leave(indent_level, text)
       parent_ast = @stack.pop
       case @ast
       when Ast::Script, Ast::SilentScript
-        @ast.mid_block_keyword = mid_block_keyword?(text)
+        if indent_level == @indent_tracker.current_level
+          @ast.mid_block_keyword = mid_block_keyword?(text)
+        end
       end
       @ast = parent_ast
       nil

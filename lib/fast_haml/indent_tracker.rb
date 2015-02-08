@@ -11,8 +11,8 @@ module FastHaml
 
     def initialize(on_enter: nil, on_leave: nil)
       @indent_levels = [0]
-      @on_enter = on_enter || lambda { |text| }
-      @on_leave = on_leave || lambda { |text| }
+      @on_enter = on_enter || lambda { |level, text| }
+      @on_leave = on_leave || lambda { |level, text| }
       @comment_level = nil
     end
 
@@ -56,7 +56,7 @@ module FastHaml
     def indent_enter(indent_level, text)
       unless @comment_level
         @indent_levels.push(indent_level)
-        @on_enter.call(text)
+        @on_enter.call(indent_level, text)
       end
     end
 
@@ -73,7 +73,7 @@ module FastHaml
 
       while indent_level < @indent_levels.last
         @indent_levels.pop
-        @on_leave.call(text)
+        @on_leave.call(indent_level, text)
       end
 
       if indent_level != @indent_levels.last
