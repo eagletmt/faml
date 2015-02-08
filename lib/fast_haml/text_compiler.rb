@@ -16,7 +16,7 @@ module FastHaml
 
     private
 
-    INTERPOLATION_BEGIN = /#[\{#$@]/o
+    INTERPOLATION_BEGIN = /#[\{$@]/o
 
     def contains_interpolation?(text)
       INTERPOLATION_BEGIN === text
@@ -36,8 +36,10 @@ module FastHaml
           if s.matched == '#{'
             temple << [:escape, @escape_html, [:dynamic, find_close_brace(s)]]
           else
+            var = s.matched[-1]
             s.scan(/\w+/)
-            temple << [:escape, @escape_html, [:dynamic, s.matched]]
+            var << s.matched
+            temple << [:escape, @escape_html, [:dynamic, var]]
           end
         end
         pos = s.pos

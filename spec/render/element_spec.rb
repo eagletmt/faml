@@ -82,6 +82,11 @@ HAML
 %span
   hello <span> #{'</span>'} </span>
 HAML
+    expect(render_string(<<'HAML')).to eq("<span>\nhello <span> &lt;/span&gt; </span>\n</span>\n")
+- @var = '</span>'
+%span
+  hello <span> #@var </span>
+HAML
   end
 
   it 'recognized escaped string interpolation' do
