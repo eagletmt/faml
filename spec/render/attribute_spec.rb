@@ -10,7 +10,7 @@ RSpec.describe 'Attributes rendering', type: :render do
   end
 
   it 'renders dynamic attributes' do
-    expect(render_string(%q|%span{class: "na#{'ni'}ka"} hello|)).to eq(%Q{<span class='nanika'>hello</span>\n})
+    expect(render_string(%q|%span#main{class: "na#{'ni'}ka"} hello|)).to eq(%Q{<span class='nanika' id='main'>hello</span>\n})
   end
 
   it 'escapes' do
@@ -37,6 +37,14 @@ HAML
 - data = { foo: 1 }
 %span{data: "x\#{data}y"} hello
 HAML
+  end
+
+  it 'merges static id' do
+    expect(render_string('#foo{id: "bar"} baz')).to eq("<div id='foo_bar'>baz</div>\n")
+  end
+
+  it 'merges static class' do
+    expect(render_string('.foo{class: "bar"} baz')).to eq("<div class='foo bar'>baz</div>\n")
   end
 
   context 'with unmatched brace' do

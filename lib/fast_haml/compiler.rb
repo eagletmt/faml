@@ -87,14 +87,15 @@ module FastHaml
       html_attrs = [:html, :attrs]
       temple << html_attrs
 
-      unless ast.static_class.empty?
-        html_attrs << [:html, :attr, 'class', [:static, ast.static_class]]
-      end
-      unless ast.static_id.empty?
-        html_attrs << [:html, :attr, 'id', [:static, ast.static_id]]
-      end
-      unless ast.old_attributes.empty?
-        html_attrs.concat(compile_old_attributes(ast.old_attributes))
+      if ast.old_attributes.empty?
+        unless ast.static_class.empty?
+          html_attrs << [:html, :attr, 'class', [:static, ast.static_class]]
+        end
+        unless ast.static_id.empty?
+          html_attrs << [:html, :attr, 'id', [:static, ast.static_id]]
+        end
+      else
+        html_attrs.concat(compile_old_attributes(ast.old_attributes, ast.static_id, ast.static_class))
       end
 
       if ast.oneline_child
@@ -108,7 +109,7 @@ module FastHaml
       temple
     end
 
-    def compile_old_attributes(text)
+    def compile_old_attributes(text, static_id, static_class)
       attrs = []
       parser = StaticHashParser.new
       if parser.parse("{#{text}}")
@@ -125,6 +126,12 @@ module FastHaml
           # XXX: Quit optimization...
           attrs << [:haml, :attr, text]
         else
+          unless static_class.empty?
+            static_attributes['class'] = [static_class, static_attributes['class']].compact.join(' ')
+          end
+          unless static_id.empty?
+            static_attributes['id'] = [static_id, static_attributes['id']].compact.join('_')
+          end
           keys = static_attributes.keys + dynamic_attributes.keys
           keys.sort.each do |k|
             if static_attributes.has_key?(k)
@@ -148,6 +155,20 @@ module FastHaml
       else
         attrs << [:haml, :attr, text]
       end
+
+      if attrs[0][0] == :haml
+        h = {}
+        unless static_class.empty?
+          h[:class] = ast.static_class
+        end
+        unless static_id.empty?
+          h[:id] = ast.static_id
+        end
+        unless h.empty?
+          attrs << [:haml, :attr, h.inspect]
+        end
+      end
+
       attrs
     end
 
