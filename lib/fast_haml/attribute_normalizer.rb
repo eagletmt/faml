@@ -10,7 +10,7 @@ module FastHaml
               h["#{k1}-#{k2}"] = v2
             end
           else
-            h[k1] = v1
+            h[k1.to_s] = v1
           end
         end
       end

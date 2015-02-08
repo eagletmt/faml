@@ -82,7 +82,7 @@ HAML
 
   context 'with data attributes' do
     it 'renders nested attributes' do
-      expect(render_string(%q|%span{data: {foo: 1, bar: 'baz', :hoge => :fuga}} hello|)).to eq(%Q{<span data-bar='baz' data-foo='1' data-hoge='fuga'>hello</span>\n})
+      expect(render_string(%q|%span{data: {foo: 1, bar: 'baz', :hoge => :fuga, k1: { k2: 'v3' }}} hello|)).to eq(%Q{<span data-bar='baz' data-foo='1' data-hoge='fuga' data-k1-k2='v3'>hello</span>\n})
     end
 
     it 'renders nested dynamic attributes' do
