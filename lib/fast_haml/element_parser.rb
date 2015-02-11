@@ -13,6 +13,7 @@ module FastHaml
 
     ELEMENT_REGEXP = /\A%([-:\w]+)([-:\w.#]*)(.+)?\z/o
     OLD_ATTRIBUTE_BEGIN = '{'
+    NEW_ATTRIBUTE_BEGIN = '('
 
     def parse
       m = @text.match(ELEMENT_REGEXP)
@@ -34,12 +35,11 @@ module FastHaml
             break
           end
           element.old_attributes, rest = parse_old_attributes(rest)
-          # TODO: parse new attributes
-          #when '('
-          #  unless element.new_attributes.empty?
-          #    break
-          #  end
-          #  element.new_attributes, rest = parse_new_attributes(rest)
+          when NEW_ATTRIBUTE_BEGIN
+            unless element.new_attributes.empty?
+              break
+            end
+            element.new_attributes, rest = parse_new_attributes(rest)
         else
           break
         end
@@ -118,6 +118,10 @@ module FastHaml
           end
         end
       end
+    end
+
+    def parse_new_attributes(text)
+      raise NotImplementedError.new("HTML-style attributes is not implemented yet, sorry")
     end
 
     def syntax_error!(message)

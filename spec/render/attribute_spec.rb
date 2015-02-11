@@ -128,4 +128,10 @@ HAML
 HAML
     end
   end
+
+  describe 'with HTML-style attributes' do
+    it 'is not implemented yet :-<' do
+      expect { render_string('%span(foo=1) hello') }.to raise_error(NotImplementedError)
+    end
+  end
 end
