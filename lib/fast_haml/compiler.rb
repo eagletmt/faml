@@ -137,67 +137,74 @@ module FastHaml
     end
 
     def compile_old_attributes(text, static_id, static_class)
-      attrs = []
+      if attrs = try_optimize_attributes(text, static_id, static_class)
+        return attrs
+      end
+
+      # Slow version
+
+      attrs = [[:haml, :attr, text]]
+      h = {}
+      unless static_class.empty?
+        h[:class] = static_class.split(/ +/)
+      end
+      unless static_id.empty?
+        h[:id] = static_id
+      end
+      unless h.empty?
+        t = h.inspect
+        t << ", " << text
+        text.replace(t)
+      end
+      attrs
+    end
+
+    def try_optimize_attributes(text, static_id, static_class)
       parser = StaticHashParser.new
-      if parser.parse("{#{text}}")
-        static_attributes = {}
-        parser.static_attributes.each do |k, v|
-          static_attributes[k.to_s] = v;
-        end
-        dynamic_attributes = {}
-        parser.dynamic_attributes.each do |k, v|
-          dynamic_attributes[k.to_s] = v
-        end
+      unless parser.parse("{#{text}}")
+        return nil
+      end
 
-        if dynamic_attributes.has_key?('data')
-          # XXX: Quit optimization...
-          attrs << [:haml, :attr, text]
-        else
-          unless static_class.empty?
-            static_attributes['class'] = [static_class.split(/ +/), static_attributes['class']].compact.flatten.sort.join(' ')
-          end
-          unless static_id.empty?
-            static_attributes['id'] = [static_id, static_attributes['id']].compact.join('_')
-          end
-          keys = static_attributes.keys + dynamic_attributes.keys
-          keys.sort.each do |k|
-            if static_attributes.has_key?(k)
-              v = static_attributes[k]
-              if v == true
-                attrs << [:html, :attr, k, [:multi]]
-              elsif v.is_a?(Hash) && k == 'data'
-                data = AttributeNormalizer.normalize_data(v)
-                data.keys.sort.each do |k2|
-                  attrs << [:html, :attr, "data-#{k2}", [:static, Temple::Utils.escape_html(data[k2])]]
-                end
-              else
-                attrs << [:html, :attr, k, [:static, Temple::Utils.escape_html(v)]]
-              end
-            else
-              v = dynamic_attributes[k]
-              attrs << [:html, :attr, k, [:escape, true, [:dynamic, v]]]
+      static_attributes = {}
+      parser.static_attributes.each do |k, v|
+        static_attributes[k.to_s] = v;
+      end
+      dynamic_attributes = {}
+      parser.dynamic_attributes.each do |k, v|
+        dynamic_attributes[k.to_s] = v
+      end
+
+      if dynamic_attributes.has_key?('data')
+        # XXX: Quit optimization...
+        return nil
+      end
+
+      attrs = []
+      unless static_class.empty?
+        static_attributes['class'] = [static_class.split(/ +/), static_attributes['class']].compact.flatten.sort.join(' ')
+      end
+      unless static_id.empty?
+        static_attributes['id'] = [static_id, static_attributes['id']].compact.join('_')
+      end
+      keys = static_attributes.keys + dynamic_attributes.keys
+      keys.sort.each do |k|
+        if static_attributes.has_key?(k)
+          v = static_attributes[k]
+          if v == true
+            attrs << [:html, :attr, k, [:multi]]
+          elsif v.is_a?(Hash) && k == 'data'
+            data = AttributeNormalizer.normalize_data(v)
+            data.keys.sort.each do |k2|
+              attrs << [:html, :attr, "data-#{k2}", [:static, Temple::Utils.escape_html(data[k2])]]
             end
+          else
+            attrs << [:html, :attr, k, [:static, Temple::Utils.escape_html(v)]]
           end
-        end
-      else
-        attrs << [:haml, :attr, text]
-      end
-
-      if attrs[0][0] == :haml
-        h = {}
-        unless static_class.empty?
-          h[:class] = static_class.split(/ +/)
-        end
-        unless static_id.empty?
-          h[:id] = static_id
-        end
-        unless h.empty?
-          t = h.inspect
-          t << ", " << text
-          text.replace(t)
+        else
+          v = dynamic_attributes[k]
+          attrs << [:html, :attr, k, [:escape, true, [:dynamic, v]]]
         end
       end
-
       attrs
     end
 
