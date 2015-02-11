@@ -3,7 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/eagletmt/fast_haml/badge.svg)](https://coveralls.io/r/eagletmt/fast_haml)
 [![Code Climate](https://codeclimate.com/github/eagletmt/fast_haml/badges/gpa.svg)](https://codeclimate.com/github/eagletmt/fast_haml)
 
-TODO: Write a gem description
+Faster implementation of Haml template language.
 
 ## Installation
 
@@ -23,7 +23,42 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Just replace your `gem 'haml'` with `gem 'fast_haml'` .
+
+## Incompatibilities
+There are several incompatibilities.
+
+### Hash attributes
+Hash attributes are only supported to "data" attributes.
+
+With original haml, `%span{foo: {bar: 'baz'}}` is rendered as `<span foo-bar='baz'></span>` .
+With fast_haml, it's rendered as `<span foo='{:bar=&gt;&quot;baz&quot;}'></span>` .
+
+Only "data" attributes are converted to hyphenated attributes.
+
+### HTML-escape by default
+Even with non-Rails project, all string are HTML-escaped.
+
+### "ugly" mode only
+Only "ugly" mode in original haml is supported.
+
+```haml
+%div
+  %div hello
+```
+
+is always rendered as
+
+```html
+<div>
+<div>hello</div>
+</div>
+```
+
+It's equivalent to haml's "ugly" mode.
+
+### Others
+If you find other incompatibility, please report it to me :-p.
 
 ## Contributing
 

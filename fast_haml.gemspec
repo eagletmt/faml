@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = FastHaml::VERSION
   spec.authors       = ["Kohei Suzuki"]
   spec.email         = ["eagletmt@gmail.com"]
-  spec.summary       = %q{Fast version of Haml}
-  spec.description   = %q{Fast version of Haml}
+  spec.summary       = %q{Faster implementation of Haml template language.}
+  spec.description   = %q{Faster implementation of Haml template language.}
   spec.homepage      = "https://github.com/eagletmt/fast_haml"
   spec.license       = "MIT"
 
