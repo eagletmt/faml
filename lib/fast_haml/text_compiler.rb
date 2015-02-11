@@ -27,10 +27,10 @@ module FastHaml
       temple = [:multi]
       pos = s.pos
       while s.scan_until(INTERPOLATION_BEGIN)
-        pre = s.string[pos ... (s.pos - s.matched.size)]
+        pre = s.string.byteslice(pos ... (s.pos - s.matched.size))
         if pre[-1] == '\\'
           # escaped
-          temple << [:static, s.string[pos ... (s.pos - s.matched.size - 1)]] << [:static, s.matched]
+          temple << [:static, s.string.byteslice(pos ... (s.pos - s.matched.size - 1))] << [:static, s.matched]
         else
           temple << [:static, pre]
           if s.matched == '#{'
@@ -60,7 +60,7 @@ module FastHaml
           depth -= 1
         end
       end
-      scanner.string[pos ... (scanner.pos-1)]
+      scanner.string.byteslice(pos ... (scanner.pos-1))
     end
   end
 end

@@ -98,6 +98,10 @@ HAML
 HAML
   end
 
+  it 'parses string interpolation with multibyte characters' do
+    expect(render_string(%q|#{'日本語'} にほんご|)).to eq("日本語 にほんご\n")
+  end
+
   it 'recognized escaped string interpolation' do
     expect(render_string(%q|%p hello \#{1 + 2}|)).to eq("<p>hello \#{1 + 2}</p>\n")
   end
