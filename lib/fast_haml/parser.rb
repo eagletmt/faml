@@ -51,6 +51,7 @@ module FastHaml
     DIV_CLASS_PREFIX = '.'
     FILTER_PREFIX = ':'
     ESCAPE_PREFIX = '\\'
+    PRESERVE_PREFIX = '~'
 
     def parse_line(line)
       text, indent = @indent_tracker.process(line, @line_parser.lineno)
@@ -81,6 +82,9 @@ module FastHaml
         parse_script(text)
       when SILENT_SCRIPT_PREFIX
         parse_silent_script(text)
+      when PRESERVE_PREFIX
+        # XXX: preserve has no meaning in "ugly" mode?
+        parse_script(text)
       when DIV_ID_PREFIX, DIV_CLASS_PREFIX
         if text.start_with?('#{')
           parse_plain(text)
@@ -137,7 +141,7 @@ module FastHaml
     end
 
     def parse_script(text)
-      script = text[/\A= *(.*)\z/, 1]
+      script = text[/\A[=~] *(.*)\z/, 1]
       if script.empty?
         syntax_error!("No Ruby code to evaluate")
       end

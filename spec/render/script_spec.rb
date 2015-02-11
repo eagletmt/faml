@@ -5,6 +5,10 @@ RSpec.describe 'Script rendering', type: :render do
     expect(render_string('%span= 1 + 2')).to eq("<span>3</span>\n")
   end
 
+  it 'parses preserve script' do
+    expect(render_string('%span= 1 + 2')).to eq("<span>3</span>\n")
+  end
+
   it 'parses multi-line script' do
     expect(render_string(<<HAML)).to eq("<span>\n3\n</span>\n")
 %span
