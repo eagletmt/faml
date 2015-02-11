@@ -27,4 +27,13 @@ bar |
   baz |
 HAML
   end
+
+  it 'is not multiline' do
+    expect(render_string(<<HAML)).to eq("<div>\nhello\n|\nworld\n</div>\n")
+%div
+  hello
+  |
+  world
+HAML
+  end
 end

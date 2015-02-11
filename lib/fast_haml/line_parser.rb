@@ -33,6 +33,7 @@ module FastHaml
     BLOCK_WITH_SPACES = /do\s*\|\s*[^\|]*\s+\|\z/o
 
     def is_multiline?(line)
+      line = line.lstrip
       line.end_with?(MULTILINE_SUFFIX) && line !~ BLOCK_WITH_SPACES
     end
 
