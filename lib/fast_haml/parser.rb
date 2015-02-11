@@ -27,7 +27,7 @@ module FastHaml
           end
         end
         unless @filter_parser.enabled?
-          parse_line(line, @line_parser.lineno)
+          parse_line(line)
         end
       end
 
@@ -52,8 +52,8 @@ module FastHaml
     FILTER_PREFIX = ':'
     ESCAPE_PREFIX = '\\'
 
-    def parse_line(line, lineno)
-      text, indent = @indent_tracker.process(line, lineno)
+    def parse_line(line)
+      text, indent = @indent_tracker.process(line, @line_parser.lineno)
 
       if text.empty?
         return
@@ -66,39 +66,39 @@ module FastHaml
 
       case text[0]
       when ESCAPE_PREFIX
-        parse_plain(text[1 .. -1], lineno)
+        parse_plain(text[1 .. -1])
       when ELEMENT_PREFIX
-        parse_element(text, lineno)
+        parse_element(text)
       when DOCTYPE_PREFIX
         if text.start_with?('!!!')
-          parse_doctype(text, lineno)
+          parse_doctype(text)
         else
-          parse_plain(text, lineno)
+          parse_plain(text)
         end
       when COMMENT_PREFIX
-        parse_comment(text, lineno)
+        parse_comment(text)
       when SCRIPT_PREFIX
-        parse_script(text, lineno)
+        parse_script(text)
       when SILENT_SCRIPT_PREFIX
-        parse_silent_script(text, lineno)
+        parse_silent_script(text)
       when DIV_ID_PREFIX, DIV_CLASS_PREFIX
         if text.start_with?('#{')
-          parse_plain(text, lineno)
+          parse_plain(text)
         else
-          parse_line("#{indent}%div#{text}", lineno)
+          parse_line("#{indent}%div#{text}")
         end
       when FILTER_PREFIX
-        parse_filter(text, lineno)
+        parse_filter(text)
       else
-        parse_plain(text, lineno)
+        parse_plain(text)
       end
     end
 
-    def parse_doctype(text, lineno)
+    def parse_doctype(text)
       @ast << Ast::Doctype.new(text)
     end
 
-    def parse_comment(text, lineno)
+    def parse_comment(text)
       text = text[1, text.size-1].strip
       comment = Ast::HtmlComment.new
       comment.comment = text
@@ -128,15 +128,15 @@ module FastHaml
       end
     end
 
-    def parse_plain(text, lineno)
+    def parse_plain(text)
       @ast << Ast::Text.new(text)
     end
 
-    def parse_element(text, lineno)
-      @ast << ElementParser.new(text, lineno, @line_parser).parse
+    def parse_element(text)
+      @ast << ElementParser.new(text, @line_parser.lineno, @line_parser).parse
     end
 
-    def parse_script(text, lineno)
+    def parse_script(text)
       script = text[/\A= *(.*)\z/, 1]
       if script.empty?
         syntax_error!("No Ruby code to evaluate")
@@ -145,7 +145,7 @@ module FastHaml
       @ast << Ast::Script.new([], script)
     end
 
-    def parse_silent_script(text, lineno)
+    def parse_silent_script(text)
       if text.start_with?('-#')
         @ast << Ast::HamlComment.new
         return
@@ -158,7 +158,7 @@ module FastHaml
       @ast << Ast::SilentScript.new([], script)
     end
 
-    def parse_filter(text, lineno)
+    def parse_filter(text)
       filter_name = text[/\A#{FILTER_PREFIX}(\w+)\z/, 1]
       unless filter_name
         syntax_error!("Invalid filter name: #{text}")
