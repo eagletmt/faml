@@ -15,6 +15,7 @@ RSpec.describe 'Script rendering', type: :render do
 %span
   != "hello<p>unescape</p>world"
 HAML
+    expect(render_string('%span!"hello"')).to eq(%Q|<span>!"hello"</span>\n|)
   end
 
   it 'parses multi-line script' do

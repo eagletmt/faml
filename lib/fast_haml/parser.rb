@@ -87,7 +87,11 @@ module FastHaml
         parse_silent_script(text)
       when PRESERVE_PREFIX
         # XXX: preserve has no meaning in "ugly" mode?
-        parse_script(text)
+        if text[1] == '='
+          parse_script(text)
+        else
+          parse_plain(text)
+        end
       when DIV_ID_PREFIX, DIV_CLASS_PREFIX
         if text.start_with?('#{')
           parse_plain(text)
