@@ -92,7 +92,7 @@ module FastHaml
     end
 
     def parse_comment(text, lineno)
-      @ast << Ast::HtmlComment.new(text[1, text.size-1].strip)
+      @ast << Ast::HtmlComment.new([], text[1, text.size-1].strip)
     end
 
     def parse_plain(text, lineno)

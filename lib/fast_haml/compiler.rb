@@ -79,7 +79,13 @@ module FastHaml
     end
 
     def compile_html_comment(ast)
-      [:html, :comment, [:static, " #{ast.comment} "]]
+      if ast.children.empty?
+        [:html, :comment, [:static, " #{ast.comment} "]]
+      else
+        temple = [:multi, [:static, "\n"]]
+        compile_children(ast, temple)
+        [:multi, [:html, :comment, temple]]
+      end
     end
 
     def compile_element(ast)

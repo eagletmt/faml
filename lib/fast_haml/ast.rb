@@ -56,7 +56,8 @@ module FastHaml
       end
     end
 
-    class HtmlComment < Struct.new(:comment)
+    class HtmlComment < Struct.new(:children, :comment)
+      include HasChildren
     end
 
     class HamlComment < Struct.new(:children)
