@@ -96,7 +96,33 @@ module FastHaml
     end
 
     def parse_comment(text, lineno)
-      @ast << Ast::HtmlComment.new([], text[1, text.size-1].strip)
+      text = text[1, text.size-1].strip
+      comment = Ast::HtmlComment.new
+      comment.comment = text
+      if text[0] == '['
+        comment.conditional, rest = parse_conditional_comment(text)
+        text.replace(rest)
+      end
+      @ast << comment
+    end
+
+    CONDITIONAL_COMMENT_REGEX = /[\[\]]/o
+
+    def parse_conditional_comment(text)
+      s = StringScanner.new(text[1 .. -1])
+      depth = 1
+      while depth > 0 && s.scan_until(CONDITIONAL_COMMENT_REGEX)
+        if s.matched == '['
+          depth += 1
+        else
+          depth -= 1
+        end
+      end
+      if depth == 0
+        [s.pre_match, s.rest.lstrip]
+      else
+        syntax_error!('Unmatched brackets in conditional comment')
+      end
     end
 
     def parse_plain(text, lineno)
@@ -142,6 +168,9 @@ module FastHaml
       @ast = @ast.children.last
       if @ast.is_a?(Ast::Element) && @ast.self_closing
         syntax_error!('Illegal nesting: nesting within a self-closing tag is illegal')
+      end
+      if @ast.is_a?(Ast::HtmlComment) && !@ast.comment.empty?
+        syntax_error!('Illegal nesting: nesting within a html comment that already has content is illegal.')
       end
       if @ast.is_a?(Ast::HamlComment)
         @indent_tracker.enter_comment!

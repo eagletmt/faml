@@ -97,10 +97,22 @@ module FastHaml
 
     def compile_html_comment(ast)
       if ast.children.empty?
-        [:html, :comment, [:static, " #{ast.comment} "]]
+        if ast.conditional.empty?
+          [:html, :comment, [:static, " #{ast.comment} "]]
+        else
+          [:html, :comment, [:static, "[#{ast.conditional}]> #{ast.comment} <![endif]"]]
+        end
       else
-        temple = [:multi, [:static, "\n"]]
+        temple = [:multi]
+        if ast.conditional.empty?
+          temple << [:static, "\n"]
+        else
+          temple << [:static, "[#{ast.conditional}]>\n"]
+        end
         compile_children(ast, temple)
+        unless ast.conditional.empty?
+          temple << [:static, "<![endif]"]
+        end
         [:multi, [:html, :comment, temple]]
       end
     end

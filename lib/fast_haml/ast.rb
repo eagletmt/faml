@@ -69,8 +69,14 @@ module FastHaml
       end
     end
 
-    class HtmlComment < Struct.new(:children, :comment)
+    class HtmlComment < Struct.new(:children, :comment, :conditional)
       include HasChildren
+
+      def initialize(*)
+        super
+        self.comment ||= ''
+        self.conditional ||= ''
+      end
     end
 
     class HamlComment < Struct.new(:children)

@@ -27,4 +27,35 @@ HAML
 %span world
 HAML
   end
+
+  it 'renders conditional comment' do
+    expect(render_string('/ [if IE] hello')).to eq("<!--[if IE]> hello <![endif]-->\n")
+  end
+
+  it 'renders conditional comment with children' do
+    expect(render_string(<<HAML)).to eq("<!--[if IE]>\n<span>hello</span>\nworld\n<![endif]-->\n")
+/[if IE]
+  %span hello
+  world
+HAML
+  end
+
+  it 'parses nested conditional comment' do
+    expect(render_string(<<HAML)).to eq("<!--[[if IE]]>\n<span>hello</span>\nworld\n<![endif]-->\n")
+/[[if IE]]
+  %span hello
+  world
+HAML
+  end
+
+  it 'raises error if conditional comment bracket is unbalanced' do
+    expect { render_string('/[[if IE]') }.to raise_error(FastHaml::SyntaxError)
+  end
+
+  it 'raises error if both comment text and children are given' do
+    expect { render_string(<<HAML) }.to raise_error(FastHaml::SyntaxError)
+/ hehehe
+  %span hello
+HAML
+  end
 end
