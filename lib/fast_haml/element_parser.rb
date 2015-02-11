@@ -23,46 +23,52 @@ module FastHaml
       element = Ast::Element.new
       element.tag_name = m[1]
       element.static_class, element.static_id = parse_class_and_id(m[2])
-      rest = m[3]
+      rest = m[3] || ''
 
-      if rest
-        rest = rest.lstrip
+      rest = rest.lstrip
 
-        loop do
-          case rest[0]
-          when OLD_ATTRIBUTE_BEGIN
-            unless element.old_attributes.empty?
-              break
-            end
-            element.old_attributes, rest = parse_old_attributes(rest)
+      loop do
+        case rest[0]
+        when OLD_ATTRIBUTE_BEGIN
+          unless element.old_attributes.empty?
+            break
+          end
+          element.old_attributes, rest = parse_old_attributes(rest)
           # TODO: parse new attributes
           #when '('
           #  unless element.new_attributes.empty?
           #    break
           #  end
           #  element.new_attributes, rest = parse_new_attributes(rest)
-          else
-            break
-          end
-        end
-
-        case rest[0]
-        when '='
-          script = rest[1 .. -1].lstrip
-          if script.empty?
-            syntax_error!('No Ruby code to evaluate')
-          end
-          script += RubyMultiline.read(@line_parser, script)
-          element.oneline_child = Ast::Script.new([], script)
-        when '/'
-          element.self_closing = true
-          if rest.size > 1
-            syntax_error!("Self-closing tags can't have content")
-          end
         else
-          unless rest.empty?
-            element.oneline_child = Ast::Text.new(rest)
-          end
+          break
+        end
+      end
+
+      m = rest.match(/\A(><|<>|[><])(.*)\z/)
+      if m
+        nuke_whitespace = m[1]
+        element.nuke_inner_whitespace = nuke_whitespace.include?('<')
+        element.nuke_outer_whitespace = nuke_whitespace.include?('>')
+        rest = m[2]
+      end
+
+      case rest[0]
+      when '='
+        script = rest[1 .. -1].lstrip
+        if script.empty?
+          syntax_error!('No Ruby code to evaluate')
+        end
+        script += RubyMultiline.read(@line_parser, script)
+        element.oneline_child = Ast::Script.new([], script)
+      when '/'
+        element.self_closing = true
+        if rest.size > 1
+          syntax_error!("Self-closing tags can't have content")
+        end
+      else
+        unless rest.empty?
+          element.oneline_child = Ast::Text.new(rest)
         end
       end
 

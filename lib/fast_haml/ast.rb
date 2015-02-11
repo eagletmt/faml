@@ -21,7 +21,18 @@ module FastHaml
     class Doctype < Struct.new(:doctype)
     end
 
-    class Element < Struct.new(:children, :tag_name, :static_class, :static_id, :old_attributes, :new_attributes, :oneline_child, :self_closing)
+    class Element < Struct.new(
+      :children,
+      :tag_name,
+      :static_class,
+      :static_id,
+      :old_attributes,
+      :new_attributes,
+      :oneline_child,
+      :self_closing,
+      :nuke_inner_whitespace,
+      :nuke_outer_whitespace,
+    )
       include HasChildren
 
       def initialize(*)
@@ -31,6 +42,8 @@ module FastHaml
         self.old_attributes ||= ''
         self.new_attributes ||= ''
         self.self_closing ||= false
+        self.nuke_inner_whitespace ||= false
+        self.nuke_outer_whitespace ||= false
       end
     end
 

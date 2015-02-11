@@ -106,6 +106,32 @@ HAML
     expect(render_string('%p/')).to eq("<p>\n")
   end
 
+  it 'parses nuke-inner-whitespace (<)' do
+    expect(render_string(<<HAML)).to eq("<blockquote><div>\nFoo!\n</div></blockquote>\n")
+%blockquote<
+  %div
+    Foo!
+HAML
+  end
+
+  it 'parses nuke-outer-whitespace (>)' do
+    expect(render_string(<<HAML)).to eq("<img></img><img></img><img></img>\n")
+%img
+%img>
+%img
+HAML
+  end
+
+  it 'parses nuke-whitespaces' do
+    expect(render_string(<<HAML)).to eq("<img></img><pre>foo\nbar</pre><img></img>\n")
+%img
+%pre><
+  foo
+  bar
+%img
+HAML
+  end
+
   it 'raises error if self-closing tag have text' do
     expect { render_string('%p/ hello') }.to raise_error(FastHaml::SyntaxError)
   end
