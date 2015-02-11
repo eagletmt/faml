@@ -50,6 +50,7 @@ module FastHaml
     DIV_ID_PREFIX = '#'
     DIV_CLASS_PREFIX = '.'
     FILTER_PREFIX = ':'
+    ESCAPE_PREFIX = '\\'
 
     def parse_line(line, lineno)
       text, indent = @indent_tracker.process(line, lineno)
@@ -64,6 +65,8 @@ module FastHaml
       end
 
       case text[0]
+      when ESCAPE_PREFIX
+        parse_plain(text[1 .. -1], lineno)
       when ELEMENT_PREFIX
         parse_element(text, lineno)
       when DOCTYPE_PREFIX
