@@ -1,19 +1,13 @@
-require 'fast_haml/text_compiler'
+require 'fast_haml/filter_compilers/base'
 
 module FastHaml
   module FilterCompilers
-    class Escaped
+    class Escaped < Base
       include Temple::Utils
-
-      def initialize
-        @text_compiler = TextCompiler.new(escape_html: false)
-      end
 
       def compile(texts)
         temple = [:multi]
-        texts.each do |text|
-          temple << @text_compiler.compile(text) << [:static, "\n"]
-        end
+        compile_texts(temple, texts)
         escape_code = Temple::Filters::Escapable.new.instance_variable_get(:@escape_code)
         sym = unique_name
         [:multi,

@@ -1,17 +1,11 @@
-require 'fast_haml/text_compiler'
+require 'fast_haml/filter_compilers/base'
 
 module FastHaml
   module FilterCompilers
-    class Javascript
-      def initialize
-        @text_compiler = TextCompiler.new(escape_html: false)
-      end
-
+    class Javascript < Base
       def compile(texts)
         temple = [:multi, [:static, "\n"]]
-        texts.each do |text|
-          temple << [:static, '  '] << @text_compiler.compile(text) << [:static, "\n"]
-        end
+        compile_texts(temple, texts, tab_width: 2)
         [:html, :tag, 'script', false, [:html, :attrs], [:html, :js, temple]]
       end
     end

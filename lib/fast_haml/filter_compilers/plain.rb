@@ -1,17 +1,11 @@
-require 'fast_haml/text_compiler'
+require 'fast_haml/filter_compilers/base'
 
 module FastHaml
   module FilterCompilers
-    class Plain
-      def initialize
-        @text_compiler = TextCompiler.new(escape_html: false)
-      end
-
+    class Plain < Base
       def compile(texts)
         temple = [:multi]
-        texts.each do |text|
-          temple << @text_compiler.compile(text) << [:static, "\n"]
-        end
+        compile_texts(temple, texts)
         temple
       end
     end

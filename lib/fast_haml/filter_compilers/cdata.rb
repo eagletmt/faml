@@ -1,17 +1,11 @@
-require 'fast_haml/text_compiler'
+require 'fast_haml/filter_compilers/base'
 
 module FastHaml
   module FilterCompilers
-    class Cdata
-      def initialize
-        @text_compiler = TextCompiler.new(escape_html: false)
-      end
-
+    class Cdata < Base
       def compile(texts)
         temple = [:multi, [:static, "<![CDATA[\n"]]
-        texts.each do |text|
-          temple << [:static, '    '] << @text_compiler.compile(text) << [:static, "\n"]
-        end
+        compile_texts(temple, texts, tab_width: 4)
         temple << [:static, "]]>"]
       end
     end

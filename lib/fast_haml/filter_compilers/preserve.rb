@@ -1,18 +1,14 @@
-require 'fast_haml/text_compiler'
+require 'fast_haml/filter_compilers/base'
 
 module FastHaml
   module FilterCompilers
-    class Preserve
+    class Preserve < Base
       include Temple::Utils
-
-      def initialize
-        @text_compiler = TextCompiler.new(escape_html: false)
-      end
 
       def compile(texts)
         temple = [:multi]
         texts.each do |text|
-          temple << @text_compiler.compile(text)
+          temple << text_compiler.compile(text)
           unless texts.last.equal?(text)
             temple << [:static, "\n"]
           end
