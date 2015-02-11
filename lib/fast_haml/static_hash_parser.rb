@@ -78,7 +78,10 @@ module FastHaml
             @static_attributes[key_static] = parser.static_attributes
           end
           unless parser.dynamic_attributes.empty?
-            @dynamic_attributes[key_static] = parser.dynamic_attributes
+            expr = parser.dynamic_attributes.map do |k, v|
+              "#{k.inspect} => #{v}"
+            end.join(', ')
+            @dynamic_attributes[key_static] = "{#{expr}}"
           end
         else
           # TODO: Is it really impossible to optimize?

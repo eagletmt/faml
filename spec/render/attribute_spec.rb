@@ -60,6 +60,13 @@ HAML
 HAML
   end
 
+  it 'renders nested dstr attributes' do
+    expect(render_string(<<'HAML')).to eq(%Q|<span foo='{:bar=&gt;&quot;x1y&quot;}'>hello</span>\n|)
+- data = { foo: 1 }
+%span{foo: {bar: "x#{1}y"}} hello
+HAML
+  end
+
   it 'merges static id' do
     expect(render_string('#foo{id: "bar"} baz')).to eq("<div id='foo_bar'>baz</div>\n")
   end
