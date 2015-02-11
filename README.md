@@ -60,6 +60,29 @@ It's equivalent to haml's "ugly" mode.
 ### Others
 If you find other incompatibility, please report it to me :-p.
 
+## Why fast_haml is faster?
+### Temple backend
+I use [temple](https://github.com/judofyr/temple) to achieve faster template rendering.
+It's used by [slim](https://github.com/slim-template/slim) template language & engine which is known as fast.
+
+1. FastHaml::Parser converts source language (Haml template) to own AST (FastHaml::Ast) .
+2. FastHaml::Compiler compiles FastHaml::Ast into Temple AST.
+3. Temple compiles its AST into Ruby code.
+    - During this process, several optimizations are performed such as Temple::Filters::MultiFlattener and Temple::Filters::StaticMerger.
+
+### Attribute optimization
+Although Haml allows arbitrary Ruby hash in the attribute syntax, most attributes are written in hash literal form.
+All keys are string or symbol literals (i.e., not dynamic values) in typical case.
+
+```haml
+%div{class: some_helper_method(current_user)}
+  %a{href: foo_path(@item)}= @item.name
+```
+
+There is an optimization chance if we could know the value is String.
+I introduced incompatibility to expand the chance: all attribute values are converted to String by `#to_s` except for `id`, `class` and `data` .
+This will enable us to avoid runtime expensive hash merging and rendering.
+
 ## Contributing
 
 1. Fork it ( https://github.com/eagletmt/fast_haml/fork )
