@@ -110,6 +110,10 @@ HAML
     expect(render_string('%p/')).to eq("<p>\n")
   end
 
+  it 'renders some attributes as self-closing by default' do
+    expect(render_string('%meta{"http-equiv" => "Content-Type", :content => "text/html"}')).to eq("<meta content='text/html' http-equiv='Content-Type'>\n")
+  end
+
   it 'parses nuke-inner-whitespace (<)' do
     expect(render_string(<<HAML)).to eq("<blockquote><div>\nFoo!\n</div></blockquote>\n")
 %blockquote<
@@ -119,7 +123,7 @@ HAML
   end
 
   it 'parses nuke-outer-whitespace (>)' do
-    expect(render_string(<<HAML)).to eq("<img></img><img></img><img></img>\n")
+    expect(render_string(<<HAML)).to eq("<img><img><img>\n")
 %img
 %img>
 %img
@@ -127,7 +131,7 @@ HAML
   end
 
   it 'parses nuke-whitespaces' do
-    expect(render_string(<<HAML)).to eq("<img></img><pre>foo\nbar</pre><img></img>\n")
+    expect(render_string(<<HAML)).to eq("<img><pre>foo\nbar</pre><img>\n")
 %img
 %pre><
   foo

@@ -7,6 +7,15 @@ require 'fast_haml/text_compiler'
 
 module FastHaml
   class Compiler < Temple::Parser
+    DEFAULT_AUTO_CLOSE_TAGS = %w[
+      area base basefont br col command embed frame hr img input isindex keygen
+      link menuitem meta param source track wbr
+    ]
+
+    define_options(
+      autoclose: DEFAULT_AUTO_CLOSE_TAGS,
+    )
+
     def initialize(*)
       super
       @text_compiler = TextCompiler.new
@@ -118,7 +127,7 @@ module FastHaml
     end
 
     def compile_element(ast)
-      temple = [:html, :tag, ast.tag_name, ast.self_closing]
+      temple = [:html, :tag, ast.tag_name, ast.self_closing || options[:autoclose].include?(ast.tag_name)]
       html_attrs = [:html, :attrs]
       temple << html_attrs
 
