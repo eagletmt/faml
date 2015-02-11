@@ -52,6 +52,7 @@ module FastHaml
     FILTER_PREFIX = ':'
     ESCAPE_PREFIX = '\\'
     PRESERVE_PREFIX = '~'
+    SANITIZE_PREFIX = '&'
 
     def parse_line(line)
       text, indent = @indent_tracker.process(line, @line_parser.lineno)
@@ -100,6 +101,12 @@ module FastHaml
         end
       when FILTER_PREFIX
         parse_filter(text)
+      when SANITIZE_PREFIX
+        if text[1] == SCRIPT_PREFIX
+          parse_script(text)
+        else
+          parse_plain(text)
+        end
       else
         parse_plain(text)
       end
@@ -148,15 +155,18 @@ module FastHaml
     end
 
     def parse_script(text)
-      m = text.match(/\A(!)?[=~] *(.*)\z/)
+      m = text.match(/\A([!&])?[=~] *(.*)\z/)
       script = m[2]
       if script.empty?
         syntax_error!("No Ruby code to evaluate")
       end
       script += RubyMultiline.read(@line_parser, script)
       node = Ast::Script.new([], script)
-      if m[1] == '!'
+      case m[1]
+      when '!'
         node.escape_html = false
+      when '&'
+        node.escape_html = true
       end
       @ast << node
     end

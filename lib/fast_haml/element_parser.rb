@@ -68,13 +68,13 @@ module FastHaml
         end
       else
         case rest[0, 2]
-        when '!='
+        when '!=', '&='
           script = rest[2 .. -1].lstrip
           if script.empty?
             syntax_error!('No Ruby code to evaluate')
           end
           script += RubyMultiline.read(@line_parser, script)
-          element.oneline_child = Ast::Script.new([], script, false)
+          element.oneline_child = Ast::Script.new([], script, rest[0] == '&')
         else
           unless rest.empty?
             element.oneline_child = Ast::Text.new(rest)
