@@ -67,8 +67,18 @@ module FastHaml
           syntax_error!("Self-closing tags can't have content")
         end
       else
-        unless rest.empty?
-          element.oneline_child = Ast::Text.new(rest)
+        case rest[0, 2]
+        when '!='
+          script = rest[2 .. -1].lstrip
+          if script.empty?
+            syntax_error!('No Ruby code to evaluate')
+          end
+          script += RubyMultiline.read(@line_parser, script)
+          element.oneline_child = Ast::Script.new([], script, false)
+        else
+          unless rest.empty?
+            element.oneline_child = Ast::Text.new(rest)
+          end
         end
       end
 

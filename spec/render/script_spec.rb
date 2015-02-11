@@ -9,6 +9,14 @@ RSpec.describe 'Script rendering', type: :render do
     expect(render_string('%span= 1 + 2')).to eq("<span>3</span>\n")
   end
 
+  it 'parses unescape script' do
+    expect(render_string('%span!= "hello<p>unescape</p>world"')).to eq("<span>hello<p>unescape</p>world</span>\n")
+    expect(render_string(<<HAML)).to eq("<span>\nhello<p>unescape</p>world\n</span>\n")
+%span
+  != "hello<p>unescape</p>world"
+HAML
+  end
+
   it 'parses multi-line script' do
     expect(render_string(<<HAML)).to eq("<span>\n3\n</span>\n")
 %span

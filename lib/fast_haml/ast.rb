@@ -47,11 +47,19 @@ module FastHaml
       end
     end
 
-    class Script < Struct.new(:children, :script, :mid_block_keyword)
+    class Script < Struct.new(
+      :children,
+      :script,
+      :escape_html,
+      :mid_block_keyword,
+    )
       include HasChildren
 
       def initialize(*)
         super
+        if self.escape_html.nil?
+          self.escape_html = true
+        end
         if self.mid_block_keyword.nil?
           self.mid_block_keyword = false
         end

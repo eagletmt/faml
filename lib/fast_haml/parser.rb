@@ -71,8 +71,11 @@ module FastHaml
       when ELEMENT_PREFIX
         parse_element(text)
       when DOCTYPE_PREFIX
-        if text.start_with?('!!!')
+        case
+        when text.start_with?('!!!')
           parse_doctype(text)
+        when text[1] == SCRIPT_PREFIX
+          parse_script(text)
         else
           parse_plain(text)
         end
@@ -141,12 +144,17 @@ module FastHaml
     end
 
     def parse_script(text)
-      script = text[/\A[=~] *(.*)\z/, 1]
+      m = text.match(/\A(!)?[=~] *(.*)\z/)
+      script = m[2]
       if script.empty?
         syntax_error!("No Ruby code to evaluate")
       end
       script += RubyMultiline.read(@line_parser, script)
-      @ast << Ast::Script.new([], script)
+      node = Ast::Script.new([], script)
+      if m[1] == '!'
+        node.escape_html = false
+      end
+      @ast << node
     end
 
     def parse_silent_script(text)
