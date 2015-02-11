@@ -159,6 +159,8 @@ module FastHaml
       attrs
     end
 
+    SPECIAL_ATTRIBUTES = %w[id class data].freeze
+
     def try_optimize_attributes(text, static_id, static_class)
       parser = StaticHashParser.new
       unless parser.parse("{#{text}}")
@@ -169,9 +171,23 @@ module FastHaml
       parser.static_attributes.each do |k, v|
         static_attributes[k.to_s] = v;
       end
+      unless static_class.empty?
+        static_attributes['class'] = [static_class.split(/ +/), static_attributes['class']].compact.flatten.sort.join(' ')
+      end
+      unless static_id.empty?
+        static_attributes['id'] = [static_id, static_attributes['id']].compact.join('_')
+      end
+
       dynamic_attributes = {}
       parser.dynamic_attributes.each do |k, v|
-        dynamic_attributes[k.to_s] = v
+        k = k.to_s
+        if static_attributes.has_key?(k)
+          if SPECIAL_ATTRIBUTES.include?(k)
+            # XXX: Quit optimization
+            return nil
+          end
+        end
+        dynamic_attributes[k] = v
       end
 
       if dynamic_attributes.has_key?('data')
@@ -180,12 +196,6 @@ module FastHaml
       end
 
       attrs = []
-      unless static_class.empty?
-        static_attributes['class'] = [static_class.split(/ +/), static_attributes['class']].compact.flatten.sort.join(' ')
-      end
-      unless static_id.empty?
-        static_attributes['id'] = [static_id, static_attributes['id']].compact.join('_')
-      end
       keys = static_attributes.keys + dynamic_attributes.keys
       keys.sort.each do |k|
         if static_attributes.has_key?(k)

@@ -66,6 +66,10 @@ HAML
 
   it 'merges static class' do
     expect(render_string('.foo{class: "bar"} baz')).to eq("<div class='bar foo'>baz</div>\n")
+    expect(render_string(<<'HAML')).to eq("<div class='bar foo'>baz</div>\n")
+- bar = 'bar'
+.foo{class: "#{bar}"} baz
+HAML
   end
 
   it 'converts underscore to hyphen in data attributes' do
