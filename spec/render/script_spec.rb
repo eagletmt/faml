@@ -35,7 +35,9 @@ HAML
   end
 
   it 'can have children' do
-    expect(render_string(<<HAML)).to eq("<span>0</span>\n1<span>end</span>\n")
+    # XXX: Double newlines is different from original haml.
+    expect(render_string(<<HAML)).to eq("<span>start</span>\n\n<span>0</span>\n1<span>end</span>\n")
+%span start
 = 1.times do |i|
   %span= i
 %span end

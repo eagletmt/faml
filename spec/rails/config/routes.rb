@@ -3,5 +3,6 @@ Rails.application.routes.draw do
     get :hello
     get :with_variables
     get :with_capture
+    get :form
   end
 end
