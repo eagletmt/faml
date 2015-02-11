@@ -67,6 +67,10 @@ HAML
 HAML
   end
 
+  it 'optimize send case' do
+    expect(render_string('%span{foo: {bar: 1+2}} hello')).to eq("<span foo='{:bar=&gt;3}'>hello</span>\n")
+  end
+
   it 'merges static id' do
     expect(render_string('#foo{id: "bar"} baz')).to eq("<div id='foo_bar'>baz</div>\n")
   end

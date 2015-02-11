@@ -159,8 +159,6 @@ module FastHaml
       attrs
     end
 
-    SPECIAL_ATTRIBUTES = %w[id class data].freeze
-
     def try_optimize_attributes(text, static_id, static_class)
       parser = StaticHashParser.new
       unless parser.parse("{#{text}}")
@@ -182,7 +180,7 @@ module FastHaml
       parser.dynamic_attributes.each do |k, v|
         k = k.to_s
         if static_attributes.has_key?(k)
-          if SPECIAL_ATTRIBUTES.include?(k)
+          if StaticHashParser::SPECIAL_ATTRIBUTES.include?(k)
             # XXX: Quit optimization
             return nil
           end

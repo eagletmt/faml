@@ -4,6 +4,8 @@ module FastHaml
   class StaticHashParser
     FAILURE_TAG = :failure
 
+    SPECIAL_ATTRIBUTES = %w[id class data].freeze
+
     attr_reader :static_attributes, :dynamic_attributes
 
     def initialize
@@ -71,6 +73,12 @@ module FastHaml
         @static_attributes[key_static] = eval(node.location.expression.source)
       when :dstr
         @dynamic_attributes[key_static] = node.location.expression.source
+      when :send
+        if SPECIAL_ATTRIBUTES.include?(key_static.to_s)
+          throw FAILURE_TAG
+        else
+          @dynamic_attributes[key_static] = node.location.expression.source
+        end
       when :hash
         parser = self.class.new
         if parser.walk(node)
