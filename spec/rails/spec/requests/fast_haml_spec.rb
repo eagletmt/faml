@@ -33,10 +33,4 @@ RSpec.describe 'FastHaml with Rails', type: :request do
     expect(response).to be_ok
     expect(response.body).to include("<div><div>\n<p>Hello</p>\n</div>\n</div>\n")
   end
-
-  it 'inserts newline before script children' do
-    get '/books/form'
-    expect(response).to be_ok
-    expect(response.body).to include("\n<span>form</span>\n")
-  end
 end
