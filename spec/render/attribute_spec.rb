@@ -9,6 +9,10 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string('%span{class: "x", "old" => 2} hello')).to eq(%Q{<span class='x' old='2'>hello</span>\n})
   end
 
+  it 'is not element with id attribute' do
+    expect(render_string('#{1 + 2}')).to eq("3\n")
+  end
+
   it 'renders dynamic attributes' do
     expect(render_string(%q|%span#main{class: "na#{'ni'}ka"} hello|)).to eq(%Q{<span class='nanika' id='main'>hello</span>\n})
   end

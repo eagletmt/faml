@@ -23,7 +23,7 @@ HAML
 - comment = 'great'
 %span hello
 /
-  comment:#{comment}
+  #{comment}
 %span world
 HAML
   end

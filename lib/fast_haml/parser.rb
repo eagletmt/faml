@@ -79,7 +79,11 @@ module FastHaml
       when SILENT_SCRIPT_PREFIX
         parse_silent_script(text, lineno)
       when DIV_ID_PREFIX, DIV_CLASS_PREFIX
-        parse_line("#{indent}%div#{text}", lineno)
+        if text.start_with?('#{')
+          parse_plain(text, lineno)
+        else
+          parse_line("#{indent}%div#{text}", lineno)
+        end
       when FILTER_PREFIX
         parse_filter(text, lineno)
       else
