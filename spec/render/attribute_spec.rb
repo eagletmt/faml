@@ -68,6 +68,11 @@ HAML
     expect(render_string('.foo{class: "bar"} baz')).to eq("<div class='bar foo'>baz</div>\n")
   end
 
+  it 'converts underscore to hyphen in data attributes' do
+    expect(render_string("%span{data: {foo_bar: 'baz'}}")).to eq("<span data-foo-bar='baz'></span>\n")
+    expect(render_string("- h = {foo_bar: 'baz'}\n%span{data: h}")).to eq("<span data-foo-bar='baz'></span>\n")
+  end
+
   context 'with unmatched brace' do
     it 'raises error' do
       expect { render_string('%span{foo hello') }.to raise_error(FastHaml::SyntaxError)

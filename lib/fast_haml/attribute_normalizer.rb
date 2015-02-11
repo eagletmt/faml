@@ -7,10 +7,10 @@ module FastHaml
         data.each do |k1, v1|
           if v1.is_a?(Hash)
             normalize_data(v1).each do |k2, v2|
-              h["#{k1}-#{k2}"] = v2
+              h["#{k1.to_s.gsub('_', '-')}-#{k2}"] = v2
             end
           else
-            h[k1.to_s] = v1
+            h[k1.to_s.gsub('_', '-')] = v1
           end
         end
       end
