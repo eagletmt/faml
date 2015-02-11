@@ -1,6 +1,7 @@
 # FastHaml
 [![Build Status](https://travis-ci.org/eagletmt/fast_haml.svg)](https://travis-ci.org/eagletmt/fast_haml)
 [![Coverage Status](https://coveralls.io/repos/eagletmt/fast_haml/badge.svg)](https://coveralls.io/r/eagletmt/fast_haml)
+[![Code Climate](https://codeclimate.com/github/eagletmt/fast_haml/badges/gpa.svg)](https://codeclimate.com/github/eagletmt/fast_haml)
 
 TODO: Write a gem description
 
