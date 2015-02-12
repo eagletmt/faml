@@ -66,8 +66,11 @@ I use [temple](https://github.com/judofyr/temple) to achieve faster template ren
 It's used by [slim](https://github.com/slim-template/slim) template language & engine which is known as fast.
 
 1. FastHaml::Parser converts source language (Haml template) to own AST (FastHaml::Ast) .
+    - You can see the FastHaml::Ast by running `fast_haml parse template.haml` .
 2. FastHaml::Compiler compiles FastHaml::Ast into Temple AST.
+    - You can see the Temple AST by running `fast_haml temple template.haml` .
 3. Temple compiles its AST into Ruby code.
+    - You can see the Ruby code by running `fast_haml compile template.haml` .
     - During this process, several optimizations are performed such as Temple::Filters::MultiFlattener and Temple::Filters::StaticMerger.
 
 ### Attribute optimization
