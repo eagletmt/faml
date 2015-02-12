@@ -101,8 +101,10 @@ module FastHaml
       @text_compiler.compile(ast.text)
     end
 
+    # html5 and html4 is deprecated in temple.
     DEFAULT_DOCTYPE = {
       html: 'html',
+      html5: 'html',
       html4: 'transitional',
       xhtml: 'transitional',
     }.freeze
