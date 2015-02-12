@@ -28,6 +28,11 @@ RSpec.describe 'FastHaml with Rails', type: :request do
     expect(response.body).to include('<p>&lt;script&gt;alert(1)&lt;/script&gt;</p>')
   end
 
+  it 'does not escape object which returns html_safe string by to_s' do
+    get '/books/with_variables?title=nanika'
+    expect(response.body).to include('<span>nanika</span>')
+  end
+
   it 'works with capture method' do
     get '/books/with_capture'
     expect(response).to be_ok
