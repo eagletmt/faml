@@ -12,8 +12,8 @@ end
 require 'fast_haml'
 
 module RenderSpecHelper
-  def render_string(str)
-    eval(FastHaml::Engine.new.call(str))
+  def render_string(str, options = {})
+    eval(FastHaml::Engine.new(options).call(str))
   end
 end
 

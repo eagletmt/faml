@@ -39,6 +39,12 @@ module FastHaml
       end
     end
 
+    def on_html_doctype(type)
+      super
+    rescue Temple::FilterError
+      [:multi]
+    end
+
     def on_haml_attr(code)
       [:code, "::FastHaml::AttributeBuilder.instance.merge!(#{code})"]
     end

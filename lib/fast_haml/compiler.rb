@@ -14,6 +14,7 @@ module FastHaml
 
     define_options(
       autoclose: DEFAULT_AUTO_CLOSE_TAGS,
+      format: :html,
     )
 
     def initialize(*)
@@ -100,8 +101,18 @@ module FastHaml
       @text_compiler.compile(ast.text)
     end
 
+    DEFAULT_DOCTYPE = {
+      html: 'html',
+      html4: 'transitional',
+      xhtml: 'transitional',
+    }.freeze
+
     def compile_doctype(ast)
-      [:html, :doctype, 'html']
+      doctype = ast.doctype.downcase
+      if doctype.empty?
+        doctype = DEFAULT_DOCTYPE[options[:format]]
+      end
+      [:html, :doctype, doctype]
     end
 
     def compile_html_comment(ast)

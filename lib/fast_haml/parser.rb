@@ -113,7 +113,7 @@ module FastHaml
     end
 
     def parse_doctype(text)
-      @ast << Ast::Doctype.new(text)
+      @ast << Ast::Doctype.new(text[3 .. -1].strip)
     end
 
     def parse_comment(text)
