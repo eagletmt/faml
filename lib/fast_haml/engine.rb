@@ -9,11 +9,13 @@ module FastHaml
       generator: Temple::Generators::ArrayBuffer,
     )
 
-    def initialize(opts = {})
-      super(opts.merge(
+    DEFAULT_OPTIONS = {
         format: :html,
         attr_quote: "'",
-      ))
+    }.freeze
+
+    def initialize(opts = {})
+      super(DEFAULT_OPTIONS.merge(opts))
     end
 
     use Parser
