@@ -1,7 +1,11 @@
 require 'strscan'
+require 'fast_haml/parser_utils'
 
 module FastHaml
   class TextCompiler
+    class InvalidInterpolation < StandardError
+    end
+
     def initialize(escape_html: true)
       @escape_html = escape_html
     end
@@ -51,16 +55,13 @@ module FastHaml
     INTERPOLATION_BRACE = /[\{\}]/o
 
     def find_close_brace(scanner)
-      depth = 1
       pos = scanner.pos
-      while depth > 0 && scanner.scan_until(INTERPOLATION_BRACE)
-        if scanner.matched == '{'
-          depth += 1
-        else
-          depth -= 1
-        end
+      depth = ParserUtils.balance(scanner, '{', '}')
+      if depth != 0
+        raise InvalidInterpolation.new(scanner.string)
+      else
+        scanner.string.byteslice(pos ... (scanner.pos-1))
       end
-      scanner.string.byteslice(pos ... (scanner.pos-1))
     end
   end
 end

@@ -3,6 +3,7 @@ require 'fast_haml/element_parser'
 require 'fast_haml/filter_parser'
 require 'fast_haml/indent_tracker'
 require 'fast_haml/line_parser'
+require 'fast_haml/parser_utils'
 require 'fast_haml/ruby_multiline'
 require 'fast_haml/syntax_error'
 
@@ -131,14 +132,7 @@ module FastHaml
 
     def parse_conditional_comment(text)
       s = StringScanner.new(text[1 .. -1])
-      depth = 1
-      while depth > 0 && s.scan_until(CONDITIONAL_COMMENT_REGEX)
-        if s.matched == '['
-          depth += 1
-        else
-          depth -= 1
-        end
-      end
+      depth = ParserUtils.balance(s, '[', ']')
       if depth == 0
         [s.pre_match, s.rest.lstrip]
       else

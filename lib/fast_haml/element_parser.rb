@@ -1,5 +1,6 @@
 require 'strscan'
 require 'fast_haml/ast'
+require 'fast_haml/parser_utils'
 require 'fast_haml/ruby_multiline'
 require 'fast_haml/syntax_error'
 
@@ -110,13 +111,7 @@ module FastHaml
       s.pos = 1
       depth = 1
       loop do
-        while depth > 0 && s.scan_until(OLD_ATTRIBUTE_REGEX)
-          if s.matched == OLD_ATTRIBUTE_BEGIN
-            depth += 1
-          else
-            depth -= 1
-          end
-        end
+        depth = ParserUtils.balance(s, '{', '}')
         if depth == 0
           attr = s.pre_match + s.matched
           return [attr[1, attr.size-2], s.rest.lstrip]
