@@ -114,7 +114,7 @@ module FastHaml
       if doctype.empty?
         doctype = DEFAULT_DOCTYPE[options[:format]]
       end
-      [:html, :doctype, doctype]
+      [:haml, :doctype, doctype]
     end
 
     def compile_html_comment(ast)

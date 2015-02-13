@@ -16,8 +16,8 @@ module FastHaml
       [:dynamic, "::FastHaml::AttributeBuilder.build(#{options[:attr_quote].inspect}, #{code})"]
     end
 
-    def on_html_doctype(type)
-      super
+    def on_haml_doctype(type)
+      compile([:html, :doctype, type])
     rescue Temple::FilterError
       [:multi]
     end
