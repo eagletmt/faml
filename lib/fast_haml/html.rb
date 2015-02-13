@@ -2,11 +2,6 @@ require 'fast_haml/attribute_builder'
 
 module FastHaml
   class Html < Temple::HTML::Fast
-    def initialize(*)
-      super
-      AttributeBuilder.instance.init(options)
-    end
-
     def on_html_tag(name, self_closing, attrs, content = nil)
       name = name.to_s
       closed = self_closing && (!content || empty_exp?(content))
@@ -17,15 +12,8 @@ module FastHaml
       result
     end
 
-    def on_html_attrs(*attrs)
-      if has_haml_attr?(attrs)
-        [:multi,
-          *attrs.map { |attr| compile(attr) },
-          [:dynamic, "::FastHaml::AttributeBuilder.instance.build!"],
-        ]
-      else
-        super
-      end
+    def on_haml_attrs(code)
+      [:dynamic, "::FastHaml::AttributeBuilder.build(#{options[:attr_quote].inspect}, #{code})"]
     end
 
     def on_html_attr(name, value)
@@ -43,18 +31,6 @@ module FastHaml
       super
     rescue Temple::FilterError
       [:multi]
-    end
-
-    def on_haml_attr(code)
-      [:code, "::FastHaml::AttributeBuilder.instance.merge!(#{code})"]
-    end
-
-    private
-
-    def has_haml_attr?(attrs)
-      attrs.any? do |html_attr|
-        html_attr[0] == :haml && html_attr[1] == :attr
-      end
     end
   end
 end

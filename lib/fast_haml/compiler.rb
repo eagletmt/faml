@@ -140,11 +140,8 @@ module FastHaml
     end
 
     def compile_element(ast)
-      temple = [:html, :tag, ast.tag_name, ast.self_closing || options[:autoclose].include?(ast.tag_name)]
-      html_attrs = [:html, :attrs]
-      temple << html_attrs
-
       if ast.old_attributes.empty?
+        html_attrs = [:html, :attrs]
         unless ast.static_class.empty?
           html_attrs << [:html, :attr, 'class', [:static, ast.static_class]]
         end
@@ -152,8 +149,11 @@ module FastHaml
           html_attrs << [:html, :attr, 'id', [:static, ast.static_id]]
         end
       else
-        html_attrs.concat(compile_old_attributes(ast.old_attributes, ast.static_id, ast.static_class))
+        html_attrs = compile_old_attributes(ast.old_attributes, ast.static_id, ast.static_class)
       end
+
+      temple = [:html, :tag, ast.tag_name, ast.self_closing || options[:autoclose].include?(ast.tag_name)]
+      temple << html_attrs
 
       if ast.oneline_child
          temple << compile(ast.oneline_child)
@@ -172,12 +172,11 @@ module FastHaml
 
     def compile_old_attributes(text, static_id, static_class)
       if attrs = try_optimize_attributes(text, static_id, static_class)
-        return attrs
+        return [:html, :attrs, *attrs]
       end
 
       # Slow version
 
-      attrs = [[:haml, :attr, text]]
       h = {}
       unless static_class.empty?
         h[:class] = static_class.split(/ +/)
@@ -185,12 +184,14 @@ module FastHaml
       unless static_id.empty?
         h[:id] = static_id
       end
-      unless h.empty?
-        t = h.inspect
-        t << ", " << text
-        text.replace(t)
-      end
-      attrs
+
+      t =
+        if h.empty?
+          text
+        else
+          "#{h.inspect}, #{text}"
+        end
+      [:haml, :attrs, t]
     end
 
     def try_optimize_attributes(text, static_id, static_class)
