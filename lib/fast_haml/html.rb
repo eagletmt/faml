@@ -2,7 +2,7 @@ require 'fast_haml/attribute_builder'
 
 module FastHaml
   class Html < Temple::HTML::Fast
-    def on_html_tag(name, self_closing, attrs, content = nil)
+    def on_haml_tag(name, self_closing, attrs, content = nil)
       name = name.to_s
       closed = self_closing && (!content || empty_exp?(content))
       result = [:multi, [:static, "<#{name}"], compile(attrs)]

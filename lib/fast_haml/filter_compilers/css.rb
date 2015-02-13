@@ -6,7 +6,7 @@ module FastHaml
       def compile(texts)
         temple = [:multi, [:static, "\n"]]
         compile_texts(temple, texts, tab_width: 2)
-        [:html, :tag, 'style', false, [:html, :attrs], temple]
+        [:haml, :tag, 'style', false, [:html, :attrs], temple]
       end
     end
 

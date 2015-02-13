@@ -152,7 +152,7 @@ module FastHaml
         html_attrs = compile_old_attributes(ast.old_attributes, ast.static_id, ast.static_class)
       end
 
-      temple = [:html, :tag, ast.tag_name, ast.self_closing || options[:autoclose].include?(ast.tag_name)]
+      temple = [:haml, :tag, ast.tag_name, ast.self_closing || options[:autoclose].include?(ast.tag_name)]
       temple << html_attrs
 
       if ast.oneline_child
