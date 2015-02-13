@@ -2,6 +2,7 @@
 require 'benchmark/ips'
 require 'haml'
 require 'fast_haml'
+require 'escape_utils/html/haml'
 
 template = ARGV[0]
 unless template
