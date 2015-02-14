@@ -156,6 +156,10 @@ bar=3) hello
 HAML
     end
 
+    it "doesn't parse extra parens" do
+      expect(render_string('%span(foo=1)(bar=3) hello')).to eq("<span foo='1'>(bar=3) hello</span>\n")
+    end
+
     it 'parses quoted value' do
       expect(render_string('%span(foo=1 bar="baz") hello')).to eq("<span bar='baz' foo='1'>hello</span>\n")
       expect(render_string("%span(foo=1 bar='baz') hello")).to eq("<span bar='baz' foo='1'>hello</span>\n")
@@ -169,6 +173,26 @@ HAML
     it 'parses escapes' do
       expect(render_string(%q|%span(foo=1 bar="ba\"z") hello|)).to eq("<span bar='ba&quot;z' foo='1'>hello</span>\n")
       expect(render_string(%q|%span(foo=1 bar='ba\'z') hello|)).to eq("<span bar='ba&#39;z' foo='1'>hello</span>\n")
+    end
+
+    it 'raises error when attributes list is unterminated' do
+      expect { render_string('%span(foo=1 bar=2') }.to raise_error(FastHaml::SyntaxError)
+    end
+
+    it 'raises error when key is not alnum' do
+      expect { render_string('%span(foo=1 3.14=3) hello') }.to raise_error(FastHaml::SyntaxError)
+    end
+
+    it 'raises error when value is missing' do
+      expect { render_string('%span(foo=1 bar=) hello') }.to raise_error(FastHaml::SyntaxError)
+    end
+
+    it 'raises error when quote is unterminated' do
+      expect { render_string('%span(foo=1 bar="baz) hello') }.to raise_error(FastHaml::SyntaxError)
+    end
+
+    it 'raises error when string interpolation is unterminated' do
+      expect { render_string('%span(foo=1 bar="ba#{1") hello') }.to raise_error(FastHaml::SyntaxError)
     end
   end
 end
