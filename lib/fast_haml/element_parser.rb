@@ -146,20 +146,14 @@ module FastHaml
       new_attributes = []
       loop do
         pre_pos = s.pos
-        while depth > 0 && s.scan_until(NEW_ATTRIBUTE_REGEX)
-          if s.matched == NEW_ATTRIBUTE_BEGIN
-            depth += 1
-          else
-            depth -= 1
-          end
-        end
+        depth = ParserUtils.balance(s, '(', ')', depth)
         if depth == 0
           t = s.string.byteslice(pre_pos ... s.pos-1)
           new_attributes.concat(parse_attribute_list(t))
           return [new_attributes, s.rest.lstrip]
         else
           if @line_parser.has_next?
-            text << @line_parser.next_line
+            text << ' ' << @line_parser.next_line
           else
             syntax_error!('Unmatched paren')
           end

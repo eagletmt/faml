@@ -148,6 +148,14 @@ HAML
 HAML
     end
 
+    it 'parses multiline attribute list' do
+      expect(render_string(<<HAML)).to eq("<span bar='3' foo='1'>hello</span>\n")
+%span(foo=1
+
+bar=3) hello
+HAML
+    end
+
     it 'parses quoted value' do
       expect(render_string('%span(foo=1 bar="baz") hello')).to eq("<span bar='baz' foo='1'>hello</span>\n")
       expect(render_string("%span(foo=1 bar='baz') hello")).to eq("<span bar='baz' foo='1'>hello</span>\n")
