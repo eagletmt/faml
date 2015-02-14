@@ -48,6 +48,14 @@ module FastHaml
         end
       end
       element.attributes = old_attributes
+      unless new_attributes.empty?
+        t = to_old_syntax(new_attributes)
+        if element.attributes.empty?
+          element.attributes = t
+        else
+          element.attributes << ", " << t
+        end
+      end
 
       m = rest.match(/\A(><|<>|[><])(.*)\z/)
       if m
@@ -128,8 +136,70 @@ module FastHaml
       end
     end
 
+    NEW_ATTRIBUTE_REGEX = /[\(\)]/o
+
     def parse_new_attributes(text)
-      raise NotImplementedError.new("HTML-style attributes is not implemented yet, sorry")
+      text = text.dup
+      s = StringScanner.new(text)
+      s.pos = 1
+      depth = 1
+      new_attributes = []
+      loop do
+        pre_pos = s.pos
+        while depth > 0 && s.scan_until(NEW_ATTRIBUTE_REGEX)
+          if s.matched == NEW_ATTRIBUTE_BEGIN
+            depth += 1
+          else
+            depth -= 1
+          end
+        end
+        if depth == 0
+          t = s.string.byteslice(pre_pos ... s.pos-1)
+          new_attributes.concat(parse_attribute_list(t))
+          return [new_attributes, s.rest.lstrip]
+        else
+          if @line_parser.has_next?
+            text << @line_parser.next_line
+          else
+            syntax_error!('Unmatched paren')
+          end
+        end
+      end
+    end
+
+    def parse_attribute_list(text)
+      s = StringScanner.new(text)
+      list = []
+      until s.eos?
+        # parse key
+        unless name = s.scan(/[-:\w]+/)
+          syntax_error!('Invalid attribute list')
+        end
+        s.skip(/\s*/)
+
+        # parse operator
+        unless s.skip(/=/)
+          list << [name, 'true']
+          next
+        end
+        s.skip(/\s*/)
+
+        # parse key
+        if quote = s.scan(/["']/)
+          raise NotImplementedError
+        else
+          unless var = s.scan(/(@@?|\$)?\w+/)
+            syntax_error!('Invalid attribute list')
+          end
+          list << [name, var]
+        end
+        s.skip(/\s*/)
+      end
+      list
+    end
+
+    def to_old_syntax(new_attributes)
+      new_attributes.map { |k, v| "#{k.inspect} => #{v}" }.join(', ')
     end
 
     def syntax_error!(message)

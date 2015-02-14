@@ -130,8 +130,22 @@ HAML
   end
 
   describe 'with HTML-style attributes' do
-    it 'is not implemented yet :-<' do
-      expect { render_string('%span(foo=1) hello') }.to raise_error(NotImplementedError)
+    it 'parses simple values' do
+      expect(render_string('%span(foo=1 bar=3) hello')).to eq("<span bar='3' foo='1'>hello</span>\n")
+    end
+
+    it 'parses variables' do
+      expect(render_string(<<HAML)).to eq("<span bar='3' foo='xxx'>hello</span>\n")
+- foo = 'xxx'
+%span(foo=foo bar=3) hello
+HAML
+    end
+
+    it 'parses attributes with old syntax' do
+      expect(render_string(<<HAML)).to eq("<span bar='3' foo='foo'>hello</span>\n")
+- foo = 'foo'
+%span(foo=foo){bar: 3} hello
+HAML
     end
   end
 end
