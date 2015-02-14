@@ -165,10 +165,15 @@ HAML
       expect(render_string("%span(foo=1 bar='baz') hello")).to eq("<span bar='baz' foo='1'>hello</span>\n")
     end
 
+    it 'parses key-only attribute' do
+      expect(render_string('%span(foo bar=1) hello')).to eq("<span bar='1' foo>hello</span>\n")
+    end
+
     it 'renders string interpolation' do
       expect(render_string(%q|%span(foo=1 bar="baz#{1 + 2}") hello|)).to eq("<span bar='baz3' foo='1'>hello</span>\n")
       expect(render_string(%q|%span(foo=1 bar='baz#{1 + 2}') hello|)).to eq("<span bar='baz3' foo='1'>hello</span>\n")
     end
+
 
     it 'parses escapes' do
       expect(render_string(%q|%span(foo=1 bar="ba\"z") hello|)).to eq("<span bar='ba&quot;z' foo='1'>hello</span>\n")

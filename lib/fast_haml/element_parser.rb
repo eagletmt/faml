@@ -13,8 +13,6 @@ module FastHaml
     end
 
     ELEMENT_REGEXP = /\A%([-:\w]+)([-:\w.#]*)(.+)?\z/o
-    OLD_ATTRIBUTE_BEGIN = '{'
-    NEW_ATTRIBUTE_BEGIN = '('
 
     def parse
       m = @text.match(ELEMENT_REGEXP)
@@ -26,36 +24,8 @@ module FastHaml
       element.tag_name = m[1]
       element.static_class, element.static_id = parse_class_and_id(m[2])
       rest = m[3] || ''
-      old_attributes = ''
-      new_attributes = ''
 
-      rest = rest.lstrip
-
-      loop do
-        case rest[0]
-        when OLD_ATTRIBUTE_BEGIN
-          unless old_attributes.empty?
-            break
-          end
-          old_attributes, rest = parse_old_attributes(rest)
-          when NEW_ATTRIBUTE_BEGIN
-            unless new_attributes.empty?
-              break
-            end
-            new_attributes, rest = parse_new_attributes(rest)
-        else
-          break
-        end
-      end
-      element.attributes = old_attributes
-      unless new_attributes.empty?
-        t = to_old_syntax(new_attributes)
-        if element.attributes.empty?
-          element.attributes = t
-        else
-          element.attributes << ", " << t
-        end
-      end
+      element.attributes, rest = parse_attributes(rest.lstrip)
 
       m = rest.match(/\A(><|<>|[><])(.*)\z/)
       if m
@@ -99,8 +69,6 @@ module FastHaml
 
     private
 
-    OLD_ATTRIBUTE_REGEX = /[{}]/o
-
     def parse_class_and_id(class_and_id)
       classes = []
       id = ''
@@ -114,6 +82,42 @@ module FastHaml
       end
 
       [classes.join(' '), id]
+    end
+
+    OLD_ATTRIBUTE_BEGIN = '{'
+    NEW_ATTRIBUTE_BEGIN = '('
+
+    def parse_attributes(rest)
+      old_attributes = ''
+      new_attributes = ''
+
+      loop do
+        case rest[0]
+        when OLD_ATTRIBUTE_BEGIN
+          unless old_attributes.empty?
+            break
+          end
+          old_attributes, rest = parse_old_attributes(rest)
+        when NEW_ATTRIBUTE_BEGIN
+          unless new_attributes.empty?
+            break
+          end
+          new_attributes, rest = parse_new_attributes(rest)
+        else
+          break
+        end
+      end
+
+      attributes = old_attributes
+      unless new_attributes.empty?
+        t = to_old_syntax(new_attributes)
+        if attributes.empty?
+          attributes = t
+        else
+          attributes << ", " << t
+        end
+      end
+      [attributes, rest]
     end
 
     def parse_old_attributes(text)
@@ -136,8 +140,6 @@ module FastHaml
       end
     end
 
-    NEW_ATTRIBUTE_REGEX = /[\(\)]/o
-
     def parse_new_attributes(text)
       text = text.dup
       s = StringScanner.new(text)
@@ -149,7 +151,7 @@ module FastHaml
         depth = ParserUtils.balance(s, '(', ')', depth)
         if depth == 0
           t = s.string.byteslice(pre_pos ... s.pos-1)
-          new_attributes.concat(parse_attribute_list(t))
+          new_attributes.concat(parse_new_attribute_list(t))
           return [new_attributes, s.rest.lstrip]
         else
           if @line_parser.has_next?
@@ -161,53 +163,75 @@ module FastHaml
       end
     end
 
-    def parse_attribute_list(text)
+    def parse_new_attribute_list(text)
       s = StringScanner.new(text)
       list = []
       until s.eos?
-        # parse key
-        unless name = s.scan(/[-:\w]+/)
-          syntax_error!('Invalid attribute list')
-        end
+        name = scan_key(s)
         s.skip(/\s*/)
 
-        # parse operator
-        unless s.skip(/=/)
-          list << [name, 'true']
-          next
-        end
-        s.skip(/\s*/)
-
-        # parse key
-        if quote = s.scan(/["']/)
-          re = /((?:\\.|\#(?!\{)|[^#{quote}\\#])*)(#{quote}|#\{)/
-          pos = s.pos
-          loop do
-            unless s.scan(re)
-              syntax_error!('Invalid attribute list')
-            end
-            if s[2] == quote
-              break
-            end
-            depth = ParserUtils.balance(s, '{', '}')
-            if depth != 0
-              syntax_error!('Invalid attribute list')
-            end
-          end
-          str = s.string.byteslice(pos-1 .. s.pos-1)
-          # Even if the quote is single, string interpolation is performed in Haml.
-          str[0] = '"'
-          str[-1] = '"'
-          list << [name, str]
+        if scan_operator(s)
+          s.skip(/\s*/)
+          value = scan_value(s)
         else
-          unless var = s.scan(/(@@?|\$)?\w+/)
-            syntax_error!('Invalid attribute list')
-          end
-          list << [name, var]
+          value = 'true'
         end
         s.skip(/\s*/)
+
+        list << [name, value]
       end
       list
+    end
+
+    def scan_key(scanner)
+      scanner.scan(/[-:\w]+/).tap do |name|
+        unless name
+          syntax_error!('Invalid attribute list (missing attributename)')
+        end
+      end
+    end
+
+    def scan_operator(scanner)
+      scanner.skip(/=/)
+    end
+
+    def scan_value(scanner)
+      if quote = scanner.scan(/["']/)
+        scan_quoted_value(scanner, quote)
+      else
+        scan_variable_value(scanner)
+      end
+    end
+
+    def scan_quoted_value(scanner, quote)
+      re = /((?:\\.|\#(?!\{)|[^#{quote}\\#])*)(#{quote}|#\{)/
+      pos = scanner.pos
+      loop do
+        unless scanner.scan(re)
+          syntax_error!('Invalid attribute list (mismatched quotation)')
+        end
+        if scanner[2] == quote
+          break
+        end
+        depth = ParserUtils.balance(scanner, '{', '}')
+        if depth != 0
+          syntax_error!('Invalid attribute list (mismatched interpolation)')
+        end
+      end
+      str = scanner.string.byteslice(pos-1 .. scanner.pos-1)
+
+      # Even if the quote is single, string interpolation is performed in Haml.
+      str[0] = '"'
+      str[-1] = '"'
+      str
+    end
+
+    def scan_variable_value(scanner)
+      scanner.scan(/(@@?|\$)?\w+/).tap do |var|
+        unless var
+          syntax_error!('Invalid attribute list (invalid variable name)')
+        end
+      end
     end
 
     def to_old_syntax(new_attributes)
