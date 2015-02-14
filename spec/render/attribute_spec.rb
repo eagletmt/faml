@@ -147,5 +147,20 @@ HAML
 %span(foo=foo){bar: 3} hello
 HAML
     end
+
+    it 'parses quoted value' do
+      expect(render_string('%span(foo=1 bar="baz") hello')).to eq("<span bar='baz' foo='1'>hello</span>\n")
+      expect(render_string("%span(foo=1 bar='baz') hello")).to eq("<span bar='baz' foo='1'>hello</span>\n")
+    end
+
+    it 'renders string interpolation' do
+      expect(render_string(%q|%span(foo=1 bar="baz#{1 + 2}") hello|)).to eq("<span bar='baz3' foo='1'>hello</span>\n")
+      expect(render_string(%q|%span(foo=1 bar='baz#{1 + 2}') hello|)).to eq("<span bar='baz3' foo='1'>hello</span>\n")
+    end
+
+    it 'parses escapes' do
+      expect(render_string(%q|%span(foo=1 bar="ba\"z") hello|)).to eq("<span bar='ba&quot;z' foo='1'>hello</span>\n")
+      expect(render_string(%q|%span(foo=1 bar='ba\'z') hello|)).to eq("<span bar='ba&#39;z' foo='1'>hello</span>\n")
+    end
   end
 end

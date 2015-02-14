@@ -186,7 +186,25 @@ module FastHaml
 
         # parse key
         if quote = s.scan(/["']/)
-          raise NotImplementedError
+          re = /((?:\\.|\#(?!\{)|[^#{quote}\\#])*)(#{quote}|#\{)/
+          pos = s.pos
+          loop do
+            unless s.scan(re)
+              syntax_error!('Invalid attribute list')
+            end
+            if s[2] == quote
+              break
+            end
+            depth = ParserUtils.balance(s, '{', '}')
+            if depth != 0
+              syntax_error!('Invalid attribute list')
+            end
+          end
+          str = s.string.byteslice(pos-1 .. s.pos-1)
+          # Even if the quote is single, string interpolation is performed in Haml.
+          str[0] = '"'
+          str[-1] = '"'
+          list << [name, str]
         else
           unless var = s.scan(/(@@?|\$)?\w+/)
             syntax_error!('Invalid attribute list')
