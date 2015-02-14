@@ -20,7 +20,7 @@ module FastHaml
 
     private
 
-    INTERPOLATION_BEGIN = /#[\{$@]/o
+    INTERPOLATION_BEGIN = /(\\*)(#[\{$@])/o
 
     def contains_interpolation?(text)
       INTERPOLATION_BEGIN === text
@@ -31,20 +31,22 @@ module FastHaml
       temple = [:multi]
       pos = s.pos
       while s.scan_until(INTERPOLATION_BEGIN)
+        escapes = s[1].size
         pre = s.string.byteslice(pos ... (s.pos - s.matched.size))
-        if pre[-1] == '\\'
-          # escaped
-          temple << [:static, s.string.byteslice(pos ... (s.pos - s.matched.size - 1))] << [:static, s.matched]
-        else
-          temple << [:static, pre]
-          if s.matched == '#{'
+        temple << [:static, pre] << [:static, "\\" * (escapes/2)]
+        if escapes % 2 == 0
+          # perform interpolation
+          if s[2] == '#{'
             temple << [:escape, @escape_html, [:dynamic, find_close_brace(s)]]
           else
-            var = s.matched[-1]
+            var = s[2][-1]
             s.scan(/\w+/)
             var << s.matched
             temple << [:escape, @escape_html, [:dynamic, var]]
           end
+        else
+          # escaped
+          temple << [:static, s[2]]
         end
         pos = s.pos
       end
