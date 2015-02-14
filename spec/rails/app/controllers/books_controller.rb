@@ -3,6 +3,6 @@ class BooksController < ApplicationController
   end
 
   def with_variables
-    @book = Book.new(title: params[:title])
+    @book = Book.new(params.permit(:title))
   end
 end

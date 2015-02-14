@@ -1,11 +1,7 @@
 class Book
-  attr_accessor :title
+  include ActiveModel::Model
 
-  def initialize(params = {})
-    params.each do |attr, value|
-      public_send("#{attr}=", value)
-    end
-  end
+  attr_accessor :title
 
   def to_s
     "<span>#{title}</span>".html_safe
