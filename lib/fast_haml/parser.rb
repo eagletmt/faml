@@ -89,11 +89,7 @@ module FastHaml
         parse_silent_script(text)
       when PRESERVE_PREFIX
         # XXX: preserve has no meaning in "ugly" mode?
-        if text[1] == '='
-          parse_script(text)
-        else
-          parse_plain(text)
-        end
+        parse_script(text)
       when DIV_ID_PREFIX, DIV_CLASS_PREFIX
         if text.start_with?('#{')
           parse_plain(text)
@@ -149,7 +145,7 @@ module FastHaml
     end
 
     def parse_script(text)
-      m = text.match(/\A([!&])?[=~] *(.*)\z/)
+      m = text.match(/\A([!&~])?[=~] *(.*)\z/)
       script = m[2]
       if script.empty?
         syntax_error!("No Ruby code to evaluate")
