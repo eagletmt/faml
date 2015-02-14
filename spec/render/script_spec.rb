@@ -84,13 +84,12 @@ HAML
   context 'without Ruby code' do
     it 'raises error' do
       expect { render_string('%span=') }.to raise_error(FastHaml::SyntaxError)
-    end
-
-    it 'raises error' do
       expect { render_string(<<HAML) }.to raise_error(FastHaml::SyntaxError)
 %span
   =
 HAML
+      expect { render_string('%span!=') }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string('%span&=') }.to raise_error(FastHaml::SyntaxError)
     end
   end
 end
