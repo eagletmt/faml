@@ -26,8 +26,7 @@ module FastHaml
       :tag_name,
       :static_class,
       :static_id,
-      :old_attributes,
-      :new_attributes,
+      :attributes,
       :oneline_child,
       :self_closing,
       :nuke_inner_whitespace,
@@ -39,8 +38,7 @@ module FastHaml
         super
         self.static_class ||= ''
         self.static_id ||= ''
-        self.old_attributes ||= ''
-        self.new_attributes ||= ''
+        self.attributes ||= ''
         self.self_closing ||= false
         self.nuke_inner_whitespace ||= false
         self.nuke_outer_whitespace ||= false

@@ -26,25 +26,28 @@ module FastHaml
       element.tag_name = m[1]
       element.static_class, element.static_id = parse_class_and_id(m[2])
       rest = m[3] || ''
+      old_attributes = ''
+      new_attributes = ''
 
       rest = rest.lstrip
 
       loop do
         case rest[0]
         when OLD_ATTRIBUTE_BEGIN
-          unless element.old_attributes.empty?
+          unless old_attributes.empty?
             break
           end
-          element.old_attributes, rest = parse_old_attributes(rest)
+          old_attributes, rest = parse_old_attributes(rest)
           when NEW_ATTRIBUTE_BEGIN
-            unless element.new_attributes.empty?
+            unless new_attributes.empty?
               break
             end
-            element.new_attributes, rest = parse_new_attributes(rest)
+            new_attributes, rest = parse_new_attributes(rest)
         else
           break
         end
       end
+      element.attributes = old_attributes
 
       m = rest.match(/\A(><|<>|[><])(.*)\z/)
       if m

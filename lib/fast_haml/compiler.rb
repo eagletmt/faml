@@ -140,7 +140,7 @@ module FastHaml
     end
 
     def compile_element(ast)
-      if ast.old_attributes.empty?
+      if ast.attributes.empty?
         html_attrs = [:html, :attrs]
         unless ast.static_class.empty?
           html_attrs << [:html, :attr, 'class', [:static, ast.static_class]]
@@ -149,7 +149,7 @@ module FastHaml
           html_attrs << [:html, :attr, 'id', [:static, ast.static_id]]
         end
       else
-        html_attrs = compile_old_attributes(ast.old_attributes, ast.static_id, ast.static_class)
+        html_attrs = compile_attributes(ast.attributes, ast.static_id, ast.static_class)
       end
 
       temple = [:haml, :tag, ast.tag_name, ast.self_closing || options[:autoclose].include?(ast.tag_name)]
@@ -170,7 +170,7 @@ module FastHaml
       temple
     end
 
-    def compile_old_attributes(text, static_id, static_class)
+    def compile_attributes(text, static_id, static_class)
       if attrs = try_optimize_attributes(text, static_id, static_class)
         return [:html, :attrs, *attrs]
       end
