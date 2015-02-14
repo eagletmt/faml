@@ -6,24 +6,7 @@ module FastHaml
         merge(attributes, *hashes)
 
         attributes.keys.sort.map do |k|
-          v = attributes[k]
-          if k == 'class'
-            if v.empty?
-              ''
-            else
-              put_attr(attr_quote, 'class', v.map(&:to_s).sort.join(' '))
-            end
-          elsif k == 'id'
-            if v.empty?
-              ''
-            else
-              put_attr(attr_quote, 'id', v.map(&:to_s).join('_'))
-            end
-          elsif v == true
-            " #{k}"
-          else
-            put_attr(attr_quote, k, v)
-          end
+          build_attribute(attr_quote, k, attributes[k])
         end.join
       end
 
@@ -31,20 +14,26 @@ module FastHaml
 
       def merge(attributes, *hashes)
         hashes.each do |h|
-          h2 = {}
-          h.keys.each do |k|
-            h2[k.to_s] = h[k]
-          end
-
-          if h2.has_key?('class')
-            attributes['class'].concat(Array(h2.delete('class')))
-          end
-          if h2.has_key?('id')
-            attributes['id'].concat(Array(h2.delete('id')))
-          end
-          attributes.merge!(normalize(h2))
+          h = stringify_keys(h)
+          concat_array_attribute!(attributes, h, 'class')
+          concat_array_attribute!(attributes, h, 'id')
+          attributes.merge!(normalize(h))
         end
         nil
+      end
+
+      def stringify_keys(hash)
+        {}.tap do |h|
+          hash.keys.each do |k|
+            h[k.to_s] = hash[k]
+          end
+        end
+      end
+
+      def concat_array_attribute!(attributes, hash, key)
+        if hash.has_key?(key)
+          attributes[key].concat(Array(hash.delete(key)))
+        end
       end
 
       def normalize(attrs)
@@ -66,8 +55,32 @@ module FastHaml
         end
       end
 
-      def put_attr(attr_quote, key, val)
-        " #{key}=#{attr_quote}#{Temple::Utils.escape_html(val)}#{attr_quote}"
+      def build_attribute(attr_quote, key, value)
+        if key == 'class'
+          build_array_attribute(attr_quote, 'class', value) do |values|
+            values.sort.join(' ')
+          end
+        elsif key == 'id'
+          build_array_attribute(attr_quote, 'id', value) do |values|
+            values.join('_')
+          end
+        elsif value == true
+          " #{key}"
+        else
+          put_attribute(attr_quote, key, value)
+        end
+      end
+
+      def build_array_attribute(attr_quote, key, value)
+        if value.empty?
+          ''
+        else
+          put_attribute(attr_quote, key, yield(value.map(&:to_s)))
+        end
+      end
+
+      def put_attribute(attr_quote, key, value)
+        " #{key}=#{attr_quote}#{Temple::Utils.escape_html(value)}#{attr_quote}"
       end
     end
   end
