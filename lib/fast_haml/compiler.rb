@@ -140,20 +140,12 @@ module FastHaml
     end
 
     def compile_element(ast)
-      if ast.attributes.empty?
-        html_attrs = [:html, :attrs]
-        unless ast.static_class.empty?
-          html_attrs << [:html, :attr, 'class', [:static, ast.static_class]]
-        end
-        unless ast.static_id.empty?
-          html_attrs << [:html, :attr, 'id', [:static, ast.static_id]]
-        end
-      else
-        html_attrs = compile_attributes(ast.attributes, ast.static_id, ast.static_class)
-      end
-
-      temple = [:haml, :tag, ast.tag_name, ast.self_closing || options[:autoclose].include?(ast.tag_name)]
-      temple << html_attrs
+      temple = [
+        :haml, :tag,
+        ast.tag_name,
+        ast.self_closing || options[:autoclose].include?(ast.tag_name),
+        compile_attributes(ast.attributes, ast.static_id, ast.static_class),
+      ]
 
       if ast.oneline_child
          temple << compile(ast.oneline_child)
@@ -171,6 +163,10 @@ module FastHaml
     end
 
     def compile_attributes(text, static_id, static_class)
+      if text.empty?
+        return compile_static_id_and_class(static_id, static_class)
+      end
+
       if attrs = try_optimize_attributes(text, static_id, static_class)
         return [:html, :attrs, *attrs]
       end
@@ -194,12 +190,43 @@ module FastHaml
       [:haml, :attrs, t]
     end
 
+    def compile_static_id_and_class(static_id, static_class)
+      [:html, :attrs].tap do |html_attrs|
+        unless static_class.empty?
+          html_attrs << [:html, :attr, 'class', [:static, static_class]]
+        end
+        unless static_id.empty?
+          html_attrs << [:html, :attr, 'id', [:static, static_id]]
+        end
+      end
+    end
+
     def try_optimize_attributes(text, static_id, static_class)
       parser = StaticHashParser.new
       unless parser.parse("{#{text}}")
         return nil
       end
 
+      static_attributes, dynamic_attributes = build_optimized_attributes(parser, static_id, static_class)
+      if static_attributes.nil?
+        return nil
+      end
+
+      if dynamic_attributes.has_key?('data')
+        # XXX: Quit optimization...
+        return nil
+      end
+
+      (static_attributes.keys + dynamic_attributes.keys).sort.flat_map do |k|
+        if static_attributes.has_key?(k)
+          compile_static_attribute(k, static_attributes[k])
+        else
+          compile_dynamic_attribute(k, dynamic_attributes[k])
+        end
+      end
+    end
+
+    def build_optimized_attributes(parser, static_id, static_class)
       static_attributes = {}
       parser.static_attributes.each do |k, v|
         static_attributes[k.to_s] = v;
@@ -217,38 +244,31 @@ module FastHaml
         if static_attributes.has_key?(k)
           if StaticHashParser::SPECIAL_ATTRIBUTES.include?(k)
             # XXX: Quit optimization
-            return nil
+            return [nil, nil]
           end
         end
         dynamic_attributes[k] = v
       end
 
-      if dynamic_attributes.has_key?('data')
-        # XXX: Quit optimization...
-        return nil
-      end
+      [static_attributes, dynamic_attributes]
+    end
 
-      attrs = []
-      keys = static_attributes.keys + dynamic_attributes.keys
-      keys.sort.each do |k|
-        if static_attributes.has_key?(k)
-          v = static_attributes[k]
-          if v == true
-            attrs << [:html, :attr, k, [:multi]]
-          elsif v.is_a?(Hash) && k == 'data'
-            data = AttributeNormalizer.normalize_data(v)
-            data.keys.sort.each do |k2|
-              attrs << [:html, :attr, "data-#{k2}", [:static, Temple::Utils.escape_html(data[k2])]]
-            end
-          else
-            attrs << [:html, :attr, k, [:static, Temple::Utils.escape_html(v)]]
-          end
-        else
-          v = dynamic_attributes[k]
-          attrs << [:html, :attr, k, [:escape, true, [:dynamic, v]]]
+    def compile_static_attribute(key, value)
+      case
+      when value == true
+        [[:html, :attr, key, [:multi]]]
+      when value.is_a?(Hash) && key == 'data'
+        data = AttributeNormalizer.normalize_data(value)
+        data.keys.sort.map do |k|
+          [:html, :attr, "data-#{k}", [:static, Temple::Utils.escape_html(data[k])]]
         end
+      else
+        [[:html, :attr, key, [:static, Temple::Utils.escape_html(value)]]]
       end
-      attrs
+    end
+
+    def compile_dynamic_attribute(key, value)
+      [[:html, :attr, key, [:escape, true, [:dynamic, value]]]]
     end
 
     def compile_script(ast)
