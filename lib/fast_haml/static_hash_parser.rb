@@ -80,24 +80,33 @@ module FastHaml
           @dynamic_attributes[key_static] = node.location.expression.source
         end
       when :hash
-        parser = self.class.new
-        if parser.walk(node)
-          unless parser.static_attributes.empty?
-            @static_attributes[key_static] = parser.static_attributes
-          end
-          unless parser.dynamic_attributes.empty?
-            expr = parser.dynamic_attributes.map do |k, v|
-              "#{k.inspect} => #{v}"
-            end.join(', ')
-            @dynamic_attributes[key_static] = "{#{expr}}"
-          end
-        else
-          # TODO: Is it really impossible to optimize?
-          throw FAILURE_TAG
-        end
+        try_static_hash_value(key_static, node)
         # TODO: Add array case
       else
         throw FAILURE_TAG
+      end
+    end
+
+    def try_static_hash_value(key_static, node)
+      parser = self.class.new
+      if parser.walk(node)
+        merge_attributes(key_static, parser)
+      else
+        # TODO: Is it really impossible to optimize?
+        throw FAILURE_TAG
+      end
+    end
+
+    def merge_attributes(key_static, parser)
+      unless parser.static_attributes.empty?
+        @static_attributes[key_static] = parser.static_attributes
+      end
+
+      unless parser.dynamic_attributes.empty?
+        expr = parser.dynamic_attributes.map do |k, v|
+          "#{k.inspect} => #{v}"
+        end.join(', ')
+        @dynamic_attributes[key_static] = "{#{expr}}"
       end
     end
   end
