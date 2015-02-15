@@ -5,7 +5,8 @@ module FastHaml
     class Plain < Base
       def compile(texts)
         temple = [:multi]
-        compile_texts(temple, texts)
+        compile_texts(temple, texts[0 .. -2])
+        temple << text_compiler.compile(texts[-1])
         temple
       end
     end

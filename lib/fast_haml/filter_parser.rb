@@ -29,7 +29,7 @@ module FastHaml
           @indent_level = nil
           ast = @ast
           @ast = nil
-          return ast
+          return strip_last_empty_lines(ast)
         end
       else
         if indent_level > @indent_tracker.current_level
@@ -48,7 +48,18 @@ module FastHaml
     end
 
     def finish
-      @ast
+      strip_last_empty_lines(@ast)
+    end
+
+    private
+
+    def strip_last_empty_lines(ast)
+      if ast
+        while ast.texts.last && ast.texts.last.empty?
+          ast.texts.pop
+        end
+      end
+      ast
     end
   end
 end
