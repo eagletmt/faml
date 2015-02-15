@@ -11,10 +11,12 @@ module FastHaml
       area base basefont br col command embed frame hr img input isindex keygen
       link menuitem meta param source track wbr
     ]
+    DEFAULT_PRESERVE_TAGS = %w[pre textarea code]
 
     define_options(
       autoclose: DEFAULT_AUTO_CLOSE_TAGS,
       format: :html,
+      preserve: DEFAULT_PRESERVE_TAGS,
     )
 
     def initialize(*)
@@ -82,7 +84,7 @@ module FastHaml
     end
 
     def need_newline?(parent, child)
-      if parent.is_a?(Ast::Element) && parent.nuke_inner_whitespace && parent.children.last.equal?(child)
+      if parent.is_a?(Ast::Element) && nuke_inner_whitespace?(parent) && parent.children.last.equal?(child)
         return false
       end
       case child
@@ -143,7 +145,7 @@ module FastHaml
       temple = [
         :haml, :tag,
         ast.tag_name,
-        ast.self_closing || options[:autoclose].include?(ast.tag_name),
+        self_closing?(ast),
         compile_attributes(ast.attributes, ast.static_id, ast.static_class),
       ]
 
@@ -151,7 +153,7 @@ module FastHaml
          temple << compile(ast.oneline_child)
       elsif !ast.children.empty?
         children = [:multi]
-        unless ast.nuke_inner_whitespace
+        unless nuke_inner_whitespace?(ast)
           children << [:static, "\n"]
         end
         children << [:newline]
@@ -160,6 +162,14 @@ module FastHaml
       end
 
       temple
+    end
+
+    def self_closing?(ast)
+      ast.self_closing || options[:autoclose].include?(ast.tag_name)
+    end
+
+    def nuke_inner_whitespace?(ast)
+      ast.nuke_inner_whitespace || options[:preserve].include?(ast.tag_name)
     end
 
     def compile_attributes(text, static_id, static_class)

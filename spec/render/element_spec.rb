@@ -122,6 +122,14 @@ HAML
 HAML
   end
 
+  it 'renders pre tag as nuke-inner-whitespace by default' do
+    expect(render_string(<<HAML)).to eq("<pre>hello\nworld</pre>\n")
+%pre
+  hello
+  world
+HAML
+  end
+
   it 'parses nuke-outer-whitespace (>)' do
     expect(render_string(<<HAML)).to eq("<img><img><img>\n")
 %img
