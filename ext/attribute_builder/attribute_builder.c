@@ -1,4 +1,12 @@
 #include <ruby.h>
+#include <ruby/version.h>
+
+#if (RUBY_API_VERSION_MAJOR > 2) || (RUBY_API_VERSION_MAJOR == 2 && RUBY_API_VERSION_MINOR >= 1)
+/* define nothing */
+#else
+# define RARRAY_AREF(a, i) RARRAY_PTR(a)[i]
+# define rb_ary_new_capa rb_ary_new2
+#endif
 
 VALUE rb_mAttributeBuilder;
 static ID id_keys, id_sort_bang, id_merge_bang, id_temple, id_utils, id_escape_html, id_gsub, id_to_s;
