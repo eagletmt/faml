@@ -208,9 +208,7 @@ m_build(int argc, VALUE *argv, VALUE self)
   VALUE attr_quote, attributes, keys, buf;
   long len, i;
 
-  if (argc == 0) {
-    rb_raise(rb_eArgError, "wrong number of arguments (0 for 1+)");
-  }
+  rb_check_arity(argc, 1, UNLIMITED_ARGUMENTS);
   attr_quote = argv[0];
   attributes = rb_hash_new();
   rb_hash_aset(attributes, rb_str_new_cstr("id"), rb_ary_new());
