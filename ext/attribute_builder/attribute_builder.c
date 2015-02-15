@@ -22,7 +22,7 @@ concat_array_attribute(VALUE attributes, VALUE hash, VALUE key)
     VALUE ary;
 
     v = rb_Array(v);
-    ary = rb_hash_aref(attributes, key);
+    ary = rb_hash_lookup(attributes, key);
     Check_Type(ary, T_ARRAY);
     rb_ary_concat(ary, v);
   }
@@ -221,7 +221,7 @@ m_build(int argc, VALUE *argv, VALUE self)
   buf = rb_ary_new_capa(len);
   for (i = 0; i < len; i++) {
     VALUE k = RARRAY_AREF(keys, i);
-    rb_ary_push(buf, build_attribute(attr_quote, k, rb_hash_aref(attributes, k)));
+    rb_ary_push(buf, build_attribute(attr_quote, k, rb_hash_lookup(attributes, k)));
   }
 
   return rb_ary_join(buf, Qnil);
