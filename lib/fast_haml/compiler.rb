@@ -1,6 +1,5 @@
 require 'temple'
 require 'fast_haml/ast'
-require 'fast_haml/attribute_normalizer'
 require 'fast_haml/filter_compilers'
 require 'fast_haml/static_hash_parser'
 require 'fast_haml/text_compiler'
@@ -268,7 +267,7 @@ module FastHaml
       when value == true
         [[:haml, :attr, key, [:multi]]]
       when value.is_a?(Hash) && key == 'data'
-        data = AttributeNormalizer.normalize_data(value)
+        data = AttributeBuilder.normalize_data(value)
         data.keys.sort.map do |k|
           [:haml, :attr, "data-#{k}", [:static, Temple::Utils.escape_html(data[k])]]
         end

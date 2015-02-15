@@ -10,6 +10,20 @@ module FastHaml
         end.join
       end
 
+      def normalize_data(data)
+        {}.tap do |h|
+          data.each do |k1, v1|
+            if v1.is_a?(Hash)
+              normalize_data(v1).each do |k2, v2|
+                h["#{k1.to_s.gsub('_', '-')}-#{k2}"] = v2
+              end
+            else
+              h[k1.to_s.gsub('_', '-')] = v1
+            end
+          end
+        end
+      end
+
       private
 
       def merge(attributes, *hashes)
@@ -40,7 +54,7 @@ module FastHaml
         {}.tap do |h|
           attrs.each do |k, v|
             if v.is_a?(Hash) && k == 'data'
-              data = AttributeNormalizer.normalize_data(v)
+              data = normalize_data(v)
               data.keys.sort.each do |k2|
                 h["data-#{k2}"] = data[k2]
               end
