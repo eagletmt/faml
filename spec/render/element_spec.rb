@@ -131,9 +131,9 @@ HAML
   end
 
   it 'parses nuke-outer-whitespace (>)' do
-    expect(render_string(<<HAML)).to eq("<img><img><img>\n")
+    expect(render_string(<<HAML)).to eq("<img><span>hello</span><img>\n")
 %img
-%img>
+%span> hello
 %img
 HAML
   end

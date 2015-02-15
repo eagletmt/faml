@@ -248,6 +248,7 @@ module FastHaml
           script += RubyMultiline.read(@line_parser, script)
           Ast::Script.new([], script, rest[0] == '&')
         else
+          rest = rest.lstrip
           if rest.empty?
             nil
           else
