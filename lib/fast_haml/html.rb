@@ -16,6 +16,21 @@ module FastHaml
       [:dynamic, "::FastHaml::AttributeBuilder.build(#{options[:attr_quote].inspect}, #{code})"]
     end
 
+    def on_haml_attr(name, value)
+      if empty_exp?(value)
+        if @format == :html
+          [:static, " #{name}"]
+        else
+          [:static, " #{name}=#{options[:attr_quote]}#{name}#{options[:attr_quote]}"]
+        end
+      else
+        [:multi,
+          [:static, " #{name}=#{options[:attr_quote]}"],
+          compile(value),
+          [:static, options[:attr_quote]]]
+      end
+    end
+
     def on_haml_doctype(type)
       compile([:html, :doctype, type])
     rescue Temple::FilterError

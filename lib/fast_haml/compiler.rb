@@ -203,10 +203,10 @@ module FastHaml
     def compile_static_id_and_class(static_id, static_class)
       [:html, :attrs].tap do |html_attrs|
         unless static_class.empty?
-          html_attrs << [:html, :attr, 'class', [:static, static_class]]
+          html_attrs << [:haml, :attr, 'class', [:static, static_class]]
         end
         unless static_id.empty?
-          html_attrs << [:html, :attr, 'id', [:static, static_id]]
+          html_attrs << [:haml, :attr, 'id', [:static, static_id]]
         end
       end
     end
@@ -266,19 +266,19 @@ module FastHaml
     def compile_static_attribute(key, value)
       case
       when value == true
-        [[:html, :attr, key, [:multi]]]
+        [[:haml, :attr, key, [:multi]]]
       when value.is_a?(Hash) && key == 'data'
         data = AttributeNormalizer.normalize_data(value)
         data.keys.sort.map do |k|
-          [:html, :attr, "data-#{k}", [:static, Temple::Utils.escape_html(data[k])]]
+          [:haml, :attr, "data-#{k}", [:static, Temple::Utils.escape_html(data[k])]]
         end
       else
-        [[:html, :attr, key, [:static, Temple::Utils.escape_html(value)]]]
+        [[:haml, :attr, key, [:static, Temple::Utils.escape_html(value)]]]
       end
     end
 
     def compile_dynamic_attribute(key, value)
-      [[:html, :attr, key, [:escape, true, [:dynamic, value]]]]
+      [[:haml, :attr, key, [:escape, true, [:dynamic, value]]]]
     end
 
     def compile_script(ast)

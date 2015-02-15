@@ -42,6 +42,12 @@ HAML
     expect(render_string(%q|%span{foo: true, bar: 1} hello|)).to eq(%Q{<span bar='1' foo>hello</span>\n})
   end
 
+  context 'with xhtml format' do
+    it 'renders name="name" if value is true' do
+      expect(render_string(%q|%span{foo: true, bar: 1} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='foo'>hello</span>\n})
+    end
+  end
+
   it 'renders nested attributes' do
     expect(render_string(%q|%span{foo: {bar: 1+2}} hello|)).to eq(%Q|<span foo='{:bar=&gt;3}'>hello</span>\n|)
   end
