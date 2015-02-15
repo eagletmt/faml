@@ -4,7 +4,7 @@ module FastHaml
   module FilterCompilers
     class Ruby < Base
       def compile(texts)
-        [:multi, [:code, texts.join("\n")], [:newline]]
+        [:multi, [:code, strip_last_empty_lines(texts).join("\n")], [:newline]]
       end
     end
 

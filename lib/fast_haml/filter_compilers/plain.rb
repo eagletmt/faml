@@ -5,6 +5,7 @@ module FastHaml
     class Plain < Base
       def compile(texts)
         temple = [:multi]
+        texts = strip_last_empty_lines(texts)
         compile_texts(temple, texts[0 .. -2])
         temple << text_compiler.compile(texts[-1])
         temple

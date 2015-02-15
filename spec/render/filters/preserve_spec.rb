@@ -12,4 +12,14 @@ RSpec.describe 'Preserve filter rendering', type: :render do
 %span end
 HAML
   end
+
+  it 'preserves last empty lines' do
+    expect(render_string(<<HAML)).to eq("hello&#x000A;&#x000A;\n<p></p>\n")
+:preserve
+  hello
+
+
+%p
+HAML
+  end
 end

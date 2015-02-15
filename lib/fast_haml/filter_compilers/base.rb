@@ -16,6 +16,14 @@ module FastHaml
       def text_compiler
         @text_compiler ||= TextCompiler.new(escape_html: false)
       end
+
+      def strip_last_empty_lines(texts)
+        texts = texts.dup
+        while texts.last && texts.last.empty?
+          texts.pop
+        end
+        texts
+      end
     end
   end
 end

@@ -5,7 +5,7 @@ module FastHaml
     class Cdata < Base
       def compile(texts)
         temple = [:multi, [:static, "<![CDATA[\n"]]
-        compile_texts(temple, texts, tab_width: 4)
+        compile_texts(temple, strip_last_empty_lines(texts), tab_width: 4)
         temple << [:static, "]]>"]
       end
     end
