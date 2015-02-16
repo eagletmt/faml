@@ -192,7 +192,7 @@ build_attribute(VALUE attr_quote, VALUE key, VALUE value)
       }
       return put_attribute(attr_quote, key, rb_ary_join(ary, rb_str_new_cstr("_")));
     }
-  } else if (value == Qtrue) {
+  } else if (RB_TYPE_P(value, T_TRUE)) {
     VALUE attr = rb_str_new_cstr(" ");
     rb_str_concat(attr, key);
     return attr;
