@@ -53,9 +53,10 @@ normalize_data_i2(VALUE key, VALUE value, VALUE ptr)
 {
   struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
   VALUE k = rb_funcall(arg->key, id_to_s, 0);
+
   k = rb_funcall(k, id_gsub, 2, rb_str_new_cstr("_"), rb_str_new_cstr("-"));
-  rb_str_concat(k, rb_str_new_cstr("-"));
-  rb_str_concat(k, key);
+  rb_str_cat(k, "-", 1);
+  rb_str_append(k, key);
   rb_hash_aset(arg->normalized, k, value);
   return ST_CONTINUE;
 }
@@ -110,8 +111,9 @@ normalize(VALUE hash)
       data_len = RARRAY_LEN(data_keys);
       for (j = 0; j < data_len; j++) {
         VALUE data_key = RARRAY_AREF(data_keys, j);
-        VALUE k = rb_str_new_cstr("data-");
-        rb_str_concat(k, data_key);
+        VALUE k = rb_str_buf_new(5 + RSTRING_LEN(data_key));
+        rb_str_buf_cat(k, "data-", 5);
+        rb_str_buf_append(k, data_key);
         rb_hash_aset(hash, k, rb_hash_lookup(data, data_key));
       }
     } else if (!RB_TYPE_P(value, T_TRUE)) {
@@ -141,17 +143,20 @@ static VALUE
 put_attribute(VALUE attr_quote, VALUE key, VALUE value)
 {
   VALUE utils_class, str;
+  long len;
 
   value = rb_funcall(value, id_to_s, 0);
   utils_class = rb_const_get(rb_const_get(rb_cObject, id_temple), id_utils);
   value = rb_funcall(utils_class, id_escape_html, 1, value);
 
-  str = rb_str_new_cstr(" ");
-  rb_str_concat(str, key);
-  rb_str_concat(str, rb_str_new_cstr("="));
-  rb_str_concat(str, attr_quote);
-  rb_str_concat(str, value);
-  rb_str_concat(str, attr_quote);
+  len = 2 + 2*RSTRING_LEN(attr_quote) + RSTRING_LEN(key) + RSTRING_LEN(value);
+  str = rb_str_buf_new(len);
+  rb_str_buf_cat(str, " ", 1);
+  rb_str_buf_append(str, key);
+  rb_str_buf_cat(str, "=", 1);
+  rb_str_buf_append(str, attr_quote);
+  rb_str_buf_append(str, value);
+  rb_str_buf_append(str, attr_quote);
   return str;
 }
 
@@ -193,8 +198,9 @@ build_attribute(VALUE attr_quote, VALUE key, VALUE value)
       return put_attribute(attr_quote, key, rb_ary_join(ary, rb_str_new_cstr("_")));
     }
   } else if (RB_TYPE_P(value, T_TRUE)) {
-    VALUE attr = rb_str_new_cstr(" ");
-    rb_str_concat(attr, key);
+    VALUE attr = rb_str_buf_new(1 + RSTRING_LEN(key));
+    rb_str_buf_cat(attr, " ", 1);
+    rb_str_buf_append(attr, key);
     return attr;
   } else {
     return put_attribute(attr_quote, key, value);
