@@ -15,6 +15,13 @@ HAML
     expect(render_string('%span& <p>hello</p>')).to eq("<span><p>hello</p></span>\n")
   end
 
+  context 'with preserve' do
+    it 'ignores preserve mark' do
+      expect(render_string('&~ "<p>hello</p>"')).to eq("&lt;p&gt;hello&lt;/p&gt;\n")
+      expect(render_string('%span&~ "<p>hello</p>"')).to eq("<span>&lt;p&gt;hello&lt;/p&gt;</span>\n")
+    end
+  end
+
   context 'without Ruby code' do
     it 'raises error' do
       expect { render_string('%span&=') }.to raise_error(FastHaml::SyntaxError)

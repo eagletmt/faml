@@ -19,6 +19,13 @@ HAML
     expect(render_string('%span! <p>#{"<strong>hello</strong>"}</p>')).to eq("<span><p><strong>hello</strong></p></span>\n")
   end
 
+  context 'with preserve' do
+    it 'keeps newlines within preserve tags' do
+      expect(render_string('!~ "<p>hello\n<pre>pre\nworld</pre></p>"')).to eq("<p>hello\n<pre>pre&#x000A;world</pre></p>\n")
+      expect(render_string('%span!~ "<p>hello\n<pre>pre\nworld</pre></p>"')).to eq("<span><p>hello\n<pre>pre&#x000A;world</pre></p></span>\n")
+    end
+  end
+
   context 'without Ruby code' do
     it 'raises error' do
       expect { render_string('%span!=') }.to raise_error(FastHaml::SyntaxError)

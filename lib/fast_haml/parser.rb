@@ -107,8 +107,11 @@ module FastHaml
       when FILTER_PREFIX
         parse_filter(text)
       when SANITIZE_PREFIX
-        if text[1] == SCRIPT_PREFIX
+        case text[1]
+        when SCRIPT_PREFIX
           parse_script(text)
+        when PRESERVE_PREFIX
+          parse_script("&=#{text[2 .. -1].lstrip}", preserve: true)
         else
           parse_plain(text[1 .. -1].strip)
         end
