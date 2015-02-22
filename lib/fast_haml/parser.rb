@@ -106,7 +106,7 @@ module FastHaml
         if text[1] == SCRIPT_PREFIX
           parse_script(text)
         else
-          parse_plain(text)
+          parse_plain(text[1 .. -1].strip)
         end
       else
         parse_plain(text)

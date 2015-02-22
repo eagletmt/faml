@@ -18,16 +18,6 @@ HAML
     expect(render_string('%span!"hello"')).to eq(%Q|<span>!"hello"</span>\n|)
   end
 
-  it 'parses sanitized script' do
-    # Default in fast_haml
-    expect(render_string('%span&= "hello<p>unescape</p>world"')).to eq("<span>hello&lt;p&gt;unescape&lt;/p&gt;world</span>\n")
-    expect(render_string(<<HAML)).to eq("<span>\nhello&lt;p&gt;unescape&lt;/p&gt;world\n</span>\n")
-%span
-  &= "hello<p>unescape</p>world"
-HAML
-    expect(render_string('%span&"hello"')).to eq(%Q|<span>&"hello"</span>\n|)
-  end
-
   it 'parses preserved script' do
     expect(render_string('~ "<p>hello</p>"')).to eq("&lt;p&gt;hello&lt;/p&gt;\n")
     expect(render_string('%span~ "<p>hello</p>"')).to eq("<span>&lt;p&gt;hello&lt;/p&gt;</span>\n")
