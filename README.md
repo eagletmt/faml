@@ -85,6 +85,7 @@ All keys are string or symbol literals (i.e., not dynamic values) in typical cas
 There is an optimization chance if we could know the value is String.
 I introduced incompatibility to expand the chance: all attribute values are converted to String by `#to_s` except for `id`, `class` and `data` .
 This will enable us to avoid runtime expensive hash merging and rendering.
+The runtime hash merging is implemented by C extension in fast_haml.
 
 ## Contributing
 
