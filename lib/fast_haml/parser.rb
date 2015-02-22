@@ -78,6 +78,8 @@ module FastHaml
           parse_doctype(text)
         when text[1] == SCRIPT_PREFIX
           parse_script(text)
+        when text[1] == PRESERVE_PREFIX
+          parse_script("!=#{text[2 .. -1].lstrip}", preserve: true)
         when text[1] == ' '
           parse_plain(text[1 .. -1].lstrip, escape_html: false)
         else
@@ -94,7 +96,7 @@ module FastHaml
       when SILENT_SCRIPT_PREFIX
         parse_silent_script(text)
       when PRESERVE_PREFIX
-        # XXX: preserve has no meaning in "ugly" mode?
+        # preserve has no meaning in non-html_escape mode
         parse_script(text)
       when DIV_ID_PREFIX, DIV_CLASS_PREFIX
         if text.start_with?('#{')
@@ -150,7 +152,7 @@ module FastHaml
       @ast << ElementParser.new(text, @line_parser.lineno, @line_parser).parse
     end
 
-    def parse_script(text)
+    def parse_script(text, preserve: false)
       m = text.match(/\A([!&~])?[=~] *(.*)\z/)
       script = m[2]
       if script.empty?
@@ -164,6 +166,7 @@ module FastHaml
       when '&'
         node.escape_html = true
       end
+      node.preserve = preserve
       @ast << node
     end
 

@@ -49,6 +49,7 @@ module FastHaml
       :children,
       :script,
       :escape_html,
+      :preserve,
       :mid_block_keyword,
     )
       include HasChildren
@@ -57,6 +58,9 @@ module FastHaml
         super
         if self.escape_html.nil?
           self.escape_html = true
+        end
+        if self.preserve.nil?
+          self.preserve = false
         end
         if self.mid_block_keyword.nil?
           self.mid_block_keyword = false

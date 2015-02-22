@@ -254,13 +254,21 @@ module FastHaml
           Ast::Text.new(rest[1 .. -1].strip)
         end
       when '!'
-        if rest[1] == '='
+        case rest[1]
+        when '='
           script = rest[2 .. -1].lstrip
           if script.empty?
             syntax_error!('No Ruby code to evaluate')
           end
           script += RubyMultiline.read(@line_parser, script)
           Ast::Script.new([], script, false)
+        when '~'
+          script = rest[2 .. -1].lstrip
+          if script.empty?
+            syntax_error!('No Ruby code to evaluate')
+          end
+          script += RubyMultiline.read(@line_parser, script)
+          Ast::Script.new([], script, false, true)
         else
           Ast::Text.new(rest[1 .. -1].lstrip, false)
         end

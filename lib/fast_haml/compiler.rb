@@ -27,6 +27,20 @@ module FastHaml
       compile(ast)
     end
 
+    def self.find_and_preserve(input)
+      # Taken from the original haml code
+      re = /<(#{options[:preserve].map(&Regexp.method(:escape)).join('|')})([^>]*)>(.*?)(<\/\1>)/im
+      input.to_s.gsub(re) do |s|
+        s =~ re # Can't rely on $1, etc. existing since Rails' SafeBuffer#gsub is incompatible
+        "<#{$1}#{$2}>#{preserve($3)}</#{$1}>"
+      end
+    end
+
+    def self.preserve(input)
+      # Taken from the original haml code
+      input.to_s.chomp("\n").gsub(/\n/, '&#x000A;').gsub(/\r/, '')
+    end
+
     private
 
     def compile(ast)
@@ -287,7 +301,11 @@ module FastHaml
       if !ast.children.empty? && !ast.mid_block_keyword
         temple << [:code, 'end']
       end
-      temple << [:escape, ast.escape_html, [:dynamic, "#{sym}.to_s"]]
+      if !ast.escape_html && ast.preserve
+        temple << [:haml, :preserve, sym]
+      else
+        temple << [:escape, ast.escape_html, [:dynamic, "#{sym}.to_s"]]
+      end
       temple
     end
 

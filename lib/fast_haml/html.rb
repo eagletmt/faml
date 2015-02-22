@@ -36,5 +36,9 @@ module FastHaml
     rescue Temple::FilterError
       [:multi]
     end
+
+    def on_haml_preserve(sym)
+      [:dynamic, "::FastHaml::Compiler.find_and_preserve(#{sym}.to_s)"]
+    end
   end
 end
