@@ -9,15 +9,6 @@ RSpec.describe 'Script rendering', type: :render do
     expect(render_string('%span= 1 + 2')).to eq("<span>3</span>\n")
   end
 
-  it 'parses unescape script' do
-    expect(render_string('%span!= "hello<p>unescape</p>world"')).to eq("<span>hello<p>unescape</p>world</span>\n")
-    expect(render_string(<<HAML)).to eq("<span>\nhello<p>unescape</p>world\n</span>\n")
-%span
-  != "hello<p>unescape</p>world"
-HAML
-    expect(render_string('%span!"hello"')).to eq(%Q|<span>!"hello"</span>\n|)
-  end
-
   it 'parses preserved script' do
     expect(render_string('~ "<p>hello</p>"')).to eq("&lt;p&gt;hello&lt;/p&gt;\n")
     expect(render_string('%span~ "<p>hello</p>"')).to eq("<span>&lt;p&gt;hello&lt;/p&gt;</span>\n")
@@ -87,8 +78,6 @@ HAML
 %span
   =
 HAML
-      expect { render_string('%span!=') }.to raise_error(FastHaml::SyntaxError)
-      expect { render_string('%span&=') }.to raise_error(FastHaml::SyntaxError)
     end
   end
 end

@@ -89,7 +89,13 @@ module FastHaml
       include HasChildren
     end
 
-    class Text < Struct.new(:text)
+    class Text < Struct.new(:text, :escape_html)
+      def initialize(*)
+        super
+        if self.escape_html.nil?
+          self.escape_html = true
+        end
+      end
     end
 
     class Filter < Struct.new(:name, :texts)

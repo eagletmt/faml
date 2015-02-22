@@ -78,6 +78,8 @@ module FastHaml
           parse_doctype(text)
         when text[1] == SCRIPT_PREFIX
           parse_script(text)
+        when text[1] == ' '
+          parse_plain(text[1 .. -1].lstrip, escape_html: false)
         else
           parse_plain(text)
         end
@@ -140,8 +142,8 @@ module FastHaml
       end
     end
 
-    def parse_plain(text)
-      @ast << Ast::Text.new(text)
+    def parse_plain(text, escape_html: true)
+      @ast << Ast::Text.new(text, escape_html)
     end
 
     def parse_element(text)

@@ -10,9 +10,9 @@ module FastHaml
       @escape_html = escape_html
     end
 
-    def compile(text)
+    def compile(text, escape_html: @escape_html)
       if contains_interpolation?(text)
-        compile_interpolation(text)
+        compile_interpolation(text, escape_html: escape_html)
       else
         [:static, text]
       end
@@ -26,7 +26,7 @@ module FastHaml
       INTERPOLATION_BEGIN === text
     end
 
-    def compile_interpolation(text)
+    def compile_interpolation(text, escape_html: @escape_html)
       s = StringScanner.new(text)
       temple = [:multi]
       pos = s.pos
@@ -37,12 +37,12 @@ module FastHaml
         if escapes % 2 == 0
           # perform interpolation
           if s[2] == '#{'
-            temple << [:escape, @escape_html, [:dynamic, find_close_brace(s)]]
+            temple << [:escape, escape_html, [:dynamic, find_close_brace(s)]]
           else
             var = s[2][-1]
             s.scan(/\w+/)
             var << s.matched
-            temple << [:escape, @escape_html, [:dynamic, var]]
+            temple << [:escape, escape_html, [:dynamic, var]]
           end
         else
           # escaped

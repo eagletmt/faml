@@ -99,7 +99,7 @@ module FastHaml
     end
 
     def compile_text(ast)
-      @text_compiler.compile(ast.text)
+      @text_compiler.compile(ast.text, escape_html: ast.escape_html)
     end
 
     # html5 and html4 is deprecated in temple.

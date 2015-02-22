@@ -14,4 +14,11 @@ HAML
     expect(render_string('& <p>hello</p>')).to eq("<p>hello</p>\n")
     expect(render_string('%span& <p>hello</p>')).to eq("<span><p>hello</p></span>\n")
   end
+
+  context 'without Ruby code' do
+    it 'raises error' do
+      expect { render_string('%span&=') }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string('&=') }.to raise_error(FastHaml::SyntaxError)
+    end
+  end
 end
