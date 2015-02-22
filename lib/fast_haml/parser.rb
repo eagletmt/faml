@@ -76,6 +76,8 @@ module FastHaml
         case
         when text.start_with?('!!!')
           parse_doctype(text)
+        when text.start_with?('!==')
+          parse_plain(text[3 .. -1].lstrip, escape_html: false)
         when text[1] == SCRIPT_PREFIX
           parse_script(text)
         when text[1] == PRESERVE_PREFIX

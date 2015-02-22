@@ -255,8 +255,10 @@ module FastHaml
           Ast::Text.new(rest[1 .. -1].strip)
         end
       when '!'
-        case rest[1]
-        when '=', '~'
+        case
+        when rest.start_with?('!==')
+          Ast::Text.new(rest[3 .. -1].lstrip, false)
+        when rest[1] == '=' || rest[1] == '~'
           script = rest[2 .. -1].lstrip
           if script.empty?
             syntax_error!('No Ruby code to evaluate')

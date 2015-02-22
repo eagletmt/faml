@@ -19,6 +19,11 @@ HAML
     expect(render_string('%span! <p>#{"<strong>hello</strong>"}</p>')).to eq("<span><p><strong>hello</strong></p></span>\n")
   end
 
+  it 'parses == syntax' do
+    expect(render_string('!== =#{"<br>"}hello')).to eq("=<br>hello\n")
+    expect(render_string('%p!== =#{"<br>"}hello')).to eq("<p>=<br>hello</p>\n")
+  end
+
   context 'with preserve' do
     it 'keeps newlines within preserve tags' do
       expect(render_string('!~ "<p>hello\n<pre>pre\nworld</pre></p>"')).to eq("<p>hello\n<pre>pre&#x000A;world</pre></p>\n")
