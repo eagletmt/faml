@@ -243,8 +243,10 @@ module FastHaml
           Ast::Script.new([], script)
         end
       when '&'
-        case rest[1]
-        when '=', '~'
+        case
+        when rest.start_with?('&==')
+          Ast::Text.new(rest[3 .. -1].lstrip)
+        when rest[1] == '=' || rest[1] == '~'
           script = rest[2 .. -1].lstrip
           if script.empty?
             syntax_error!('No Ruby code to evaluate')
