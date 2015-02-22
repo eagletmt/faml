@@ -10,6 +10,8 @@ gemfile:
   - gemfiles/rails_4.1.gemfile
   - gemfiles/rails_4.2.gemfile
   - gemfiles/rails_edge.gemfile
+after_script:
+  - bundle exec rake benchmark:rendering
 matrix:
   allow_failures:
     - rvm: ruby-head
