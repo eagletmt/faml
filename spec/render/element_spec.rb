@@ -148,6 +148,10 @@ HAML
 HAML
   end
 
+  it 'parses == syntax' do
+    expect(render_string('%p== =#{1+2}hello')).to eq("<p>=3hello</p>\n")
+  end
+
   it 'raises error if self-closing tag have text' do
     expect { render_string('%p/ hello') }.to raise_error(FastHaml::SyntaxError)
   end

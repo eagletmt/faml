@@ -232,12 +232,16 @@ module FastHaml
     def parse_oneline_child(rest)
       case rest[0]
       when '=', '~'
-        script = rest[1 .. -1].lstrip
-        if script.empty?
-          syntax_error!('No Ruby code to evaluate')
+        if rest[1] == '='
+          Ast::Text.new(rest[2 .. -1].strip)
+        else
+          script = rest[1 .. -1].lstrip
+          if script.empty?
+            syntax_error!('No Ruby code to evaluate')
+          end
+          script += RubyMultiline.read(@line_parser, script)
+          Ast::Script.new([], script)
         end
-        script += RubyMultiline.read(@line_parser, script)
-        Ast::Script.new([], script)
       else
         case rest[0, 2]
         when '!=', '&='

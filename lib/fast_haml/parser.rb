@@ -84,7 +84,11 @@ module FastHaml
       when COMMENT_PREFIX
         parse_comment(text)
       when SCRIPT_PREFIX
-        parse_script(text)
+        if text[1] == SCRIPT_PREFIX
+          parse_plain(text[2 .. -1].strip)
+        else
+          parse_script(text)
+        end
       when SILENT_SCRIPT_PREFIX
         parse_silent_script(text)
       when PRESERVE_PREFIX

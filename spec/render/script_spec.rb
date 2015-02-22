@@ -86,6 +86,10 @@ HAML
 HAML
   end
 
+  it 'parses == syntax' do
+    expect(render_string('== =#{1+2}hello')).to eq("=3hello\n")
+  end
+
   context 'without Ruby code' do
     it 'raises error' do
       expect { render_string('%span=') }.to raise_error(FastHaml::SyntaxError)
