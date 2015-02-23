@@ -63,6 +63,11 @@ HAML
     expect(render_string('%span.foo#foo-bar.bar hello')).to eq(%Q{<span class='foo bar' id='foo-bar'>hello</span>\n})
   end
 
+  it "doesn't skip spaces before attribute list" do
+    expect(render_string('%span {hello}')).to eq("<span>{hello}</span>\n")
+    expect(render_string('%span (hello)')).to eq("<span>(hello)</span>\n")
+  end
+
   context 'with invalid tag name' do
     it 'raises error' do
       expect { render_string('%.foo') }.to raise_error(FastHaml::SyntaxError)

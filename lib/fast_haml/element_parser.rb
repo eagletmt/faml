@@ -25,7 +25,7 @@ module FastHaml
       element.static_class, element.static_id = parse_class_and_id(m[2])
       rest = m[3] || ''
 
-      element.attributes, rest = parse_attributes(rest.lstrip)
+      element.attributes, rest = parse_attributes(rest)
       element.nuke_inner_whitespace, element.nuke_outer_whitespace, rest = parse_nuke_whitespace(rest)
       element.self_closing, rest = parse_self_closing(rest)
       element.oneline_child = parse_oneline_child(rest)
