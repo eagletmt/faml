@@ -59,6 +59,7 @@ module FastHaml
       text, indent = @indent_tracker.process(line, @line_parser.lineno)
 
       if text.empty?
+        @ast.increment_trailing_empty_lines
         return
       end
 
