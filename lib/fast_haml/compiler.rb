@@ -87,12 +87,13 @@ module FastHaml
           if x != [:static, "\n"]
             raise "InternalError: Unexpected pop (expected [:static, newline]): #{x}"
           end
+          temple << [:newline]
         end
         temple << compile(c)
         if was_newline = need_newline?(ast, c)
           temple << [:static, "\n"]
-          temple << [:newline]
         end
+        temple << [:newline]
       end
     end
 
