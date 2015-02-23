@@ -69,7 +69,7 @@ module FastHaml
     end
 
     def compile_root(ast)
-      [:multi, [:newline]].tap do |temple|
+      [:multi].tap do |temple|
         compile_children(ast, temple)
       end
     end
