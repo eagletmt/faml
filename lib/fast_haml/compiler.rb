@@ -93,7 +93,9 @@ module FastHaml
         if was_newline = need_newline?(ast, c)
           temple << [:static, "\n"]
         end
-        temple << [:newline]
+        unless c.equal?(ast.children.last)
+          temple << [:newline]
+        end
       end
     end
 
