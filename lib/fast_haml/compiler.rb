@@ -252,10 +252,10 @@ module FastHaml
     def build_optimized_attributes(parser, static_id, static_class)
       static_attributes = {}
       parser.static_attributes.each do |k, v|
-        static_attributes[k.to_s] = v;
+        static_attributes[k.to_s] = v
       end
       unless static_class.empty?
-        static_attributes['class'] = [static_class.split(/ +/), static_attributes['class']].compact.flatten.sort.join(' ')
+        static_attributes['class'] = [static_class.split(/ +/), static_attributes['class']].compact.flatten.map(&:to_s).sort.join(' ')
       end
       unless static_id.empty?
         static_attributes['id'] = [static_id, static_attributes['id']].compact.join('_')

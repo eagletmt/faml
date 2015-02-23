@@ -30,6 +30,15 @@ RSpec.describe 'Attributes rendering', type: :render do
 HAML
   end
 
+  it 'strigify non-string classes' do
+    expect(render_string('%span.foo{class: :bar} hello')).to eq("<span class='bar foo'>hello</span>\n")
+    expect(render_string('%span.foo{class: 1} hello')).to eq("<span class='1 foo'>hello</span>\n")
+  end
+
+  it 'strigify non-string ids' do
+    expect(render_string('%span.#foo{id: :bar} hello')).to eq("<span id='foo_bar'>hello</span>\n")
+  end
+
   it 'escapes' do
     expect(render_string(%q|%span{class: "x\"y'z"} hello|)).to eq(%Q{<span class='x&quot;y&#39;z'>hello</span>\n})
   end
