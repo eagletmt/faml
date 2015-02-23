@@ -87,7 +87,7 @@ module FastHaml
           if x != [:static, "\n"]
             raise "InternalError: Unexpected pop (expected [:static, newline]): #{x}"
           end
-          unless c.oneline_child.is_a?(Ast::Script)
+          unless suppress_code_newline?(c.oneline_child)
             temple << [:newline]
           end
         end
@@ -95,7 +95,7 @@ module FastHaml
         if was_newline = need_newline?(ast, c)
           temple << [:static, "\n"]
         end
-        if !c.equal?(ast.children.last) && !c.is_a?(Ast::Script)
+        unless suppress_code_newline?(c)
           temple << [:newline]
         end
       end
@@ -115,6 +115,10 @@ module FastHaml
       else
         true
       end
+    end
+
+    def suppress_code_newline?(ast)
+      ast.is_a?(Ast::Script) || ast.is_a?(Ast::SilentScript) || (ast.is_a?(Ast::Element) && suppress_code_newline?(ast.oneline_child))
     end
 
     def compile_text(ast)
@@ -174,7 +178,6 @@ module FastHaml
         unless nuke_inner_whitespace?(ast)
           children << [:static, "\n"]
         end
-        children << [:newline]
         compile_children(ast, children)
         temple << children
       end
