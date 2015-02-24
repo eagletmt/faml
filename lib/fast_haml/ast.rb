@@ -1,6 +1,19 @@
 module FastHaml
   module Ast
-    module Construct
+    module LineCounter
+      def initialize(*)
+        super
+        @trailing_empty_lines = 0
+      end
+
+      def trailing_empty_lines
+        @trailing_empty_lines
+      end
+
+      def increment_trailing_empty_lines
+        @trailing_empty_lines += 1
+        nil
+      end
     end
 
     module HasChildren
@@ -15,10 +28,12 @@ module FastHaml
     end
 
     class Root < Struct.new(:children)
+      include LineCounter
       include HasChildren
     end
 
     class Doctype < Struct.new(:doctype)
+      include LineCounter
     end
 
     class Element < Struct.new(
@@ -32,6 +47,7 @@ module FastHaml
       :nuke_inner_whitespace,
       :nuke_outer_whitespace,
     )
+      include LineCounter
       include HasChildren
 
       def initialize(*)
@@ -52,6 +68,7 @@ module FastHaml
       :preserve,
       :mid_block_keyword,
     )
+      include LineCounter
       include HasChildren
 
       def initialize(*)
@@ -69,6 +86,7 @@ module FastHaml
     end
 
     class SilentScript < Struct.new(:children, :script, :mid_block_keyword)
+      include LineCounter
       include HasChildren
 
       def initialize(*)
@@ -80,6 +98,7 @@ module FastHaml
     end
 
     class HtmlComment < Struct.new(:children, :comment, :conditional)
+      include LineCounter
       include HasChildren
 
       def initialize(*)
@@ -90,10 +109,13 @@ module FastHaml
     end
 
     class HamlComment < Struct.new(:children)
+      include LineCounter
       include HasChildren
     end
 
     class Text < Struct.new(:text, :escape_html)
+      include LineCounter
+
       def initialize(*)
         super
         if self.escape_html.nil?
@@ -103,6 +125,8 @@ module FastHaml
     end
 
     class Filter < Struct.new(:name, :texts)
+      include LineCounter
+
       def initialize(*)
         super
         self.texts ||= []

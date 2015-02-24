@@ -44,32 +44,39 @@ module FastHaml
     private
 
     def compile(ast)
-      case ast
-      when Ast::Root
-        compile_root(ast)
-      when Ast::Doctype
-        compile_doctype(ast)
-      when Ast::HtmlComment
-        compile_html_comment(ast)
-      when Ast::HamlComment
-        [:multi]
-      when Ast::Element
-        compile_element(ast)
-      when Ast::Script
-        compile_script(ast)
-      when Ast::SilentScript
-        compile_silent_script(ast)
-      when Ast::Text
-        compile_text(ast)
-      when Ast::Filter
-        compile_filter(ast)
+      temple =
+        case ast
+        when Ast::Root
+          compile_root(ast)
+        when Ast::Doctype
+          compile_doctype(ast)
+        when Ast::HtmlComment
+          compile_html_comment(ast)
+        when Ast::HamlComment
+          [:multi]
+        when Ast::Element
+          compile_element(ast)
+        when Ast::Script
+          compile_script(ast)
+        when Ast::SilentScript
+          compile_silent_script(ast)
+        when Ast::Text
+          compile_text(ast)
+        when Ast::Filter
+          compile_filter(ast)
+        else
+          raise "InternalError: Unknown AST node #{ast.class}: #{ast.inspect}"
+        end
+
+      if ast.trailing_empty_lines > 0
+        [:multi, temple].concat([[:newline]] * ast.trailing_empty_lines)
       else
-        raise "InternalError: Unknown AST node #{ast.class}: #{ast.inspect}"
+        temple
       end
     end
 
     def compile_root(ast)
-      [:multi, [:newline]].tap do |temple|
+      [:multi].tap do |temple|
         compile_children(ast, temple)
       end
     end
@@ -87,10 +94,15 @@ module FastHaml
           if x != [:static, "\n"]
             raise "InternalError: Unexpected pop (expected [:static, newline]): #{x}"
           end
+          unless suppress_code_newline?(c.oneline_child)
+            temple << [:newline]
+          end
         end
         temple << compile(c)
         if was_newline = need_newline?(ast, c)
           temple << [:static, "\n"]
+        end
+        unless suppress_code_newline?(c)
           temple << [:newline]
         end
       end
@@ -110,6 +122,10 @@ module FastHaml
       else
         true
       end
+    end
+
+    def suppress_code_newline?(ast)
+      ast.is_a?(Ast::Script) || ast.is_a?(Ast::SilentScript) || (ast.is_a?(Ast::Element) && suppress_code_newline?(ast.oneline_child))
     end
 
     def compile_text(ast)
@@ -169,7 +185,6 @@ module FastHaml
         unless nuke_inner_whitespace?(ast)
           children << [:static, "\n"]
         end
-        children << [:newline]
         compile_children(ast, children)
         temple << children
       end

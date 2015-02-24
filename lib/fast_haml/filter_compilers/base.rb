@@ -8,7 +8,7 @@ module FastHaml
       def compile_texts(temple, texts, tab_width: 0)
         tabs = ' ' * tab_width
         texts.each do |text|
-          temple << [:static, tabs] << text_compiler.compile(text) << [:static, "\n"]
+          temple << [:static, tabs] << text_compiler.compile(text) << [:static, "\n"] << [:newline]
         end
         nil
       end

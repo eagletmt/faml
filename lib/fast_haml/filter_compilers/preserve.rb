@@ -12,6 +12,7 @@ module FastHaml
           unless texts.last.equal?(text)
             temple << [:static, "\n"]
           end
+          temple << [:newline]
         end
         sym = unique_name
         [:multi,
