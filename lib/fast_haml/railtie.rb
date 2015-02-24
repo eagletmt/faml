@@ -4,7 +4,7 @@ module FastHaml
       require 'fast_haml/rails_handler'
       begin
         # Load Haml::Plugin earlier to overwrite template handler with fast_haml.
-        require 'haml/plugin'
+        require 'haml/template'
       rescue LoadError
       end
       ActionView::Template.register_template_handler(:haml, FastHaml::RailsHandler.new)
