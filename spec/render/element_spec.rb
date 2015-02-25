@@ -141,6 +141,11 @@ HAML
 %span> hello
 %img
 HAML
+    expect(render_string(<<HAML)).to eq("<div>\n<span>1</span><span>hoge</span></div>\n")
+%div
+  %span= 1
+  %span> hoge
+HAML
   end
 
   it 'parses nuke-whitespaces' do
