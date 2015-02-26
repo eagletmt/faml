@@ -128,7 +128,10 @@ module FastHaml
     end
 
     def suppress_code_newline?(ast)
-      ast.is_a?(Ast::Script) || ast.is_a?(Ast::SilentScript) || (ast.is_a?(Ast::Element) && suppress_code_newline?(ast.oneline_child))
+      ast.is_a?(Ast::Script) ||
+        ast.is_a?(Ast::SilentScript) ||
+        (ast.is_a?(Ast::Element) && suppress_code_newline?(ast.oneline_child)) ||
+        (ast.is_a?(Ast::Element) && !ast.children.empty?)
     end
 
     def compile_text(ast)
@@ -188,6 +191,7 @@ module FastHaml
         unless nuke_inner_whitespace?(ast)
           children << [:static, "\n"]
         end
+        children << [:newline]
         compile_children(ast, children)
         temple << children
       end
