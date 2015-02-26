@@ -87,12 +87,15 @@ module FastHaml
         if c.is_a?(Ast::Element) && c.nuke_outer_whitespace && was_newline
           # pop newline
           x = temple.pop
-          if x != [:newline]
-            raise "InternalError: Unexpected pop (expected [:newline]): #{x}"
-          end
-          x = temple.pop
-          if x != [:static, "\n"]
-            raise "InternalError: Unexpected pop (expected [:static, newline]): #{x}"
+          if x == [:newline]
+            x = temple.pop
+            if x != [:static, "\n"]
+              raise "InternalError: Unexpected pop (expected [:static, \\n]): #{x}"
+            end
+          elsif x == [:static, "\n"]
+            # nothing
+          else
+            raise "InternalError: Unexpected pop (expected [:newline] or [:static, \\n]): #{x}"
           end
           unless suppress_code_newline?(c.oneline_child)
             temple << [:newline]
