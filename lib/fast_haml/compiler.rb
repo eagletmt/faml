@@ -44,31 +44,28 @@ module FastHaml
     private
 
     def compile(ast)
-      temple =
-        case ast
-        when Ast::Root
-          compile_root(ast)
-        when Ast::Doctype
-          compile_doctype(ast)
-        when Ast::HtmlComment
-          compile_html_comment(ast)
-        when Ast::HamlComment, Ast::Empty
-          [:multi]
-        when Ast::Element
-          compile_element(ast)
-        when Ast::Script
-          compile_script(ast)
-        when Ast::SilentScript
-          compile_silent_script(ast)
-        when Ast::Text
-          compile_text(ast)
-        when Ast::Filter
-          compile_filter(ast)
-        else
-          raise "InternalError: Unknown AST node #{ast.class}: #{ast.inspect}"
-        end
-
-      temple
+      case ast
+      when Ast::Root
+        compile_root(ast)
+      when Ast::Doctype
+        compile_doctype(ast)
+      when Ast::HtmlComment
+        compile_html_comment(ast)
+      when Ast::HamlComment, Ast::Empty
+        [:multi]
+      when Ast::Element
+        compile_element(ast)
+      when Ast::Script
+        compile_script(ast)
+      when Ast::SilentScript
+        compile_silent_script(ast)
+      when Ast::Text
+        compile_text(ast)
+      when Ast::Filter
+        compile_filter(ast)
+      else
+        raise "InternalError: Unknown AST node #{ast.class}: #{ast.inspect}"
+      end
     end
 
     def compile_root(ast)
