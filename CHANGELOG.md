@@ -1,3 +1,7 @@
+## 0.1.3 (2015-02-27)
+- Fix internal compiler error when `>` is used
+- Fix newline generation at Ast::Element case
+
 ## 0.1.2 (2015-02-24)
 - Keep newlines for better backtrace (#4)
 
