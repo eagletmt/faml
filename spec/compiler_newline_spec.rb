@@ -51,7 +51,7 @@ HAML
 HAML
   end
 
-  it do
+  it 'keeps empty lines' do
     expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(4))
 %div
   %span= 1
@@ -60,11 +60,19 @@ HAML
 HAML
   end
 
-  it do
+  it 'keeps leading empty lines' do
     expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(3))
 %div
 
   %span= raise LineVerifier
+HAML
+  end
+
+  it 'counts haml comments' do
+    expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(3))
+-# foo
+   bar
+%span= raise LineVerifier
 HAML
   end
 end

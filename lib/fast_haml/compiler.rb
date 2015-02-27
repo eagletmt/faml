@@ -51,7 +51,9 @@ module FastHaml
         compile_doctype(ast)
       when Ast::HtmlComment
         compile_html_comment(ast)
-      when Ast::HamlComment, Ast::Empty
+      when Ast::HamlComment
+        compile_haml_comment(ast)
+      when Ast::Empty
         [:multi]
       when Ast::Element
         compile_element(ast)
@@ -168,6 +170,10 @@ module FastHaml
         end
         [:multi, [:html, :comment, temple]]
       end
+    end
+
+    def compile_haml_comment(ast)
+      [:multi].concat([[:newline]] * ast.children.size)
     end
 
     def compile_element(ast)
