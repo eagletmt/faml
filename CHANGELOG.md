@@ -1,3 +1,7 @@
+## 0.1.4 (2015-02-28)
+- Fix newline generation around empty lines
+    - Internal: introduce Ast::Empty and remove LineCounter
+
 ## 0.1.3 (2015-02-27)
 - Fix internal compiler error when `>` is used
 - Fix newline generation at Ast::Element case
