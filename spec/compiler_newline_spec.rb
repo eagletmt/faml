@@ -45,9 +45,24 @@ HAML
   end
 
   it do
+    expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(2))
+
+%div= raise LineVerifier
+HAML
+  end
+
+  it do
     expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(4))
 %div
   %span= 1
+
+  %span= raise LineVerifier
+HAML
+  end
+
+  it do
+    expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(3))
+%div
 
   %span= raise LineVerifier
 HAML

@@ -59,7 +59,7 @@ module FastHaml
       text, indent = @indent_tracker.process(line, @line_parser.lineno)
 
       if text.empty?
-        @ast.children.last.increment_trailing_empty_lines
+        @ast << Ast::Empty.new
         return
       end
 
@@ -200,8 +200,13 @@ module FastHaml
     end
 
     def indent_enter(_, text)
+      empty_lines = []
+      while @ast.children.last.is_a?(Ast::Empty)
+        empty_lines << @ast.children.pop
+      end
       @stack.push(@ast)
       @ast = @ast.children.last
+      @ast.children = empty_lines
       if @ast.is_a?(Ast::Element) && @ast.self_closing
         syntax_error!('Illegal nesting: nesting within a self-closing tag is illegal')
       end

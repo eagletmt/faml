@@ -52,7 +52,7 @@ module FastHaml
           compile_doctype(ast)
         when Ast::HtmlComment
           compile_html_comment(ast)
-        when Ast::HamlComment
+        when Ast::HamlComment, Ast::Empty
           [:multi]
         when Ast::Element
           compile_element(ast)
@@ -68,15 +68,12 @@ module FastHaml
           raise "InternalError: Unknown AST node #{ast.class}: #{ast.inspect}"
         end
 
-      if ast.trailing_empty_lines > 0
-        [:multi, temple].concat([[:newline]] * ast.trailing_empty_lines)
-      else
-        temple
-      end
+      temple
     end
 
     def compile_root(ast)
       [:multi].tap do |temple|
+        temple.concat([[:newline]] * ast.leading_empty_lines)
         compile_children(ast, temple)
       end
     end
@@ -118,7 +115,7 @@ module FastHaml
       case child
       when Ast::Script
         child.children.empty?
-      when Ast::SilentScript, Ast::HamlComment
+      when Ast::SilentScript, Ast::HamlComment, Ast::Empty
         false
       when Ast::Element
         !child.nuke_outer_whitespace
