@@ -1,3 +1,6 @@
+## 0.1.5 (2015-03-01)
+- Fix minor newline generation bug with Haml comment
+
 ## 0.1.4 (2015-02-28)
 - Fix newline generation around empty lines
     - Internal: introduce Ast::Empty and remove LineCounter
