@@ -34,6 +34,13 @@ HAML
 HAML
   end
 
+  it 'can be comment-only' do
+    expect(render_string(<<HAML)).to eq("\nstring\n")
+= # comment
+= 'string'
+HAML
+  end
+
   it 'can have children' do
     expect(render_string(<<HAML)).to eq("<span>0</span>\n1<span>end</span>\n")
 = 1.times do |i|

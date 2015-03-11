@@ -318,10 +318,15 @@ module FastHaml
 
     def compile_script(ast)
       sym = unique_name
-      temple = [:multi, [:code, "#{sym} = #{ast.script}"], [:newline]]
-      compile_children(ast, temple)
-      if !ast.children.empty? && !ast.mid_block_keyword
-        temple << [:code, 'end']
+      temple = [:multi]
+      if ast.children.empty?
+        temple << [:code, "#{sym} = (#{ast.script}"] << [:newline] << [:code, ')']
+      else
+        temple << [:code, "#{sym} = #{ast.script}"] << [:newline]
+        compile_children(ast, temple)
+        if !ast.mid_block_keyword
+          temple << [:code, 'end']
+        end
       end
       if !ast.escape_html && ast.preserve
         temple << [:haml, :preserve, sym]
