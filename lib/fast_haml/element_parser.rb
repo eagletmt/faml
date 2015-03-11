@@ -92,7 +92,7 @@ module FastHaml
       s.pos = 1
       depth = 1
       loop do
-        depth = ParserUtils.balance(s, '{', '}')
+        depth = ParserUtils.balance(s, '{', '}', depth)
         if depth == 0
           attr = s.pre_match + s.matched
           return [attr[1, attr.size-2], s.rest.lstrip]

@@ -164,6 +164,14 @@ HAML
     end
 
     it 'parses multiline attribute list' do
+      expect(render_string(<<HAML)).to eq("<span data-bar='2' data-foo='1'>\n<span>hello</span>\n</span>\n")
+%span{data: {foo: 1,
+  bar: 2}}
+  %span hello
+HAML
+    end
+
+    it 'parses HTML-style multiline attribute list' do
       expect(render_string(<<HAML)).to eq("<span bar='3' foo='1'>hello</span>\n")
 %span(foo=1
 
