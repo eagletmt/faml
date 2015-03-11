@@ -1,3 +1,9 @@
+## 0.1.6 (2015-03-11)
+- Fix render error with comment-only script
+    - https://github.com/eagletmt/fast_haml/issues/6
+- Fix parsing error at multiline attributes
+    - https://github.com/eagletmt/fast_haml/issues/7
+
 ## 0.1.5 (2015-03-01)
 - Fix minor newline generation bug with Haml comment
 
