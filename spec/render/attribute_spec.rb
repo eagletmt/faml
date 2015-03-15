@@ -27,6 +27,8 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string('%input{checked: false}')).to eq("<input>\n")
     expect(render_string('%input{checked: "a" == "a"}')).to eq("<input checked>\n")
     expect(render_string('%input{checked: "a" != "a"}')).to eq("<input>\n")
+    expect(render_string("- h = {checked: true}\n%input{h}")).to eq("<input checked>\n")
+    expect(render_string("- h = {checked: false}\n%input{h}")).to eq("<input>\n")
   end
 
   it 'merges classes' do
