@@ -22,6 +22,13 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string('%span.c2{class: ["c1", "c3"]}')).to eq("<span class='c1 c2 c3'></span>\n")
   end
 
+  it "renders boolean attributes" do
+    expect(render_string('%input{checked: true}')).to eq("<input checked>\n")
+    expect(render_string('%input{checked: false}')).to eq("<input>\n")
+    expect(render_string('%input{checked: "a" == "a"}')).to eq("<input checked>\n")
+    expect(render_string('%input{checked: "a" != "a"}')).to eq("<input>\n")
+  end
+
   it 'merges classes' do
     expect(render_string(<<HAML)).to eq("<span class='c1 c2 content {}' id='main_id1_id3_id2'>hello</span>\n")
 - h1 = {class: 'c1', id: ['id1', 'id3']}
@@ -196,7 +203,6 @@ HAML
       expect(render_string(%q|%span(foo=1 bar="baz#{1 + 2}") hello|)).to eq("<span bar='baz3' foo='1'>hello</span>\n")
       expect(render_string(%q|%span(foo=1 bar='baz#{1 + 2}') hello|)).to eq("<span bar='baz3' foo='1'>hello</span>\n")
     end
-
 
     it 'parses escapes' do
       expect(render_string(%q|%span(foo=1 bar="ba\"z") hello|)).to eq("<span bar='ba&quot;z' foo='1'>hello</span>\n")
