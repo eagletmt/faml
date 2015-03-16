@@ -302,7 +302,7 @@ module FastHaml
       case
       when value == true
         [[:haml, :attr, key, [:multi]]]
-      when value == false
+      when value == false || value == nil
         [[:multi]]
       when value.is_a?(Hash) && key == 'data'
         data = AttributeBuilder.normalize_data(value)

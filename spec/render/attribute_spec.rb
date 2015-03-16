@@ -25,10 +25,13 @@ RSpec.describe 'Attributes rendering', type: :render do
   it "renders boolean attributes" do
     expect(render_string('%input{checked: true}')).to eq("<input checked>\n")
     expect(render_string('%input{checked: false}')).to eq("<input>\n")
+    expect(render_string('%input{checked: nil}')).to eq("<input>\n")
     expect(render_string('%input{checked: "a" == "a"}')).to eq("<input checked>\n")
     expect(render_string('%input{checked: "a" != "a"}')).to eq("<input>\n")
+    expect(render_string("- x = nil\n%input{checked: x}")).to eq("<input>\n")
     expect(render_string("- h = {checked: true}\n%input{h}")).to eq("<input checked>\n")
     expect(render_string("- h = {checked: false}\n%input{h}")).to eq("<input>\n")
+    expect(render_string("- h = {checked: nil}\n%input{h}")).to eq("<input>\n")
   end
 
   it 'merges classes' do

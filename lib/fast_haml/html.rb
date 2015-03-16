@@ -29,7 +29,7 @@ module FastHaml
           [:code, "#{sym} = (#{value[1]})"],
           [:case, sym,
             ['true', [:static, " #{name}"]],
-            ['false', [:multi]],
+            ['false, nil', [:multi]],
             [:else, [:multi,
               [:static, " #{name}=#{options[:attr_quote]}"],
               [:escape, true, [:dynamic, sym]],
