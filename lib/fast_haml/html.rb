@@ -24,14 +24,15 @@ module FastHaml
           [:static, " #{name}=#{options[:attr_quote]}#{name}#{options[:attr_quote]}"]
         end
       elsif value[0] == :dvalue
+        sym = unique_name
         [:multi,
-          [:code, "value = (#{value[1]})"],
-          [:case, 'value',
+          [:code, "#{sym} = (#{value[1]})"],
+          [:case, sym,
             ['true', [:static, " #{name}"]],
             ['false', [:multi]],
             [:else, [:multi,
               [:static, " #{name}=#{options[:attr_quote]}"],
-              [:escape, true, [:dynamic, 'value']],
+              [:escape, true, [:dynamic, sym]],
               [:static, options[:attr_quote]],
             ]],
           ],
