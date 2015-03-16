@@ -1,3 +1,7 @@
+## 0.1.7 (2015-03-16)
+- Fix attribute rendering with falsey values
+    - https://github.com/eagletmt/fast_haml/pull/11
+
 ## 0.1.6 (2015-03-11)
 - Fix render error with comment-only script
     - https://github.com/eagletmt/fast_haml/issues/6
