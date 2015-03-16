@@ -88,6 +88,24 @@ I introduced incompatibility to expand the chance: all attribute values are conv
 This will enable us to avoid runtime expensive hash merging and rendering.
 The runtime hash merging is implemented by C extension in fast_haml.
 
+Internally, attributes are categolized into three types.
+
+1. Static attributes
+    - Both the key and the value are literal.
+    - Compiled into string literals.
+    - Fastest.
+    - e.g. `%input{checked: false}`
+2. Dynamic attributes
+    - The key is literal but the value isn't.
+    - The key is compiled into string literal. The value is interpolated at run-time.
+    - Relatively fast.
+    - e.g. `%input{checked: helper_method(@record)}`
+3. Ruby attributes
+    - Both the key and the value are non-literal expression.
+    - The attributes are stringified at run-time.
+    - Slow.
+    - e.g. `%input{helper_method(@record)}`
+
 ## Contributing
 
 1. Fork it ( https://github.com/eagletmt/fast_haml/fork )
