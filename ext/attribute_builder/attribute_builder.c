@@ -116,7 +116,7 @@ normalize(VALUE hash)
         rb_str_buf_append(k, data_key);
         rb_hash_aset(hash, k, rb_hash_lookup(data, data_key));
       }
-    } else if (!RB_TYPE_P(value, T_TRUE)) {
+    } else if (!(RB_TYPE_P(value, T_TRUE) || RB_TYPE_P(value, T_FALSE))) {
       rb_hash_aset(hash, key, rb_funcall(value, id_to_s, 0));
     }
   }
@@ -202,6 +202,8 @@ build_attribute(VALUE attr_quote, VALUE key, VALUE value)
     rb_str_buf_cat(attr, " ", 1);
     rb_str_buf_append(attr, key);
     return attr;
+  } else if (RB_TYPE_P(value, T_FALSE)) {
+    return Qnil;
   } else {
     return put_attribute(attr_quote, key, value);
   }
