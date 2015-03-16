@@ -19,11 +19,6 @@ module FastHaml
         super
         @leading_empty_lines = 0
       end
-
-      def increment_leading_empty_lines
-        @leading_empty_lines +=1
-        nil
-      end
     end
 
     class Doctype < Struct.new(:doctype)
