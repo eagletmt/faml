@@ -303,7 +303,7 @@ module FastHaml
       when value == true
         [[:haml, :attr, key, [:multi]]]
       when value == false
-        []
+        [[:multi]]
       when value.is_a?(Hash) && key == 'data'
         data = AttributeBuilder.normalize_data(value)
         data.keys.sort.map do |k|
@@ -315,7 +315,7 @@ module FastHaml
     end
 
     def compile_dynamic_attribute(key, value)
-      [[:haml, :attr, key, [:code, value]]]
+      [[:haml, :attr, key, [:dvalue, value]]]
     end
 
     def compile_script(ast)

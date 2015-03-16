@@ -23,7 +23,7 @@ module FastHaml
         else
           [:static, " #{name}=#{options[:attr_quote]}#{name}#{options[:attr_quote]}"]
         end
-      elsif value[0] == :code
+      elsif value[0] == :dvalue
         [:multi,
           [:code, "value = (#{value[1]})"],
           [:case, 'value',
