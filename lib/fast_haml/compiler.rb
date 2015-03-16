@@ -1,3 +1,4 @@
+require 'parser/current'
 require 'temple'
 require 'fast_haml/ast'
 require 'fast_haml/filter_compilers'
@@ -6,6 +7,9 @@ require 'fast_haml/text_compiler'
 
 module FastHaml
   class Compiler < Temple::Parser
+    class UnparsableRubyCode < StandardError
+    end
+
     DEFAULT_AUTO_CLOSE_TAGS = %w[
       area base basefont br col command embed frame hr img input isindex keygen
       link menuitem meta param source track wbr
@@ -249,6 +253,7 @@ module FastHaml
     def try_optimize_attributes(text, static_id, static_class)
       parser = StaticHashParser.new
       unless parser.parse("{#{text}}")
+        assert_valid_ruby_code!(text)
         return nil
       end
 
@@ -269,6 +274,17 @@ module FastHaml
           compile_dynamic_attribute(k, dynamic_attributes[k])
         end
       end
+    end
+
+    def assert_valid_ruby_code!(text)
+      parser = ::Parser::CurrentRuby.new
+      parser.diagnostics.consumer = nil
+      buffer = ::Parser::Source::Buffer.new('(fast_haml)')
+      buffer.source = "call(#{text})"
+      parser.parse(buffer)
+      true
+    rescue ::Parser::SyntaxError
+      raise UnparsableRubyCode.new("Unparsable Ruby code is given to attributes: #{text}")
     end
 
     def build_optimized_attributes(parser, static_id, static_class)

@@ -63,6 +63,10 @@ HAML
     expect(render_string(%q|%span{foo: true, bar: 1} hello|)).to eq(%Q{<span bar='1' foo>hello</span>\n})
   end
 
+  it 'raises error when unparsable Ruby code is given' do
+    expect { render_string('%span{x ==== 2}') }.to raise_error(FastHaml::Compiler::UnparsableRubyCode)
+  end
+
   context 'with xhtml format' do
     it 'renders name="name" if value is true' do
       expect(render_string(%q|%span{foo: true, bar: 1} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='foo'>hello</span>\n})
