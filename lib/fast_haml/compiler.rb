@@ -148,9 +148,9 @@ module FastHaml
       else
         temple = [:multi]
         if ast.conditional.empty?
-          temple << [:static, "\n"]
+          temple << [:mknl]
         else
-          temple << [:static, "[#{ast.conditional}]>\n"] << [:newline]
+          temple << [:static, "[#{ast.conditional}]>"] << [:mknl] << [:newline]
         end
         compile_children(ast, temple)
         unless ast.conditional.empty?
