@@ -168,18 +168,9 @@ module FastHaml
       ]
 
       if ast.oneline_child
-         temple << compile(ast.oneline_child)
+        temple << compile(ast.oneline_child)
       elsif !ast.children.empty?
-        children = [:multi]
-        unless nuke_inner_whitespace?(ast)
-          children << [:mknl]
-        end
-        children << [:newline]
-        compile_children(ast, children)
-        if nuke_inner_whitespace?(ast)
-          children << [:rmnl]
-        end
-        temple << children
+        temple << compile_element_children(ast)
       end
 
       if ast.nuke_outer_whitespace
@@ -191,6 +182,19 @@ module FastHaml
 
     def self_closing?(ast)
       ast.self_closing || options[:autoclose].include?(ast.tag_name)
+    end
+
+    def compile_element_children(ast)
+      children = [:multi]
+      unless nuke_inner_whitespace?(ast)
+        children << [:mknl]
+      end
+      children << [:newline]
+      compile_children(ast, children)
+      if nuke_inner_whitespace?(ast)
+        children << [:rmnl]
+      end
+      children
     end
 
     def nuke_inner_whitespace?(ast)
@@ -274,6 +278,16 @@ module FastHaml
     end
 
     def build_optimized_attributes(parser, static_id, static_class)
+      static_attributes = build_optimized_static_attributes(parser, static_id, static_class)
+      dynamic_attributes = build_optimized_dynamic_attributes(parser, static_attributes)
+      if dynamic_attributes
+        [static_attributes, dynamic_attributes]
+      else
+        [nil, nil]
+      end
+    end
+
+    def build_optimized_static_attributes(parser, static_id, static_class)
       static_attributes = {}
       parser.static_attributes.each do |k, v|
         static_attributes[k.to_s] = v
@@ -284,20 +298,22 @@ module FastHaml
       unless static_id.empty?
         static_attributes['id'] = [static_id, static_attributes['id']].compact.join('_')
       end
+      static_attributes
+    end
 
+    def build_optimized_dynamic_attributes(parser, static_attributes)
       dynamic_attributes = {}
       parser.dynamic_attributes.each do |k, v|
         k = k.to_s
         if static_attributes.has_key?(k)
           if StaticHashParser::SPECIAL_ATTRIBUTES.include?(k)
             # XXX: Quit optimization
-            return [nil, nil]
+            return nil
           end
         end
         dynamic_attributes[k] = v
       end
-
-      [static_attributes, dynamic_attributes]
+      dynamic_attributes
     end
 
     def compile_static_attribute(key, value)
