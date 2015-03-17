@@ -282,7 +282,6 @@ module FastHaml
         end
         script += RubyMultiline.read(@line_parser, script)
         Ast::Script.new([], script, false, text[1] == '~')
-        Ast::Script.new([], script, false, true)
       else
         Ast::Text.new(text[1 .. -1].lstrip, false)
       end
