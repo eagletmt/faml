@@ -119,32 +119,6 @@ HAML
     expect(render_string('%meta{"http-equiv" => "Content-Type", :content => "text/html"}')).to eq("<meta content='text/html' http-equiv='Content-Type'>\n")
   end
 
-  it 'parses nuke-inner-whitespace (<)' do
-    expect(render_string(<<HAML)).to eq("<blockquote><div>\nFoo!\n</div></blockquote>\n")
-%blockquote<
-  %div
-    Foo!
-HAML
-  end
-
-  it 'renders pre tag as nuke-inner-whitespace by default' do
-    expect(render_string(<<HAML)).to eq("<pre>hello\nworld</pre>\n")
-%pre
-  hello
-  world
-HAML
-  end
-
-  it 'parses nuke-whitespaces' do
-    expect(render_string(<<HAML)).to eq("<img><pre>foo\nbar</pre><img>\n")
-%img
-%pre><
-  foo
-  bar
-%img
-HAML
-  end
-
   it 'parses == syntax' do
     expect(render_string('%p== =#{1+2}hello')).to eq("<p>=3hello</p>\n")
   end

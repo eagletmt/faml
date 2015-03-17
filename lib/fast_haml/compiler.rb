@@ -83,7 +83,7 @@ module FastHaml
     def compile_children(ast, temple)
       ast.children.each do |c|
         temple << compile(c)
-        if need_newline?(ast, c)
+        if need_newline?(c)
           temple << [:mknl]
         end
         unless suppress_code_newline?(c)
@@ -92,10 +92,7 @@ module FastHaml
       end
     end
 
-    def need_newline?(parent, child)
-      if parent.is_a?(Ast::Element) && nuke_inner_whitespace?(parent) && parent.children.last.equal?(child)
-        return false
-      end
+    def need_newline?(child)
       case child
       when Ast::Script
         child.children.empty?
@@ -179,6 +176,9 @@ module FastHaml
         end
         children << [:newline]
         compile_children(ast, children)
+        if nuke_inner_whitespace?(ast)
+          children << [:rmnl]
+        end
         temple << children
       end
 

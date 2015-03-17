@@ -42,4 +42,42 @@ HAML
 HAML
     end
   end
+
+  describe '>' do
+    it 'parses nuke-inner-whitespace (<)' do
+      expect(render_string(<<HAML)).to eq("<blockquote><div>\nFoo!\n</div></blockquote>\n")
+%blockquote<
+  %div
+    Foo!
+HAML
+    end
+
+    it 'renders pre tag as nuke-inner-whitespace by default' do
+      expect(render_string(<<HAML)).to eq("<pre>hello\nworld</pre>\n")
+%pre
+  hello
+  world
+HAML
+    end
+
+    it 'handles silent script' do
+      expect(render_string(<<HAML)).to eq("<div>012</div>\n")
+%div<
+  - 3.times do |i|
+    = i
+HAML
+    end
+  end
+
+  describe '><' do
+    it 'parses nuke-whitespaces' do
+      expect(render_string(<<HAML)).to eq("<img><pre>foo\nbar</pre><img>\n")
+%img
+%pre><
+  foo
+  bar
+%img
+HAML
+    end
+  end
 end
