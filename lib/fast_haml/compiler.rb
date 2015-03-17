@@ -76,7 +76,6 @@ module FastHaml
 
     def compile_root(ast)
       [:multi].tap do |temple|
-        temple.concat([[:newline]] * ast.leading_empty_lines)
         compile_children(ast, temple)
       end
     end

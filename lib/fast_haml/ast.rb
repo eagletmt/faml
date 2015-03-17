@@ -13,12 +13,6 @@ module FastHaml
 
     class Root < Struct.new(:children)
       include HasChildren
-      attr_reader :leading_empty_lines
-
-      def initialize(*)
-        super
-        @leading_empty_lines = 0
-      end
     end
 
     class Doctype < Struct.new(:doctype)
