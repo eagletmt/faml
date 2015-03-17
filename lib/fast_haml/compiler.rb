@@ -114,7 +114,8 @@ module FastHaml
       ast.is_a?(Ast::Script) ||
         ast.is_a?(Ast::SilentScript) ||
         (ast.is_a?(Ast::Element) && suppress_code_newline?(ast.oneline_child)) ||
-        (ast.is_a?(Ast::Element) && !ast.children.empty?)
+        (ast.is_a?(Ast::Element) && !ast.children.empty?) ||
+        (ast.is_a?(Ast::HtmlComment) && !ast.conditional.empty?)
     end
 
     def compile_text(ast)
@@ -149,7 +150,7 @@ module FastHaml
         if ast.conditional.empty?
           temple << [:static, "\n"]
         else
-          temple << [:static, "[#{ast.conditional}]>\n"]
+          temple << [:static, "[#{ast.conditional}]>\n"] << [:newline]
         end
         compile_children(ast, temple)
         unless ast.conditional.empty?

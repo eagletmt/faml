@@ -75,4 +75,23 @@ HAML
 %span= raise LineVerifier
 HAML
   end
+
+  context 'with conditional comment' do
+    it do
+      expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(3))
+%div
+  / [if IE]
+    %span= raise LineVerifier
+HAML
+    end
+
+    it do
+      expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(4))
+%div
+  / [if IE]
+    %span hello
+  %span= raise LineVerifier
+HAML
+    end
+  end
 end
