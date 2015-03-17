@@ -81,10 +81,9 @@ module FastHaml
     end
 
     def compile_children(ast, temple)
-      was_newline = false
       ast.children.each do |c|
         temple << compile(c)
-        if was_newline = need_newline?(ast, c)
+        if need_newline?(ast, c)
           temple << [:mknl]
         end
         unless suppress_code_newline?(c)
