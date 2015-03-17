@@ -1,3 +1,7 @@
+## 0.1.8 (2015-03-17)
+- Fix whitespace removal (`<` and `>`) behavior
+    - Internally, new instructions `mknl` and `rmnl` are added.
+
 ## 0.1.7 (2015-03-16)
 - Fix attribute rendering with falsey values
     - https://github.com/eagletmt/fast_haml/pull/11
