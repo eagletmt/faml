@@ -84,26 +84,9 @@ module FastHaml
     def compile_children(ast, temple)
       was_newline = false
       ast.children.each do |c|
-        if c.is_a?(Ast::Element) && c.nuke_outer_whitespace && was_newline
-          # pop newline
-          x = temple.pop
-          if x == [:newline]
-            x = temple.pop
-            if x != [:static, "\n"]
-              raise "InternalError: Unexpected pop (expected [:static, \\n]): #{x}"
-            end
-          elsif x == [:static, "\n"]
-            # nothing
-          else
-            raise "InternalError: Unexpected pop (expected [:newline] or [:static, \\n]): #{x}"
-          end
-          unless suppress_code_newline?(c.oneline_child)
-            temple << [:newline]
-          end
-        end
         temple << compile(c)
         if was_newline = need_newline?(ast, c)
-          temple << [:static, "\n"]
+          temple << [:mknl]
         end
         unless suppress_code_newline?(c)
           temple << [:newline]
@@ -193,14 +176,18 @@ module FastHaml
       elsif !ast.children.empty?
         children = [:multi]
         unless nuke_inner_whitespace?(ast)
-          children << [:static, "\n"]
+          children << [:mknl]
         end
         children << [:newline]
         compile_children(ast, children)
         temple << children
       end
 
-      temple
+      if ast.nuke_outer_whitespace
+        [:multi, [:rmnl], temple]
+      else
+        temple
+      end
     end
 
     def self_closing?(ast)
