@@ -229,55 +229,71 @@ module FastHaml
       end
     end
 
-    def parse_oneline_child(rest)
-      case rest[0]
+    def parse_oneline_child(text)
+      case text[0]
       when '=', '~'
-        if rest[1] == '='
-          Ast::Text.new(rest[2 .. -1].strip)
-        else
-          script = rest[1 .. -1].lstrip
-          if script.empty?
-            syntax_error!('No Ruby code to evaluate')
-          end
-          script += RubyMultiline.read(@line_parser, script)
-          Ast::Script.new([], script)
-        end
+        parse_oneline_script(text)
       when '&'
-        case
-        when rest.start_with?('&==')
-          Ast::Text.new(rest[3 .. -1].lstrip)
-        when rest[1] == '=' || rest[1] == '~'
-          script = rest[2 .. -1].lstrip
-          if script.empty?
-            syntax_error!('No Ruby code to evaluate')
-          end
-          script += RubyMultiline.read(@line_parser, script)
-          Ast::Script.new([], script, true, rest[1] == '~')
-        else
-          Ast::Text.new(rest[1 .. -1].strip)
-        end
+        parse_oneline_sanitized(text)
       when '!'
-        case
-        when rest.start_with?('!==')
-          Ast::Text.new(rest[3 .. -1].lstrip, false)
-        when rest[1] == '=' || rest[1] == '~'
-          script = rest[2 .. -1].lstrip
-          if script.empty?
-            syntax_error!('No Ruby code to evaluate')
-          end
-          script += RubyMultiline.read(@line_parser, script)
-          Ast::Script.new([], script, false, rest[1] == '~')
-          Ast::Script.new([], script, false, true)
-        else
-          Ast::Text.new(rest[1 .. -1].lstrip, false)
-        end
+        parse_oneline_unescape(text)
       else
-        rest = rest.lstrip
-        if rest.empty?
-          nil
-        else
-          Ast::Text.new(rest)
+        parse_oneline_text(text)
+      end
+    end
+
+    def parse_oneline_script(text)
+      if text[1] == '='
+        Ast::Text.new(text[2 .. -1].strip)
+      else
+        script = text[1 .. -1].lstrip
+        if script.empty?
+          syntax_error!('No Ruby code to evaluate')
         end
+        script += RubyMultiline.read(@line_parser, script)
+        Ast::Script.new([], script)
+      end
+    end
+
+    def parse_oneline_sanitized(text)
+      case
+      when text.start_with?('&==')
+        Ast::Text.new(text[3 .. -1].lstrip)
+      when text[1] == '=' || text[1] == '~'
+        script = text[2 .. -1].lstrip
+        if script.empty?
+          syntax_error!('No Ruby code to evaluate')
+        end
+        script += RubyMultiline.read(@line_parser, script)
+        Ast::Script.new([], script, true, text[1] == '~')
+      else
+        Ast::Text.new(text[1 .. -1].strip)
+      end
+    end
+
+    def parse_oneline_unescape(text)
+      case
+      when text.start_with?('!==')
+        Ast::Text.new(text[3 .. -1].lstrip, false)
+      when text[1] == '=' || text[1] == '~'
+        script = text[2 .. -1].lstrip
+        if script.empty?
+          syntax_error!('No Ruby code to evaluate')
+        end
+        script += RubyMultiline.read(@line_parser, script)
+        Ast::Script.new([], script, false, text[1] == '~')
+        Ast::Script.new([], script, false, true)
+      else
+        Ast::Text.new(text[1 .. -1].lstrip, false)
+      end
+    end
+
+    def parse_oneline_text(text)
+      text = text.lstrip
+      if text.empty?
+        nil
+      else
+        Ast::Text.new(text)
       end
     end
 
