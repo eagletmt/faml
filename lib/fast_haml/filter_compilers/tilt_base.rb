@@ -9,7 +9,7 @@ module FastHaml
       include Temple::Utils
 
       def self.render_with_tilt(name, source)
-        ::Tilt.template_for("t.#{name}").new { source }.render
+        ::Tilt["t.#{name}"].new { source }.render
       end
 
       protected
