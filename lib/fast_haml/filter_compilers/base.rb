@@ -7,6 +7,7 @@ module FastHaml
 
       def compile_texts(temple, texts, tab_width: 0)
         tabs = ' ' * tab_width
+        texts = strip_last_empty_lines(texts)
         texts.each do |text|
           temple << [:static, tabs] << text_compiler.compile(text) << [:static, "\n"] << [:newline]
         end
