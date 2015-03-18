@@ -3,6 +3,10 @@ require 'fast_haml/text_compiler'
 module FastHaml
   module FilterCompilers
     class Base
+      def need_newline?
+        true
+      end
+
       protected
 
       def compile_texts(temple, texts, tab_width: 0)

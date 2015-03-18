@@ -100,6 +100,8 @@ module FastHaml
         false
       when Ast::Element
         !child.nuke_outer_whitespace
+      when Ast::Filter
+        FilterCompilers.find(child.name).need_newline?
       else
         true
       end
