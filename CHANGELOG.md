@@ -1,3 +1,8 @@
+## 0.1.9 (2015-03-18)
+- Refactor script parser (internal)
+- Fix newline generation with filters
+- Support sass, scss and coffee filter
+
 ## 0.1.8 (2015-03-17)
 - Fix whitespace removal (`<` and `>`) behavior
     - Internally, new instructions `mknl` and `rmnl` are added.
