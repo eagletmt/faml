@@ -43,7 +43,6 @@ module FastHaml
 
     private
 
-
     DOCTYPE_PREFIX = '!'
     ELEMENT_PREFIX = '%'
     COMMENT_PREFIX = '/'
