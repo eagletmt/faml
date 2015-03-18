@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe 'CoffeeScript filter renderiong', type: :render do
+RSpec.describe 'CoffeeScript filter rendering', type: :render do
   it 'renders CoffeeScript filter' do
     html = render_string(<<HAML)
 :coffee

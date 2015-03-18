@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe 'JavaScript filter renderiong', type: :render do
+RSpec.describe 'JavaScript filter rendering', type: :render do
   it 'renders javascript filter' do
     expect(render_string(<<HAML)).to eq("<div>\n<script>\n  alert('hello');\n</script>\n<span>world</span>\n</div>\n")
 %div
