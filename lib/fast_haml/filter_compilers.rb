@@ -29,6 +29,7 @@ module FastHaml
 end
 
 require 'fast_haml/filter_compilers/cdata'
+require 'fast_haml/filter_compilers/coffee'
 require 'fast_haml/filter_compilers/css'
 require 'fast_haml/filter_compilers/escaped'
 require 'fast_haml/filter_compilers/javascript'

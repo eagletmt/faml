@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "appraisal"
   spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "bundler"
+  spec.add_development_dependency "coffee-script"
   spec.add_development_dependency "coveralls"
   spec.add_development_dependency "haml"
   spec.add_development_dependency "rake"
