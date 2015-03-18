@@ -11,20 +11,20 @@ module FastHaml
     end
 
     def compile(text, escape_html: @escape_html)
-      if contains_interpolation?(text)
+      if self.class.contains_interpolation?(text)
         compile_interpolation(text, escape_html: escape_html)
       else
         [:static, text]
       end
     end
 
-    private
-
     INTERPOLATION_BEGIN = /(\\*)(#[\{$@])/o
 
-    def contains_interpolation?(text)
+    def self.contains_interpolation?(text)
       INTERPOLATION_BEGIN === text
     end
+
+    private
 
     def compile_interpolation(text, escape_html: @escape_html)
       s = StringScanner.new(text)

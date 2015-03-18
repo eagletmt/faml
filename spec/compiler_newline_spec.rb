@@ -94,4 +94,45 @@ HAML
 HAML
     end
   end
+
+  context 'with tilt filters' do
+    it 'keeps newlines in filter' do
+      expect { render_string(<<'HAML') }.to raise_error(LineVerifier, raised_at(4))
+:scss
+  nav {
+    ul {
+      margin: #{raise LineVerifier}px;
+    }
+  }
+HAML
+    end
+
+    it 'keeps newlines after filter' do
+      expect { render_string(<<'HAML') }.to raise_error(LineVerifier, raised_at(8))
+:scss
+  nav {
+    ul {
+      margin: 0;
+    }
+  }
+
+%span= raise LineVerifier
+HAML
+    end
+
+    context 'with interpolation' do
+      it 'keeps newlines after filter' do
+        expect { render_string(<<'HAML') }.to raise_error(LineVerifier, raised_at(8))
+:scss
+  nav {
+    ul {
+      margin: #{0 + 5}px;
+    }
+  }
+
+%span= raise LineVerifier
+HAML
+      end
+    end
+  end
 end
