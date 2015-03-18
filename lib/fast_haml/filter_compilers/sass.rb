@@ -4,8 +4,8 @@ module FastHaml
   module FilterCompilers
     class Sass < TiltBase
       def compile(texts)
-        temple = compile_with_tilt('sass', texts)
-        temple << [:static, "\n"]
+        temple = [:multi, [:static, "\n"], [:newline]]
+        compile_with_tilt(temple, 'sass', texts)
         [:haml, :tag, 'style', false, [:html, :attrs], temple]
       end
     end

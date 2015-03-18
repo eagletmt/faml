@@ -14,9 +14,8 @@ module FastHaml
 
       protected
 
-      def compile_with_tilt(name, texts)
+      def compile_with_tilt(temple, name, texts)
         source = texts.join("\n")
-        temple = [:multi, [:static, "\n"], [:newline]]
         if TextCompiler.contains_interpolation?(source)
           text_temple = [:multi]
           compile_texts(text_temple, texts)
