@@ -1,3 +1,7 @@
+## 0.1.10 (2015-03-19)
+- Fix ruby filter to not generate newlines
+- Support markdown filter
+
 ## 0.1.9 (2015-03-18)
 - Refactor script parser (internal)
 - Fix newline generation with filters
