@@ -23,7 +23,6 @@ module FastHaml
           sym = unique_name
           temple << [:capture, sym, text_temple]
           temple << [:dynamic, "::FastHaml::FilterCompilers::TiltBase.render_with_tilt(#{name.inspect}, #{sym})"]
-          temple << [:newline]
         else
           compiled = self.class.render_with_tilt(name, source)
           temple << [:static, compiled]
