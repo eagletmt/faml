@@ -4,10 +4,8 @@ module FastHaml
   module FilterCompilers
     class Plain < Base
       def compile(texts)
-        temple = [:multi]
-        texts = strip_last_empty_lines(texts)
-        compile_texts(temple, texts[0 .. -2])
-        temple << text_compiler.compile(texts[-1]) << [:newline]
+        temple = [:multi, [:newline]]
+        compile_texts(temple, texts)
         temple
       end
     end

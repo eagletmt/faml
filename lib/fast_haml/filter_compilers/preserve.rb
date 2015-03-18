@@ -6,13 +6,12 @@ module FastHaml
       include Temple::Utils
 
       def compile(texts)
-        temple = [:multi]
+        temple = [:multi, [:newline]]
         texts.each do |text|
           temple << text_compiler.compile(text)
           unless texts.last.equal?(text)
-            temple << [:static, "\n"]
+            temple << [:static, "\n"] << [:newline]
           end
-          temple << [:newline]
         end
         sym = unique_name
         [:multi,

@@ -10,6 +10,7 @@ module FastHaml
         texts.each do |text|
           temple << [:static, tabs] << text_compiler.compile(text) << [:static, "\n"] << [:newline]
         end
+        temple.pop  # discard last [:newline]
         nil
       end
 

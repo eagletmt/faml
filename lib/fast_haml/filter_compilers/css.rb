@@ -4,7 +4,7 @@ module FastHaml
   module FilterCompilers
     class Css < Base
       def compile(texts)
-        temple = [:multi, [:static, "\n"]]
+        temple = [:multi, [:static, "\n"], [:newline]]
         compile_texts(temple, strip_last_empty_lines(texts), tab_width: 2)
         [:haml, :tag, 'style', false, [:html, :attrs], temple]
       end
