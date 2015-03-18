@@ -14,6 +14,11 @@ HAML
     expect(render_string('%span! <p>hello</p>')).to eq("<span><p>hello</p></span>\n")
   end
 
+  it 'ignores single Unescape mark without spaces' do
+    expect(render_string('!<p>hello</p>')).to eq("<p>hello</p>\n")
+    expect(render_string('%span!<p>hello</p>')).to eq("<span><p>hello</p></span>\n")
+  end
+
   it 'has effect on string interpolation in plain' do
     expect(render_string('! <p>#{"<strong>hello</strong>"}</p>')).to eq("<p><strong>hello</strong></p>\n")
     expect(render_string('%span! <p>#{"<strong>hello</strong>"}</p>')).to eq("<span><p><strong>hello</strong></p></span>\n")

@@ -46,15 +46,12 @@ module FastHaml
 
     DOCTYPE_PREFIX = '!'
     ELEMENT_PREFIX = '%'
-    SCRIPT_PREFIX = '='
     COMMENT_PREFIX = '/'
     SILENT_SCRIPT_PREFIX = '-'
     DIV_ID_PREFIX = '#'
     DIV_CLASS_PREFIX = '.'
     FILTER_PREFIX = ':'
     ESCAPE_PREFIX = '\\'
-    PRESERVE_PREFIX = '~'
-    SANITIZE_PREFIX = '&'
 
     def parse_line(line)
       text, indent = @indent_tracker.process(line, @line_parser.lineno)
@@ -75,54 +72,25 @@ module FastHaml
       when ELEMENT_PREFIX
         parse_element(text)
       when DOCTYPE_PREFIX
-        case
-        when text.start_with?('!!!')
+        if text.start_with?('!!!')
           parse_doctype(text)
-        when text.start_with?('!==')
-          parse_plain(text[3 .. -1].lstrip, escape_html: false)
-        when text[1] == SCRIPT_PREFIX
-          parse_script(text)
-        when text[1] == PRESERVE_PREFIX
-          parse_script(text)
-        when text[1] == ' '
-          parse_plain(text[1 .. -1].lstrip, escape_html: false)
         else
-          parse_plain(text)
+          parse_script(text)
         end
       when COMMENT_PREFIX
         parse_comment(text)
-      when SCRIPT_PREFIX
-        if text[1] == SCRIPT_PREFIX
-          parse_plain(text[2 .. -1].strip)
-        else
-          parse_script(text)
-        end
       when SILENT_SCRIPT_PREFIX
         parse_silent_script(text)
-      when PRESERVE_PREFIX
-        # preserve has no meaning in non-html_escape mode
-        parse_script(text)
       when DIV_ID_PREFIX, DIV_CLASS_PREFIX
         if text.start_with?('#{')
-          parse_plain(text)
+          parse_script(text)
         else
           parse_line("#{indent}%div#{text}")
         end
       when FILTER_PREFIX
         parse_filter(text)
-      when SANITIZE_PREFIX
-        case
-        when text.start_with?('&==')
-          parse_plain(text[3 .. -1].lstrip)
-        when text[1] == SCRIPT_PREFIX
-          parse_script(text)
-        when text[1] == PRESERVE_PREFIX
-          parse_script(text)
-        else
-          parse_plain(text[1 .. -1].strip)
-        end
       else
-        parse_plain(text)
+        parse_script(text)
       end
     end
 
@@ -153,8 +121,8 @@ module FastHaml
       end
     end
 
-    def parse_plain(text, escape_html: true)
-      @ast << Ast::Text.new(text, escape_html)
+    def parse_plain(text)
+      @ast << Ast::Text.new(text)
     end
 
     def parse_element(text)

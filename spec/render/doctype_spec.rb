@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe 'Doctype rendering', type: :render do
-  it 'ignores 1 or 2 exclamation marks' do
-    expect(render_string('!')).to eq("!\n")
-    expect(render_string('!!')).to eq("!!\n")
-  end
-
   context 'with html format' do
     it 'renders html5 doctype by default' do
       expect(render_string('!!!')).to eq("<!DOCTYPE html>\n")
