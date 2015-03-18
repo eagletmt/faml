@@ -126,7 +126,7 @@ module FastHaml
     end
 
     def parse_element(text)
-      @ast << ElementParser.new(text, @line_parser.lineno, @line_parser).parse
+      @ast << ElementParser.new(@line_parser).parse(text)
     end
 
     def parse_script(text)

@@ -7,16 +7,14 @@ require 'fast_haml/syntax_error'
 
 module FastHaml
   class ElementParser
-    def initialize(text, lineno, line_parser)
-      @text = text
-      @lineno = lineno
+    def initialize(line_parser)
       @line_parser = line_parser
     end
 
     ELEMENT_REGEXP = /\A%([-:\w]+)([-:\w.#]*)(.+)?\z/o
 
-    def parse
-      m = @text.match(ELEMENT_REGEXP)
+    def parse(text)
+      m = text.match(ELEMENT_REGEXP)
       unless m
         syntax_error!('Invalid element declaration')
       end
@@ -231,7 +229,7 @@ module FastHaml
     end
 
     def syntax_error!(message)
-      raise SyntaxError.new(message, @lineno)
+      raise SyntaxError.new(message, @line_parser.lineno)
     end
   end
 end
