@@ -83,7 +83,7 @@ module FastHaml
         when text[1] == SCRIPT_PREFIX
           parse_script(text)
         when text[1] == PRESERVE_PREFIX
-          parse_script("!=#{text[2 .. -1].lstrip}", preserve: true)
+          parse_script(text)
         when text[1] == ' '
           parse_plain(text[1 .. -1].lstrip, escape_html: false)
         else
@@ -117,7 +117,7 @@ module FastHaml
         when text[1] == SCRIPT_PREFIX
           parse_script(text)
         when text[1] == PRESERVE_PREFIX
-          parse_script("&=#{text[2 .. -1].lstrip}", preserve: true)
+          parse_script(text)
         else
           parse_plain(text[1 .. -1].strip)
         end
@@ -161,10 +161,8 @@ module FastHaml
       @ast << ElementParser.new(text, @line_parser.lineno, @line_parser).parse
     end
 
-    def parse_script(text, preserve: false)
-      node = ScriptParser.new(@line_parser).parse(text)
-      node.preserve = preserve
-      @ast << node
+    def parse_script(text)
+      @ast << ScriptParser.new(@line_parser).parse(text)
     end
 
     def parse_silent_script(text)
