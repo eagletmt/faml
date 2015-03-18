@@ -5,6 +5,7 @@ require 'fast_haml/indent_tracker'
 require 'fast_haml/line_parser'
 require 'fast_haml/parser_utils'
 require 'fast_haml/ruby_multiline'
+require 'fast_haml/script_parser'
 require 'fast_haml/syntax_error'
 
 module FastHaml
@@ -161,19 +162,7 @@ module FastHaml
     end
 
     def parse_script(text, preserve: false)
-      m = text.match(/\A([!&~])?[=~] *(.*)\z/)
-      script = m[2]
-      if script.empty?
-        syntax_error!("No Ruby code to evaluate")
-      end
-      script += RubyMultiline.read(@line_parser, script)
-      node = Ast::Script.new([], script)
-      case m[1]
-      when '!'
-        node.escape_html = false
-      when '&'
-        node.escape_html = true
-      end
+      node = ScriptParser.new(@line_parser).parse(text)
       node.preserve = preserve
       @ast << node
     end
