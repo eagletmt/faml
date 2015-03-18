@@ -8,6 +8,7 @@ module FastHaml
       def compile(texts)
         temple = [:multi, [:newline]]
         compile_texts(temple, texts)
+        temple << [:static, "\n"]
         escape_code = Temple::Filters::Escapable.new.instance_variable_get(:@escape_code)
         sym = unique_name
         [:multi,

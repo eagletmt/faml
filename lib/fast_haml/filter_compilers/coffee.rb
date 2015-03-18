@@ -5,6 +5,7 @@ module FastHaml
     class Coffee < TiltBase
       def compile(texts)
         temple = compile_with_tilt('coffee', texts)
+        temple << [:static, "\n"]
         [:haml, :tag, 'script', false, [:html, :attrs], [:html, :js, temple]]
       end
     end

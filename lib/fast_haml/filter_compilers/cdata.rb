@@ -6,7 +6,7 @@ module FastHaml
       def compile(texts)
         temple = [:multi, [:static, "<![CDATA[\n"], [:newline]]
         compile_texts(temple, texts, tab_width: 4)
-        temple << [:static, "]]>"]
+        temple << [:static, "\n]]>"]
       end
     end
 

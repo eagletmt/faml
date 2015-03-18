@@ -9,13 +9,17 @@ module FastHaml
 
       protected
 
-      def compile_texts(temple, texts, tab_width: 0)
+      def compile_texts(temple, texts, tab_width: 0, keep_last_empty_lines: false)
         tabs = ' ' * tab_width
-        texts = strip_last_empty_lines(texts)
-        texts.each do |text|
-          temple << [:static, tabs] << text_compiler.compile(text) << [:static, "\n"] << [:newline]
+        unless keep_last_empty_lines
+          texts = strip_last_empty_lines(texts)
         end
-        temple.pop  # discard last [:newline]
+        texts.each do |text|
+          temple << [:static, tabs] << text_compiler.compile(text)
+          unless texts.last.equal?(text)
+            temple << [:static, "\n"] << [:newline]
+          end
+        end
         nil
       end
 

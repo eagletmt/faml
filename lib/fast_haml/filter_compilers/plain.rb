@@ -5,13 +5,7 @@ module FastHaml
     class Plain < Base
       def compile(texts)
         temple = [:multi, [:newline]]
-        texts = strip_last_empty_lines(texts)
-        texts.each do |text|
-          temple << text_compiler.compile(text)
-          unless texts.last.equal?(text)
-            temple << [:static, "\n"] << [:newline]
-          end
-        end
+        compile_texts(temple, texts)
         temple
       end
     end
