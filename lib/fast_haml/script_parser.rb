@@ -1,3 +1,5 @@
+require 'fast_haml/ast'
+require 'fast_haml/ruby_multiline'
 require 'fast_haml/syntax_error'
 
 module FastHaml
