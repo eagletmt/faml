@@ -43,7 +43,7 @@ HAML
   end
 
   it 'raises error if indent is wrong' do
-    expect { render_string(<<HAML) }.to raise_error(FastHaml::IndentTracker::IndentMismatch)
+    expect { render_string(<<HAML) }.to raise_error(Faml::IndentTracker::IndentMismatch)
 %div
     %div
       %div
@@ -70,7 +70,7 @@ HAML
 
   context 'with invalid tag name' do
     it 'raises error' do
-      expect { render_string('%.foo') }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string('%.foo') }.to raise_error(Faml::SyntaxError)
     end
   end
 
@@ -124,11 +124,11 @@ HAML
   end
 
   it 'raises error if self-closing tag have text' do
-    expect { render_string('%p/ hello') }.to raise_error(FastHaml::SyntaxError)
+    expect { render_string('%p/ hello') }.to raise_error(Faml::SyntaxError)
   end
 
   it 'raises error if self-closing tag have children' do
-    expect { render_string(<<HAML) }.to raise_error(FastHaml::SyntaxError)
+    expect { render_string(<<HAML) }.to raise_error(Faml::SyntaxError)
 %p/
   hello
 HAML

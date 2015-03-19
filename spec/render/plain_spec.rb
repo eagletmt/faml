@@ -15,6 +15,6 @@ HAML
   end
 
   it 'raises error when interpolation is unterminated' do
-    expect { render_string('%span foo#{1 + 2') }.to raise_error(FastHaml::TextCompiler::InvalidInterpolation)
+    expect { render_string('%span foo#{1 + 2') }.to raise_error(Faml::TextCompiler::InvalidInterpolation)
   end
 end

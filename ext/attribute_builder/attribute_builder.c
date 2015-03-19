@@ -244,8 +244,8 @@ m_normalize_data(VALUE self, VALUE data)
 void
 Init_attribute_builder(void)
 {
-  VALUE mFastHaml = rb_define_module("FastHaml");
-  rb_mAttributeBuilder = rb_define_module_under(mFastHaml, "AttributeBuilder");
+  VALUE mFaml = rb_define_module("Faml");
+  rb_mAttributeBuilder = rb_define_module_under(mFaml, "AttributeBuilder");
   rb_define_singleton_method(rb_mAttributeBuilder, "build", RUBY_METHOD_FUNC(m_build), -1);
   rb_define_singleton_method(rb_mAttributeBuilder, "normalize_data", RUBY_METHOD_FUNC(m_normalize_data), 1);
 

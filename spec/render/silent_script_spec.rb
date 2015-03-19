@@ -81,7 +81,7 @@ HAML
   end
 
   it 'raises error if no Ruby code is given' do
-    expect { render_string('-') }.to raise_error(FastHaml::SyntaxError)
+    expect { render_string('-') }.to raise_error(Faml::SyntaxError)
   end
 
   it 'checks indent levels' do

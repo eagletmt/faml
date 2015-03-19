@@ -16,7 +16,7 @@ module LineVerifierHelper
   end
 end
 
-RSpec.describe 'FastHaml::Compiler newline generation', type: :render do
+RSpec.describe 'Faml::Compiler newline generation', type: :render do
   include LineVerifierHelper
 
   it do

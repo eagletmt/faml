@@ -5,8 +5,8 @@ RSpec.describe 'Tilt integration' do
     Tilt.new('spec.haml') { str }
   end
 
-  it 'renders with fast_haml' do
-    expect(Tilt['spec.haml']).to equal(FastHaml::Tilt)
+  it 'renders with faml' do
+    expect(Tilt['spec.haml']).to equal(Faml::Tilt)
   end
 
   it 'renders' do

@@ -9,11 +9,11 @@ SimpleCov.start do
   add_filter File.dirname(__FILE__)
 end
 
-require 'fast_haml'
+require 'faml'
 
 module RenderSpecHelper
   def render_string(str, options = {})
-    eval(FastHaml::Engine.new(options).call(str))
+    eval(Faml::Engine.new(options).call(str))
   end
 end
 

@@ -38,8 +38,8 @@ HAML
 
   context 'without Ruby code' do
     it 'raises error' do
-      expect { render_string('%span!=') }.to raise_error(FastHaml::SyntaxError)
-      expect { render_string('!=') }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string('%span!=') }.to raise_error(Faml::SyntaxError)
+      expect { render_string('!=') }.to raise_error(Faml::SyntaxError)
     end
   end
 end

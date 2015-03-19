@@ -49,11 +49,11 @@ HAML
   end
 
   it 'raises error if conditional comment bracket is unbalanced' do
-    expect { render_string('/[[if IE]') }.to raise_error(FastHaml::SyntaxError)
+    expect { render_string('/[[if IE]') }.to raise_error(Faml::SyntaxError)
   end
 
   it 'raises error if both comment text and children are given' do
-    expect { render_string(<<HAML) }.to raise_error(FastHaml::SyntaxError)
+    expect { render_string(<<HAML) }.to raise_error(Faml::SyntaxError)
 / hehehe
   %span hello
 HAML

@@ -4,7 +4,7 @@ task :default => [:compile, :spec]
 
 require 'rake/extensiontask'
 Rake::ExtensionTask.new('attribute_builder') do |ext|
-  ext.lib_dir = 'lib/fast_haml'
+  ext.lib_dir = 'lib/faml'
 end
 
 require 'rspec/core/rake_task'

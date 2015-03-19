@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 require 'json'
-require 'fast_haml'
+require 'faml'
 
 class HamlTest < Minitest::Test
   contexts = JSON.parse(File.read(File.join(__dir__, 'haml-spec', 'tests.json')))

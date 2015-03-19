@@ -64,7 +64,7 @@ HAML
   end
 
   it 'raises error when unparsable Ruby code is given' do
-    expect { render_string('%span{x ==== 2}') }.to raise_error(FastHaml::Compiler::UnparsableRubyCode)
+    expect { render_string('%span{x ==== 2}') }.to raise_error(Faml::Compiler::UnparsableRubyCode)
   end
 
   context 'with xhtml format' do
@@ -121,7 +121,7 @@ HAML
 
   context 'with unmatched brace' do
     it 'raises error' do
-      expect { render_string('%span{foo hello') }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string('%span{foo hello') }.to raise_error(Faml::SyntaxError)
     end
 
     it 'tries to parse next lines' do
@@ -132,7 +132,7 @@ HAML
     end
 
     it "doesn't try to parse next lines without trailing comma" do
-      expect { render_string(<<HAML) }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string(<<HAML) }.to raise_error(Faml::SyntaxError)
 %span{foo: 1
 , bar: 2} hello
 HAML
@@ -219,23 +219,23 @@ HAML
     end
 
     it 'raises error when attributes list is unterminated' do
-      expect { render_string('%span(foo=1 bar=2') }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string('%span(foo=1 bar=2') }.to raise_error(Faml::SyntaxError)
     end
 
     it 'raises error when key is not alnum' do
-      expect { render_string('%span(foo=1 3.14=3) hello') }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string('%span(foo=1 3.14=3) hello') }.to raise_error(Faml::SyntaxError)
     end
 
     it 'raises error when value is missing' do
-      expect { render_string('%span(foo=1 bar=) hello') }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string('%span(foo=1 bar=) hello') }.to raise_error(Faml::SyntaxError)
     end
 
     it 'raises error when quote is unterminated' do
-      expect { render_string('%span(foo=1 bar="baz) hello') }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string('%span(foo=1 bar="baz) hello') }.to raise_error(Faml::SyntaxError)
     end
 
     it 'raises error when string interpolation is unterminated' do
-      expect { render_string('%span(foo=1 bar="ba#{1") hello') }.to raise_error(FastHaml::SyntaxError)
+      expect { render_string('%span(foo=1 bar="ba#{1") hello') }.to raise_error(Faml::SyntaxError)
     end
   end
 end
