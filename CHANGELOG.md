@@ -1,3 +1,7 @@
+## 0.2.0 (2015-03-19)
+- Rename from fast_haml to faml
+- Allow .faml extension
+
 ## 0.1.10 (2015-03-19)
 - Fix ruby filter to not generate newlines
 - Support markdown filter
