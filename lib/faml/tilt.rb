@@ -13,4 +13,5 @@ module Faml
   end
 
   ::Tilt.register(Tilt, 'haml')
+  ::Tilt.register(Tilt, 'faml')
 end
