@@ -2,6 +2,7 @@ require 'parser/current'
 require 'temple'
 require 'faml/ast'
 require 'faml/filter_compilers'
+require 'faml/helpers'
 require 'faml/static_hash_parser'
 require 'faml/text_compiler'
 
@@ -36,13 +37,8 @@ module Faml
       re = /<(#{options[:preserve].map(&Regexp.method(:escape)).join('|')})([^>]*)>(.*?)(<\/\1>)/im
       input.to_s.gsub(re) do |s|
         s =~ re # Can't rely on $1, etc. existing since Rails' SafeBuffer#gsub is incompatible
-        "<#{$1}#{$2}>#{preserve($3)}</#{$1}>"
+        "<#{$1}#{$2}>#{Helpers.preserve($3)}</#{$1}>"
       end
-    end
-
-    def self.preserve(input)
-      # Taken from the original haml code
-      input.to_s.chomp("\n").gsub(/\n/, '&#x000A;').gsub(/\r/, '')
     end
 
     private
@@ -75,7 +71,7 @@ module Faml
     end
 
     def compile_root(ast)
-      [:multi].tap do |temple|
+      [:multi, [:code, 'extend ::Faml::Helpers']].tap do |temple|
         compile_children(ast, temple)
       end
     end
