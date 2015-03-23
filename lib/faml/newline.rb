@@ -8,12 +8,8 @@ module Faml
       while i >= 0
         case exprs[i]
         when [:rmnl]
-          if marker
-            raise "InternalError: double rmnl error"
-          else
-            marker = true
-            exprs.delete_at(i)
-          end
+          marker = true
+          exprs.delete_at(i)
         when [:mknl]
           if marker
             marker = false
