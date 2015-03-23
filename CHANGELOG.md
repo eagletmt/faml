@@ -1,3 +1,7 @@
+## 0.2.1 (2015-03-23)
+- Allow double rmnl
+    - simply ignore the second rmnl
+
 ## 0.2.0 (2015-03-19)
 - Rename from fast_haml to faml
 - Allow .faml extension
