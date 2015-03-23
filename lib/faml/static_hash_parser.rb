@@ -56,10 +56,18 @@ module Faml
       end
     end
 
+    def eval_symbol(code)
+      if code.start_with?(':')
+        eval(code)
+      else
+        code.to_sym
+      end
+    end
+
     def try_static_key(node)
       case node.type
       when :sym
-        node.location.expression.source.gsub(/\A:/, '').to_sym
+        eval_symbol(node.location.expression.source)
       when :int, :float, :str
         eval(node.location.expression.source)
       end
@@ -68,7 +76,7 @@ module Faml
     def try_static_value(key_static, node)
       case node.type
       when :sym
-        @static_attributes[key_static] = node.location.expression.source.gsub(/\A:/, '').to_sym
+        @static_attributes[key_static] = eval_symbol(node.location.expression.source)
       when :true, :false, :nil, :int, :float, :str
         @static_attributes[key_static] = eval(node.location.expression.source)
       when :dstr

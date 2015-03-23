@@ -13,6 +13,12 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string('#{1 + 2}')).to eq("3\n")
   end
 
+  it 'renders attributes with symbol literal' do
+    expect(render_string("%span{foo: 'baz'}")).to eq("<span foo='baz'></span>\n")
+    expect(render_string("%span{:foo => 'baz'}")).to eq("<span foo='baz'></span>\n")
+    expect(render_string("%span{:'foo-bar' => 'baz'}")).to eq("<span foo-bar='baz'></span>\n")
+  end
+
   it 'renders dynamic attributes' do
     expect(render_string(%q|%span#main{class: "na#{'ni'}ka"} hello|)).to eq(%Q{<span class='nanika' id='main'>hello</span>\n})
   end
