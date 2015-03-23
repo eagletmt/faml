@@ -1,3 +1,8 @@
+## 0.2.2 (2015-03-23)
+- Fix attribute rendering when the key is in `:'foo-bar'` form
+- Provide `preserve` method in view contexts
+    - For compatibility with haml's Haml::Helper
+
 ## 0.2.1 (2015-03-23)
 - Allow double rmnl
     - simply ignore the second rmnl
