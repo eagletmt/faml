@@ -4,5 +4,6 @@ Rails.application.routes.draw do
     get :with_variables
     get :with_capture
     get :escaped
+    get :preserve
   end
 end

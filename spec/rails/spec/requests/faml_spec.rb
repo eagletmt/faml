@@ -44,4 +44,12 @@ RSpec.describe 'Faml with Rails', type: :request do
     expect(response).to be_ok
     expect(response.body).to include("&lt;marquee&gt;escape me&lt;/marquee&gt;")
   end
+
+  describe 'preserve helper' do
+    it 'returns html_safe string' do
+      get '/books/preserve'
+      expect(response).to be_ok
+      expect(response.body).to include('<b>preserve&#x000A;me</b>')
+    end
+  end
 end

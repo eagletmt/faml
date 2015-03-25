@@ -3,6 +3,7 @@ require 'temple'
 require 'faml/ast'
 require 'faml/filter_compilers'
 require 'faml/helpers'
+require 'faml/rails_helpers'
 require 'faml/static_hash_parser'
 require 'faml/text_compiler'
 
@@ -21,6 +22,7 @@ module Faml
       autoclose: DEFAULT_AUTO_CLOSE_TAGS,
       format: :html,
       preserve: DEFAULT_PRESERVE_TAGS,
+      use_html_safe: false,
     )
 
     def initialize(*)
@@ -71,8 +73,16 @@ module Faml
     end
 
     def compile_root(ast)
-      [:multi, [:code, 'extend ::Faml::Helpers']].tap do |temple|
+      [:multi, [:code, "extend ::#{helper_module.name}"]].tap do |temple|
         compile_children(ast, temple)
+      end
+    end
+
+    def helper_module
+      if options[:use_html_safe]
+        RailsHelpers
+      else
+        Helpers
       end
     end
 
