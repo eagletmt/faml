@@ -38,4 +38,10 @@ RSpec.describe 'Faml with Rails', type: :request do
     expect(response).to be_ok
     expect(response.body).to include("<div><div>\n<p>Hello</p>\n</div>\n</div>\n")
   end
+
+  it 'works with :escaped filter' do
+    get '/books/escaped'
+    expect(response).to be_ok
+    expect(response.body).to include("&lt;marquee&gt;escape me&lt;/marquee&gt;")
+  end
 end

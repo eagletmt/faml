@@ -9,7 +9,7 @@ module Faml
         temple = [:multi, [:newline]]
         compile_texts(temple, texts)
         temple << [:static, "\n"]
-        escape_code = Temple::Filters::Escapable.new.instance_variable_get(:@escape_code)
+        escape_code = Temple::Filters::Escapable.new(use_html_safe: false).instance_variable_get(:@escape_code)
         sym = unique_name
         [:multi,
           [:capture, sym, temple],
