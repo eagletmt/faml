@@ -1,7 +1,13 @@
+## 0.2.3 (2015-03-25)
+- Always escape texts in :escape filter
+    - It was not escaped when used in Rails
+- `preserve` helper returns html_safe string in Rails
+    - For compatibility with haml's Haml::Helpers::XssMods
+
 ## 0.2.2 (2015-03-23)
 - Fix attribute rendering when the key is in `:'foo-bar'` form
 - Provide `preserve` method in view contexts
-    - For compatibility with haml's Haml::Helper
+    - For compatibility with haml's Haml::Helpers
 
 ## 0.2.1 (2015-03-23)
 - Allow double rmnl
