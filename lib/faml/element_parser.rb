@@ -94,7 +94,7 @@ module Faml
         depth = ParserUtils.balance(s, '{', '}', depth)
         if depth == 0
           attr = s.pre_match + s.matched
-          return [attr[1, attr.size-2], s.rest.lstrip]
+          return [attr[1, attr.size-2], s.rest]
         else
           if text[-1] == ',' && @line_parser.has_next?
             text << @line_parser.next_line
@@ -117,7 +117,7 @@ module Faml
         if depth == 0
           t = s.string.byteslice(pre_pos ... s.pos-1)
           new_attributes.concat(parse_new_attribute_list(t))
-          return [new_attributes, s.rest.lstrip]
+          return [new_attributes, s.rest]
         else
           if @line_parser.has_next?
             text << ' ' << @line_parser.next_line

@@ -67,6 +67,11 @@ HAML
     = i
 HAML
     end
+
+    it 'parses texts correctly' do
+      expect(render_string('%div{foo: :bar} <b>hello</b>')).to eq("<div foo='bar'><b>hello</b></div>\n")
+      expect(render_string('%div(foo="bar") <b>hello</b>')).to eq("<div foo='bar'><b>hello</b></div>\n")
+    end
   end
 
   describe '><' do
