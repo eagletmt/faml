@@ -1,3 +1,7 @@
+## 0.2.4 (2015-03-26)
+- Fix parser when parsing `>` or `<` after attribute lists
+    - `%div{foo: :bar} <br>` was incorrectly parsed as `%div{foo: :bar}< br>` .
+
 ## 0.2.3 (2015-03-25)
 - Always escape texts in :escape filter
     - It was not escaped when used in Rails
