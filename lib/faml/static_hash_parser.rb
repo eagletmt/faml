@@ -64,7 +64,7 @@ module Faml
 
     def eval_symbol(code)
       if SYMBOL_FIRST_CHARS.include?(code[0])
-        eval(code)
+        eval(code).to_sym
       else
         code.to_sym
       end
