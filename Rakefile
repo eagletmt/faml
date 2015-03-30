@@ -11,7 +11,7 @@ require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
 
 namespace :benchmark do
-  task :rendering => ['benchmark:rendering:haml', 'benchmark:rendering:attributes']
+  task :rendering => ['benchmark:rendering:haml', 'benchmark:rendering:attributes', 'benchmark:rendering:slim']
   namespace :rendering do
     desc "Run benchmark with Haml's standard template"
     task :haml do
@@ -23,6 +23,11 @@ namespace :benchmark do
     desc "Run benchmark for attribute builder"
     task :attributes do
       sh 'ruby', 'benchmark/rendering.rb', File.join('benchmark/attribute_builder.haml')
+    end
+
+    desc "Run slim's benchmark"
+    task :slim do
+      sh 'ruby', 'benchmark/slim.rb'
     end
   end
 end
