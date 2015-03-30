@@ -1,3 +1,7 @@
+## 0.2.5 (2015-03-30)
+- Fix parser when parsing attributes in `{'foo': 'bar'}` form
+    - The syntax was introduced in Ruby 2.2.
+
 ## 0.2.4 (2015-03-26)
 - Fix parser when parsing `>` or `<` after attribute lists
     - `%div{foo: :bar} <br>` was incorrectly parsed as `%div{foo: :bar}< br>` .
