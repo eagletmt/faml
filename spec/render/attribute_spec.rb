@@ -19,6 +19,15 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string("%span{:'foo-bar' => 'baz'}")).to eq("<span foo-bar='baz'></span>\n")
   end
 
+  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.2.0')
+    it 'renders attributes with 2.2-style symbol literals' do
+      expect(render_string(%Q|%span{"foo": 'bar'}|)).to eq("<span foo='bar'></span>\n")
+      expect(render_string(%Q|- x = 'bar'\n%span{"foo": x}|)).to eq("<span foo='bar'></span>\n")
+      expect(render_string(%Q|%span{'foo': 'bar'}|)).to eq("<span foo='bar'></span>\n")
+      expect(render_string(%Q|- x = 'bar'\n%span{'foo': x}|)).to eq("<span foo='bar'></span>\n")
+    end
+  end
+
   it 'renders dynamic attributes' do
     expect(render_string(%q|%span#main{class: "na#{'ni'}ka"} hello|)).to eq(%Q{<span class='nanika' id='main'>hello</span>\n})
   end

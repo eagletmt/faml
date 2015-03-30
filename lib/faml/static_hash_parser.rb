@@ -56,8 +56,14 @@ module Faml
       end
     end
 
+    SYMBOL_FIRST_CHARS = [
+      ':',  # { :'foo' => 'bar' } or { :"foo" => 'bar' }
+      "'",  # { 'foo': 'bar' }
+      '"',  # { "foo": 'bar' }
+    ].freeze
+
     def eval_symbol(code)
-      if code.start_with?(':')
+      if SYMBOL_FIRST_CHARS.include?(code[0])
         eval(code)
       else
         code.to_sym
