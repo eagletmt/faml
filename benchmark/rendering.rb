@@ -2,34 +2,38 @@
 require 'benchmark/ips'
 require 'haml'
 require 'faml'
+require 'slim'
 require 'escape_utils/html/haml'
 
-template = ARGV[0]
-unless template
-  $stderr.puts "Usage: #{$0} template.haml"
+unless ARGV[0]
+  $stderr.puts "Usage: #{$0} template.haml [template.slim]"
   exit 1
 end
+
+haml_code = File.read(ARGV[0])
+slim_code = ARGV[1] ? File.read(ARGV[1]) : nil
 
 Benchmark.ips do |x|
   obj = Object.new
 
-  Haml::Engine.new(File.read(template), ugly: true, escape_html: true).def_method(obj, :haml)
-  code_array = Faml::Engine.new.call(File.read(template))
-  obj.instance_eval("def faml_array; #{code_array}; end")
-  code_string = Faml::Engine.new(generator: Temple::Generators::RailsOutputBuffer).call(File.read(template))
-  obj.instance_eval("def faml_string; #{code_string}; end")
-
-  x.report('Haml') do
-    obj.haml
+  Haml::Engine.new(haml_code, ugly: true, escape_html: true).def_method(obj, :haml)
+  obj.instance_eval %{
+    def faml_array; #{Faml::Engine.new.call(haml_code)}; end
+    def faml_string; #{Faml::Engine.new(generator: Temple::Generators::RailsOutputBuffer).call(haml_code)}; end
+  }
+  if slim_code
+    obj.instance_eval %{
+      def slim_array; #{Slim::Engine.new.call(slim_code)}; end
+      def slim_string; #{Slim::Engine.new(generator: Temple::Generators::RailsOutputBuffer).call(slim_code)}; end
+    }
   end
 
-  x.report('Faml (Array)') do
-    obj.faml_array
+  x.report('Haml') { obj.haml }
+  x.report('Faml (Array)') { obj.faml_array }
+  x.report('Faml (String)') { obj.faml_string }
+  if slim_code
+    x.report('Slim (Array)') { obj.slim_array }
+    x.report('Slim (String)') { obj.slim_string }
   end
-
-  x.report('Faml (String)') do
-    obj.faml_string
-  end
-
   x.compare!
 end

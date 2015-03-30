@@ -22,7 +22,7 @@ namespace :benchmark do
 
     desc "Run benchmark for attribute builder"
     task :attributes do
-      sh 'ruby', 'benchmark/rendering.rb', File.join('benchmark/attribute_builder.haml')
+      sh 'ruby', 'benchmark/rendering.rb', 'benchmark/attribute_builder.haml', 'benchmark/attribute_builder.slim'
     end
 
     desc "Run slim's benchmark"
