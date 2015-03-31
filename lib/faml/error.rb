@@ -1,6 +1,7 @@
 module Faml
   class Error < StandardError
-    attr_reader :lineno
+    attr_accessor :lineno
+
     def initialize(message, lineno)
       super(message)
       @lineno = lineno

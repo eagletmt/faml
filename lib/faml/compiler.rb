@@ -1,6 +1,7 @@
 require 'parser/current'
 require 'temple'
 require 'faml/ast'
+require 'faml/error'
 require 'faml/filter_compilers'
 require 'faml/helpers'
 require 'faml/rails_helpers'
@@ -9,7 +10,7 @@ require 'faml/text_compiler'
 
 module Faml
   class Compiler < Temple::Parser
-    class UnparsableRubyCode < StandardError
+    class UnparsableRubyCode < Error
     end
 
     DEFAULT_AUTO_CLOSE_TAGS = %w[
@@ -23,11 +24,13 @@ module Faml
       format: :html,
       preserve: DEFAULT_PRESERVE_TAGS,
       use_html_safe: false,
+      filename: nil,
     )
 
     def initialize(*)
       super
       @text_compiler = TextCompiler.new
+      @filename = options[:filename]
     end
 
     def call(ast)
@@ -70,6 +73,11 @@ module Faml
       else
         raise "InternalError: Unknown AST node #{ast.class}: #{ast.inspect}"
       end
+    rescue Error => e
+      if @filename && e.lineno
+        e.backtrace.unshift "#{@filename}:#{e.lineno}"
+      end
+      raise e
     end
 
     def compile_root(ast)
@@ -186,6 +194,11 @@ module Faml
       else
         temple
       end
+    rescue UnparsableRubyCode => e
+      unless e.lineno
+        e.lineno = ast.lineno
+      end
+      raise e
     end
 
     def self_closing?(ast)
@@ -282,7 +295,7 @@ module Faml
       parser.parse(buffer)
       true
     rescue ::Parser::SyntaxError
-      raise UnparsableRubyCode.new("Unparsable Ruby code is given to attributes: #{text}")
+      raise UnparsableRubyCode.new("Unparsable Ruby code is given to attributes: #{text}", nil)
     end
 
     def build_optimized_attributes(parser, static_id, static_class)
