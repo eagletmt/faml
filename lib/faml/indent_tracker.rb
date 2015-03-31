@@ -1,12 +1,8 @@
+require 'faml/error'
+
 module Faml
   class IndentTracker
-    class IndentMismatch < StandardError
-      attr_reader :lineno
-
-      def initialize(message, lineno)
-        super("#{message} at line #{lineno}")
-        @lineno = lineno
-      end
+    class IndentMismatch < Error
     end
 
     def initialize(on_enter: nil, on_leave: nil)

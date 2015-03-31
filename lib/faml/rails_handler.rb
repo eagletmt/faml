@@ -4,6 +4,7 @@ module Faml
       Engine.new(
         use_html_safe: true,
         generator: Temple::Generators::RailsOutputBuffer,
+        filename: template.identifier,
       ).call(template.source)
     end
   end

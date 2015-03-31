@@ -52,4 +52,22 @@ RSpec.describe 'Faml with Rails', type: :request do
       expect(response.body).to include('<b>preserve&#x000A;me</b>')
     end
   end
+
+  describe 'compile time errors' do
+    describe Faml::SyntaxError do
+      it 'has proper backtrace' do
+        expect { get '/books/syntax_error' }.to raise_error { |e|
+          expect(e.backtrace[0]).to end_with('app/views/books/syntax_error.html.haml:2')
+        }
+      end
+    end
+
+    describe Faml::IndentTracker::IndentMismatch do
+      it 'has proper backtrace' do
+        expect { get '/books/indent_error' }.to raise_error { |e|
+          expect(e.backtrace[0]).to end_with('app/views/books/indent_error.html.haml:3')
+        }
+      end
+    end
+  end
 end

@@ -1,5 +1,6 @@
 require 'faml/ast'
 require 'faml/element_parser'
+require 'faml/error'
 require 'faml/filter_parser'
 require 'faml/indent_tracker'
 require 'faml/line_parser'
@@ -11,6 +12,7 @@ require 'faml/syntax_error'
 module Faml
   class Parser
     def initialize(options = {})
+      @filename = options[:filename]
     end
 
     def call(template_str)
@@ -39,6 +41,11 @@ module Faml
       end
       @indent_tracker.finish
       @ast
+    rescue Error => e
+      if @filename && e.lineno
+        e.backtrace.unshift "#{@filename}:#{e.lineno}"
+      end
+      raise e
     end
 
     private

@@ -1,10 +1,6 @@
-module Faml
-  class SyntaxError < StandardError
-    attr_reader :lineno
+require 'faml/error'
 
-    def initialize(message, lineno)
-      super("#{message} at line #{lineno}")
-      @lineno = lineno
-    end
+module Faml
+  class SyntaxError < Error
   end
 end

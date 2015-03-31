@@ -8,6 +8,7 @@ module Faml
   class Engine < Temple::Engine
     define_options(
       generator: Temple::Generators::ArrayBuffer,
+      filename: nil,
     )
 
     DEFAULT_OPTIONS = {
