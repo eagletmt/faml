@@ -1,3 +1,8 @@
+## 0.2.7 (2015-03-31)
+- Improve backtrace of compile time errors
+- Annotate Faml::Ast with filename and line number (internal)
+- Fix error with tilt 1.x.
+
 ## 0.2.6 (2015-03-31)
 - Fix dependency on temple
 - Improve backtrace when syntax error is raised
