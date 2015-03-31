@@ -1,4 +1,5 @@
 require 'tilt'
+require 'tilt/haml'
 require 'faml/engine'
 
 module Faml
