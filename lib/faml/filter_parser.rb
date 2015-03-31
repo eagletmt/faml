@@ -10,9 +10,10 @@ module Faml
       !!@ast
     end
 
-    def start(name)
+    def start(name, lineno)
       @ast = Ast::Filter.new
       @ast.name = name
+      @ast.lineno = lineno
     end
 
     def append(line)

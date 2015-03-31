@@ -15,7 +15,7 @@ module Faml
       include HasChildren
     end
 
-    class Doctype < Struct.new(:doctype)
+    class Doctype < Struct.new(:doctype, :lineno)
     end
 
     class Element < Struct.new(
@@ -28,6 +28,7 @@ module Faml
       :self_closing,
       :nuke_inner_whitespace,
       :nuke_outer_whitespace,
+      :lineno,
     )
       include HasChildren
 
@@ -48,6 +49,7 @@ module Faml
       :escape_html,
       :preserve,
       :mid_block_keyword,
+      :lineno,
     )
       include HasChildren
 
@@ -65,7 +67,7 @@ module Faml
       end
     end
 
-    class SilentScript < Struct.new(:children, :script, :mid_block_keyword)
+    class SilentScript < Struct.new(:children, :script, :mid_block_keyword, :lineno)
       include HasChildren
 
       def initialize(*)
@@ -76,7 +78,7 @@ module Faml
       end
     end
 
-    class HtmlComment < Struct.new(:children, :comment, :conditional)
+    class HtmlComment < Struct.new(:children, :comment, :conditional, :lineno)
       include HasChildren
 
       def initialize(*)
@@ -86,11 +88,11 @@ module Faml
       end
     end
 
-    class HamlComment < Struct.new(:children)
+    class HamlComment < Struct.new(:children, :lineno)
       include HasChildren
     end
 
-    class Text < Struct.new(:text, :escape_html)
+    class Text < Struct.new(:text, :escape_html, :lineno)
       def initialize(*)
         super
         if self.escape_html.nil?
@@ -99,14 +101,14 @@ module Faml
       end
     end
 
-    class Filter < Struct.new(:name, :texts)
+    class Filter < Struct.new(:name, :texts, :lineno)
       def initialize(*)
         super
         self.texts ||= []
       end
     end
 
-    class Empty
+    class Empty < Struct.new(:lineno)
     end
   end
 end
