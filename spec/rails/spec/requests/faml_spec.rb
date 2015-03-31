@@ -77,5 +77,13 @@ RSpec.describe 'Faml with Rails', type: :request do
         }
       end
     end
+
+    describe Faml::FilterCompilers::NotFound do
+      it 'has proper backtrace' do
+        expect { get '/books/filter_not_found' }.to raise_error { |e|
+          expect(e.backtrace[0]).to end_with('app/views/books/filter_not_found.html.haml:2')
+        }
+      end
+    end
   end
 end

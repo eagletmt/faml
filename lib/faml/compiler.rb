@@ -388,6 +388,11 @@ module Faml
 
     def compile_filter(ast)
       FilterCompilers.find(ast.name).compile(ast.texts)
+    rescue FilterCompilers::NotFound => e
+      unless e.lineno
+        e.lineno = ast.lineno
+      end
+      raise e
     end
   end
 end

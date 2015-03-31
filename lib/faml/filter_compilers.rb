@@ -1,10 +1,10 @@
+require 'faml/error'
+
 module Faml
   module FilterCompilers
-    class NotFound < StandardError
-      attr_reader
-
+    class NotFound < Error
       def initialize(name)
-        super("Unable to find compiler for #{name}")
+        super("Unable to find compiler for #{name}", nil)
         @name = name
       end
     end

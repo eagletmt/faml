@@ -9,5 +9,6 @@ Rails.application.routes.draw do
     get :syntax_error
     get :indent_error
     get :unparsable
+    get :filter_not_found
   end
 end
