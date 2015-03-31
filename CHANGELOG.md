@@ -1,3 +1,8 @@
+## 0.2.6 (2015-03-31)
+- Fix dependency on temple
+- Improve backtrace when syntax error is raised
+    - https://github.com/eagletmt/faml/issues/13
+
 ## 0.2.5 (2015-03-30)
 - Fix parser when parsing attributes in `{'foo': 'bar'}` form
     - The syntax was introduced in Ruby 2.2.
