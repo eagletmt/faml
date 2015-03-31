@@ -22,17 +22,17 @@ module Faml
     desc 'temple FILE', 'Render temple AST'
     def temple(file)
       require 'pp'
-      pp Faml::Compiler.new.call(parse_file(file))
+      pp Faml::Compiler.new(filename: file).call(parse_file(file))
     end
 
     private
 
     def compile_file(file)
-      Faml::Engine.new.call(File.read(file))
+      Faml::Engine.new(filename: file).call(File.read(file))
     end
 
     def parse_file(file)
-      Faml::Parser.new.call(File.read(file))
+      Faml::Parser.new(filename: file).call(File.read(file))
     end
   end
 end
