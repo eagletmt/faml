@@ -130,7 +130,7 @@ module Faml
     end
 
     def compile_text(ast)
-      @text_compiler.compile(ast.text, escape_html: ast.escape_html)
+      @text_compiler.compile(ast.text, ast.lineno, escape_html: ast.escape_html)
     end
 
     # html5 and html4 is deprecated in temple.
@@ -387,7 +387,7 @@ module Faml
     end
 
     def compile_filter(ast)
-      FilterCompilers.find(ast.name).compile(ast.texts)
+      FilterCompilers.find(ast.name).compile(ast)
     rescue FilterCompilers::NotFound => e
       unless e.lineno
         e.lineno = ast.lineno

@@ -14,18 +14,18 @@ module Faml
 
       protected
 
-      def compile_with_tilt(temple, name, texts)
-        source = texts.join("\n")
+      def compile_with_tilt(temple, name, ast)
+        source = ast.texts.join("\n")
         if TextCompiler.contains_interpolation?(source)
           text_temple = [:multi]
-          compile_texts(text_temple, texts)
+          compile_texts(text_temple, ast.lineno, ast.texts)
           sym = unique_name
           temple << [:capture, sym, text_temple]
           temple << [:dynamic, "::Faml::FilterCompilers::TiltBase.render_with_tilt(#{name.inspect}, #{sym})"]
         else
           compiled = self.class.render_with_tilt(name, source)
           temple << [:static, compiled]
-          temple.concat([[:newline]] * (texts.size - 1))
+          temple.concat([[:newline]] * (ast.texts.size - 1))
         end
         temple
       end

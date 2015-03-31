@@ -1,18 +1,19 @@
 require 'strscan'
+require 'faml/error'
 require 'faml/parser_utils'
 
 module Faml
   class TextCompiler
-    class InvalidInterpolation < StandardError
+    class InvalidInterpolation < Error
     end
 
     def initialize(escape_html: true)
       @escape_html = escape_html
     end
 
-    def compile(text, escape_html: @escape_html)
+    def compile(text, lineno, escape_html: @escape_html)
       if self.class.contains_interpolation?(text)
-        compile_interpolation(text, escape_html: escape_html)
+        compile_interpolation(text, lineno, escape_html: escape_html)
       else
         [:static, text]
       end
@@ -26,7 +27,7 @@ module Faml
 
     private
 
-    def compile_interpolation(text, escape_html: @escape_html)
+    def compile_interpolation(text, lineno, escape_html: @escape_html)
       s = StringScanner.new(text)
       temple = [:multi]
       pos = s.pos
@@ -37,7 +38,7 @@ module Faml
         if escapes % 2 == 0
           # perform interpolation
           if s[2] == '#{'
-            temple << [:escape, escape_html, [:dynamic, find_close_brace(s)]]
+            temple << [:escape, escape_html, [:dynamic, find_close_brace(s, lineno)]]
           else
             var = s[2][-1]
             s.scan(/\w+/)
@@ -56,11 +57,11 @@ module Faml
 
     INTERPOLATION_BRACE = /[\{\}]/o
 
-    def find_close_brace(scanner)
+    def find_close_brace(scanner, lineno)
       pos = scanner.pos
       depth = ParserUtils.balance(scanner, '{', '}')
       if depth != 0
-        raise InvalidInterpolation.new(scanner.string)
+        raise InvalidInterpolation.new(scanner.string, lineno)
       else
         scanner.string.byteslice(pos ... (scanner.pos-1))
       end

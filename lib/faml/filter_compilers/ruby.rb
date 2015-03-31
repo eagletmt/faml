@@ -7,8 +7,8 @@ module Faml
         false
       end
 
-      def compile(texts)
-        [:multi, [:newline], [:code, strip_last_empty_lines(texts).join("\n")]]
+      def compile(ast)
+        [:multi, [:newline], [:code, strip_last_empty_lines(ast.texts).join("\n")]]
       end
     end
 

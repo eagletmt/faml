@@ -7,9 +7,9 @@ module Faml
         false
       end
 
-      def compile(texts)
+      def compile(ast)
         temple = [:multi, [:newline]]
-        compile_with_tilt(temple, 'markdown', texts)
+        compile_with_tilt(temple, 'markdown', ast)
       end
     end
 

@@ -3,9 +3,9 @@ require 'faml/filter_compilers/base'
 module Faml
   module FilterCompilers
     class Plain < Base
-      def compile(texts)
+      def compile(ast)
         temple = [:multi, [:newline]]
-        compile_texts(temple, texts)
+        compile_texts(temple, ast.lineno, ast.texts)
         temple
       end
     end

@@ -5,10 +5,10 @@ module Faml
     class Preserve < Base
       include Temple::Utils
 
-      def compile(texts)
+      def compile(ast)
         temple = [:multi, [:newline]]
         # I don't know why only :preserve filter keeps the last empty lines.
-        compile_texts(temple, texts, keep_last_empty_lines: true)
+        compile_texts(temple, ast.lineno, ast.texts, keep_last_empty_lines: true)
         sym = unique_name
         [:multi,
           [:capture, sym, temple],

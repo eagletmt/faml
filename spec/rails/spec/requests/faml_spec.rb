@@ -85,5 +85,21 @@ RSpec.describe 'Faml with Rails', type: :request do
         }
       end
     end
+
+    describe Faml::TextCompiler::InvalidInterpolation do
+      it 'has proper backtrace' do
+        expect { get '/books/invalid_interpolation' }.to raise_error { |e|
+          expect(e.backtrace[0]).to end_with('app/views/books/invalid_interpolation.html.haml:3')
+        }
+      end
+
+      context 'inside filter' do
+        it 'has proper backtrace' do
+          expect { get '/books/filter_invalid_interpolation' }.to raise_error { |e|
+            expect(e.backtrace[0]).to end_with('app/views/books/filter_invalid_interpolation.html.haml:4')
+          }
+        end
+      end
+    end
   end
 end

@@ -9,6 +9,8 @@ Rails.application.routes.draw do
     get :syntax_error
     get :indent_error
     get :unparsable
+    get :invalid_interpolation
     get :filter_not_found
+    get :filter_invalid_interpolation
   end
 end
