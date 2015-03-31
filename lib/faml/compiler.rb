@@ -35,6 +35,11 @@ module Faml
 
     def call(ast)
       compile(ast)
+    rescue Error => e
+      if @filename && e.lineno
+        e.backtrace.unshift "#{@filename}:#{e.lineno}"
+      end
+      raise e
     end
 
     def self.find_and_preserve(input)
@@ -73,11 +78,6 @@ module Faml
       else
         raise "InternalError: Unknown AST node #{ast.class}: #{ast.inspect}"
       end
-    rescue Error => e
-      if @filename && e.lineno
-        e.backtrace.unshift "#{@filename}:#{e.lineno}"
-      end
-      raise e
     end
 
     def compile_root(ast)
