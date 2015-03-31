@@ -20,6 +20,7 @@ module Faml
       end
 
       element = Ast::Element.new
+      element.filename = @line_parser.filename
       element.lineno = @line_parser.lineno
       element.tag_name = m[1]
       element.static_class, element.static_id = parse_class_and_id(m[2])

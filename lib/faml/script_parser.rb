@@ -25,10 +25,9 @@ module Faml
 
     def parse_script(text)
       if text[1] == '='
-        Ast::Text.new(text[2 .. -1].strip).tap { |t| t.lineno = @line_parser.lineno }
+        create_node(Ast::Text) { |t| t.text = text[2 .. -1].strip }
       else
-        node = Ast::Script.new
-        node.lineno = @line_parser.lineno
+        node = create_node(Ast::Script)
         node.script = text[1 .. -1].lstrip
         if node.script.empty?
           syntax_error!('No Ruby code to evaluate')
@@ -41,10 +40,9 @@ module Faml
     def parse_sanitized(text)
       case
       when text.start_with?('&==')
-        Ast::Text.new(text[3 .. -1].lstrip).tap { |t| t.lineno = @line_parser.lineno }
+        create_node(Ast::Text) { |t| t.text = text[3 .. -1].lstrip }
       when text[1] == '=' || text[1] == '~'
-        node = Ast::Script.new
-        node.lineno = @line_parser.lineno
+        node = create_node(Ast::Script)
         node.script = text[2 .. -1].lstrip
         if node.script.empty?
           syntax_error!('No Ruby code to evaluate')
@@ -53,17 +51,19 @@ module Faml
         node.preserve = text[1] == '~'
         node
       else
-        Ast::Text.new(text[1 .. -1].strip).tap { |t| t.lineno = @line_parser.lineno }
+        create_node(Ast::Text) { |t| t.text = text[1 .. -1].strip }
       end
     end
 
     def parse_unescape(text)
       case
       when text.start_with?('!==')
-        Ast::Text.new(text[3 .. -1].lstrip, false).tap { |t| t.lineno = @line_parser.lineno }
+        create_node(Ast::Text) do |t|
+          t.text = text[3 .. -1].lstrip
+          t.escape_html = false
+        end
       when text[1] == '=' || text[1] == '~'
-        node = Ast::Script.new
-        node.lineno = @line_parser.lineno
+        node = create_node(Ast::Script)
         node.escape_html = false
         node.script = text[2 .. -1].lstrip
         if node.script.empty?
@@ -73,7 +73,10 @@ module Faml
         node.preserve = text[1] == '~'
         node
       else
-        Ast::Text.new(text[1 .. -1].lstrip, false).tap { |t| t.lineno = @line_parser.lineno }
+        create_node(Ast::Text) do |t|
+          t.text = text[1 .. -1].lstrip
+          t.escape_html = false
+        end
       end
     end
 
@@ -82,12 +85,22 @@ module Faml
       if text.empty?
         nil
       else
-        Ast::Text.new(text).tap { |t| t.lineno = @line_parser.lineno }
+        create_node(Ast::Text) { |t| t.text = text }
       end
     end
 
     def syntax_error!(message)
       raise SyntaxError.new(message, @line_parser.lineno)
+    end
+
+    def create_node(klass, &block)
+      klass.new.tap do |node|
+        node.filename = @line_parser.filename
+        node.lineno = @line_parser.lineno
+        if block
+          block.call(node)
+        end
+      end
     end
   end
 end

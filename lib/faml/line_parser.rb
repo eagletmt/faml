@@ -1,8 +1,9 @@
 module Faml
   class LineParser
-    attr_reader :lineno
+    attr_reader :filename, :lineno
 
-    def initialize(template_str)
+    def initialize(filename, template_str)
+      @filename = filename
       @lines = template_str.each_line.map { |line| line.chomp.rstrip }
       @lineno = 0
     end

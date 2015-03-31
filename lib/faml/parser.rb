@@ -18,7 +18,7 @@ module Faml
     def call(template_str)
       @ast = Ast::Root.new
       @stack = []
-      @line_parser = LineParser.new(template_str)
+      @line_parser = LineParser.new(@filename, template_str)
       @indent_tracker = IndentTracker.new(on_enter: method(:indent_enter), on_leave: method(:indent_leave))
       @filter_parser = FilterParser.new(@indent_tracker)
 
@@ -63,12 +63,12 @@ module Faml
       text, indent = @indent_tracker.process(line, @line_parser.lineno)
 
       if text.empty?
-        @ast << Ast::Empty.new(@line_parser.lineno)
+        @ast << create_node(Ast::Empty)
         return
       end
 
       if @ast.is_a?(Ast::HamlComment)
-        @ast << Ast::Text.new(text).tap { |t| t.lineno = @line_parser.lineno }
+        @ast << create_node(Ast::Text) { |t| t.text = text }
         return
       end
 
@@ -101,13 +101,12 @@ module Faml
     end
 
     def parse_doctype(text)
-      @ast << Ast::Doctype.new(text[3 .. -1].strip).tap { |d| d.lineno = @line_parser.lineno }
+      @ast << create_node(Ast::Doctype) { |d| d.doctype = text[3 .. -1].strip }
     end
 
     def parse_comment(text)
       text = text[1, text.size-1].strip
-      comment = Ast::HtmlComment.new
-      comment.lineno = @line_parser.lineno
+      comment = create_node(Ast::HtmlComment)
       comment.comment = text
       if text[0] == '['
         comment.conditional, rest = parse_conditional_comment(text)
@@ -129,7 +128,7 @@ module Faml
     end
 
     def parse_plain(text)
-      @ast << Ast::Text.new(text).tap { |t| t.lineno = @line_parser.lineno }
+      @ast << create_node(Ast::Text) { |t| t.text = text }
     end
 
     def parse_element(text)
@@ -142,11 +141,10 @@ module Faml
 
     def parse_silent_script(text)
       if text.start_with?('-#')
-        @ast << Ast::HamlComment.new.tap { |c| c.lineno = @line_parser.lineno }
+        @ast << create_node(Ast::HamlComment)
         return
       end
-      node = Ast::SilentScript.new
-      node.lineno = @line_parser.lineno
+      node = create_node(Ast::SilentScript)
       node.script = text[/\A- *(.*)\z/, 1]
       if node.script.empty?
         syntax_error!("No Ruby code to evaluate")
@@ -160,7 +158,7 @@ module Faml
       unless filter_name
         syntax_error!("Invalid filter name: #{text}")
       end
-      @filter_parser.start(filter_name, @line_parser.lineno)
+      @filter_parser.start(filter_name, @line_parser.filename, @line_parser.lineno)
     end
 
     def indent_enter(_, text)
@@ -216,6 +214,16 @@ module Faml
 
     def syntax_error!(message)
       raise SyntaxError.new(message, @line_parser.lineno)
+    end
+
+    def create_node(klass, &block)
+      klass.new.tap do |node|
+        node.filename = @line_parser.filename
+        node.lineno = @line_parser.lineno
+        if block
+          block.call(node)
+        end
+      end
     end
   end
 end
