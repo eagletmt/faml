@@ -4,7 +4,11 @@ require 'faml/engine'
 module Faml
   class Tilt < Tilt::Template
     def prepare
-      @code = Engine.new(options.merge(filename: File.expand_path(file))).call(data)
+      filename = nil
+      if file
+        filename = File.expand_path(file)
+      end
+      @code = Engine.new(options.merge(filename: filename)).call(data)
     end
 
     def precompiled_template(locals = {})
