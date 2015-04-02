@@ -58,6 +58,10 @@ is always rendered as
 
 It's equivalent to haml's "ugly" mode.
 
+### No Haml::Helpers except for preserve
+I won't provide helper methods of Haml::Helpers except for `preserve` .
+If you really need other helper methods, please open an issue.
+
 ### Others
 If you find other incompatibility, please report it to me :-p.
 
