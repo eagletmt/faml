@@ -1,3 +1,10 @@
+## 0.2.8 (2015-04-02)
+- Allow empty silent script body
+    - For compatibility with haml
+    - https://github.com/eagletmt/faml/issues/16
+- Fix parse error at multiline in attribute list
+    - https://github.com/eagletmt/faml/issues/15
+
 ## 0.2.7 (2015-03-31)
 - Improve backtrace of compile time errors
 - Annotate Faml::Ast with filename and line number (internal)
