@@ -80,8 +80,8 @@ HAML
 HAML
   end
 
-  it 'raises error if no Ruby code is given' do
-    expect { render_string('-') }.to raise_error(Faml::SyntaxError)
+  it 'allows empty silent script body' do
+    expect(render_string("%br\n-\n%br")).to eq("<br>\n<br>\n")
   end
 
   it 'checks indent levels' do

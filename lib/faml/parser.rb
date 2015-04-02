@@ -146,9 +146,6 @@ module Faml
       end
       node = create_node(Ast::SilentScript)
       node.script = text[/\A- *(.*)\z/, 1]
-      if node.script.empty?
-        syntax_error!("No Ruby code to evaluate")
-      end
       node.script += RubyMultiline.read(@line_parser, node.script)
       @ast << node
     end
