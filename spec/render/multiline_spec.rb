@@ -36,4 +36,11 @@ HAML
   world
 HAML
   end
+
+  it 'can be used in attribute list' do
+    expect(render_string(<<HAML)).to eq("<div bar='2' foo='1'></div>\n")
+%div{foo: 1, |
+  bar: 2}
+HAML
+  end
 end

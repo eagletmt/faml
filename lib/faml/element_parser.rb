@@ -98,7 +98,7 @@ module Faml
           attr = s.pre_match + s.matched
           return [attr[1, attr.size-2], s.rest]
         else
-          if text[-1] == ',' && @line_parser.has_next?
+          if /,\s*\z/ === text && @line_parser.has_next?
             text << @line_parser.next_line
           else
             syntax_error!('Unmatched brace')
