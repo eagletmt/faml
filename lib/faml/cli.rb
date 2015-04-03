@@ -6,7 +6,7 @@ module Faml
     desc 'render FILE', 'Render haml template'
     def render(file)
       code = compile_file(file)
-      instance_eval(code, file)
+      puts instance_eval(code, file)
     end
 
     desc 'compile FILE', 'Compile haml template'
