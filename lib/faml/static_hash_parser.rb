@@ -14,7 +14,9 @@ module Faml
     end
 
     def parse(text)
-      parser = ::Parser::CurrentRuby.new
+      builder = ::Parser::Builders::Default.new
+      builder.emit_file_line_as_literals = false
+      parser = ::Parser::CurrentRuby.new(builder)
       parser.diagnostics.consumer = nil
       buffer = ::Parser::Source::Buffer.new('(faml)')
       buffer.source = text

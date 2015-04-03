@@ -175,6 +175,13 @@ HAML
     end
   end
 
+  it 'renders __LINE__ correctly' do
+    expect(render_string(<<HAML)).to eq("<span a='2' b='1'></span>\n")
+%span{b: __LINE__,
+  a: __LINE__}
+HAML
+  end
+
   describe 'with HTML-style attributes' do
     it 'parses simple values' do
       expect(render_string('%span(foo=1 bar=3) hello')).to eq("<span bar='3' foo='1'>hello</span>\n")
