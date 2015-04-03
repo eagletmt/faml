@@ -188,6 +188,15 @@ HAML
 hello
 HAML
       end
+
+      it 'keeps newlines in haml multiline' do
+        expect(render_string(<<HAML)).to eq("foo bar 1\n4\n")
+= 'foo ' + |
+  'bar ' + |
+  __LINE__.to_s |
+= __LINE__
+HAML
+      end
     end
   end
 end

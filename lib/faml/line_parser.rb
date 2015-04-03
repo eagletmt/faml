@@ -61,7 +61,7 @@ module Faml
           break
         end
       end
-      buf.join
+      buf.join("\n")
     end
   end
 end

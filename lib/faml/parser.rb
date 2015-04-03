@@ -31,7 +31,12 @@ module Faml
           end
         end
         unless @filter_parser.enabled?
+          line_count = line.count("\n")
+          line.delete!("\n")
           parse_line(line)
+          line_count.times do
+            @ast << create_node(Ast::Empty)
+          end
         end
       end
 
