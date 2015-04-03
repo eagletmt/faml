@@ -99,7 +99,7 @@ module Faml
           return [attr[1, attr.size-2], s.rest]
         else
           if /,\s*\z/ === text && @line_parser.has_next?
-            text << @line_parser.next_line
+            text << "\n" << @line_parser.next_line
           else
             syntax_error!('Unmatched brace')
           end
@@ -122,7 +122,7 @@ module Faml
           return [new_attributes, s.rest]
         else
           if @line_parser.has_next?
-            text << ' ' << @line_parser.next_line
+            text << "\n" << @line_parser.next_line
           else
             syntax_error!('Unmatched paren')
           end

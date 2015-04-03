@@ -6,7 +6,7 @@ module Faml
         current_text = line_parser.next_line
         buf << current_text
       end
-      buf.join(' ')
+      buf.join("\n")
     end
 
     # `text' is a Ruby multiline block if it:
