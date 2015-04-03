@@ -171,6 +171,12 @@ module Faml
       end
       @stack.push(@ast)
       @ast = @ast.children.last
+      case @ast
+      when Ast::Text
+        syntax_error!('nesting within plain text is illegal')
+      when Ast::Doctype
+        syntax_error!('nesting within a header command is illegal')
+      end
       @ast.children = empty_lines
       if @ast.is_a?(Ast::Element) && @ast.self_closing
         syntax_error!('Illegal nesting: nesting within a self-closing tag is illegal')
