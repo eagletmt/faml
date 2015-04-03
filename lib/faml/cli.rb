@@ -5,7 +5,8 @@ module Faml
   class CLI < Thor
     desc 'render FILE', 'Render haml template'
     def render(file)
-      puts eval(compile_file(file))
+      code = compile_file(file)
+      instance_eval(code, file)
     end
 
     desc 'compile FILE', 'Compile haml template'
