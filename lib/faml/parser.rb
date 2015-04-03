@@ -23,8 +23,9 @@ module Faml
       @filter_parser = FilterParser.new(@indent_tracker)
 
       while @line_parser.has_next?
-        line = @line_parser.next_line
-        if !@ast.is_a?(Ast::HamlComment) && @filter_parser.enabled?
+        in_filter = !@ast.is_a?(Ast::HamlComment) && @filter_parser.enabled?
+        line = @line_parser.next_line(in_filter: in_filter)
+        if in_filter
           ast = @filter_parser.append(line)
           if ast
             @ast << ast

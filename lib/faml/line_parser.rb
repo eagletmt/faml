@@ -8,9 +8,9 @@ module Faml
       @lineno = 0
     end
 
-    def next_line
+    def next_line(in_filter: false)
       line = move_next
-      if is_multiline?(line)
+      if !in_filter && is_multiline?(line)
         next_multiline(line)
       else
         line

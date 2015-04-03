@@ -43,4 +43,13 @@ HAML
   bar: 2}
 HAML
   end
+
+  it "isn't enabled in filter" do
+    expect(render_string(<<HAML)).to eq("<script>\n  hello |\n  world |\n</script>\n4\n")
+:javascript
+  hello |
+  world |
+= __LINE__
+HAML
+  end
 end
