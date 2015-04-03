@@ -158,5 +158,36 @@ HAML
 HAML
       end
     end
+
+    context 'with multiline' do
+      it 'keeps newlines in static attributes' do
+        expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(3))
+%span{a: 1,
+  b: 2}
+= raise LineVerifier
+HAML
+      end
+
+      it 'keeps newlines in dynamic attributes' do
+        expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(2))
+%span{a: 1,
+  b: raise(LineVerifier)}
+hello
+HAML
+        expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(3))
+%span{a: 1,
+  b: 2 + 3}
+= raise LineVerifier
+HAML
+      end
+
+      it 'keeps newlines in ruby attributes' do
+        expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(2))
+%span{[1,
+  raise(LineVerifier)]}
+hello
+HAML
+      end
+    end
   end
 end

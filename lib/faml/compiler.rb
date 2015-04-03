@@ -228,7 +228,8 @@ module Faml
       end
 
       if attrs = try_optimize_attributes(text, static_id, static_class)
-        return [:html, :attrs, *attrs]
+        line_count = text.count("\n")
+        return [:multi, [:html, :attrs, *attrs]].concat([[:newline]] * line_count)
       end
 
       # Slow version
@@ -275,6 +276,12 @@ module Faml
 
       if dynamic_attributes.has_key?('data')
         # XXX: Quit optimization...
+        return nil
+      end
+
+      if text.include?("\n") && !dynamic_attributes.empty?
+        # XXX: Quit optimization to keep newlines
+        # https://github.com/eagletmt/faml/issues/18
         return nil
       end
 
