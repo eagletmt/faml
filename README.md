@@ -24,7 +24,15 @@ Or install it yourself as:
 
 ## Usage
 
+### Rails, sinatra
 Just replace your `gem 'haml'` with `gem 'faml'` .
+
+### middleman
+Since middleman has its own renderers, there's no easy way to use faml with middleman currently.
+
+### Others
+faml provide a [tilt](https://github.com/rtomayko/tilt) interface.
+If your framework uses tilt, you can use faml by replacing `gem 'haml'` with `gem 'faml'` .
 
 ## Incompatibilities
 There are several incompatibilities.
