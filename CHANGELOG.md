@@ -1,3 +1,9 @@
+## 0.2.9 (2015-04-04)
+- Keep code newlines with multiline
+    - https://github.com/eagletmt/faml/issues/18
+- Disable haml multiline syntax within filter
+- Fix `__LINE__` and `__FILE__` in attribute lists
+
 ## 0.2.8 (2015-04-02)
 - Allow empty silent script body
     - For compatibility with haml
