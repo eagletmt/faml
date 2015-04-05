@@ -2,6 +2,7 @@
 require 'benchmark/ips'
 require 'haml'
 require 'faml'
+require 'hamlit'
 require 'slim'
 require 'escape_utils/html/haml'
 
@@ -20,6 +21,8 @@ Benchmark.ips do |x|
   obj.instance_eval %{
     def faml_array; #{Faml::Engine.new.call(haml_code)}; end
     def faml_string; #{Faml::Engine.new(generator: Temple::Generators::RailsOutputBuffer).call(haml_code)}; end
+    def hamlit_array; #{Hamlit::Engine.new(escape_html: true).call(haml_code)}; end
+    def hamlit_string; #{Hamlit::Engine.new(escape_html: true, generator: Temple::Generators::RailsOutputBuffer).call(haml_code)}; end
   }
   if slim_code
     obj.instance_eval %{
@@ -31,6 +34,8 @@ Benchmark.ips do |x|
   x.report('Haml') { obj.haml }
   x.report('Faml (Array)') { obj.faml_array }
   x.report('Faml (String)') { obj.faml_string }
+  x.report('Hamlit (Array)') { obj.hamlit_array }
+  x.report('Hamlit (String)') { obj.hamlit_string }
   if slim_code
     x.report('Slim (Array)') { obj.slim_array }
     x.report('Slim (String)') { obj.slim_string }
