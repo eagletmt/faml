@@ -27,6 +27,8 @@ Or install it yourself as:
 ### Rails, sinatra
 Just replace your `gem 'haml'` with `gem 'faml'` .
 
+faml is only tested with Rails >= 4.0.
+
 ### middleman
 Since middleman has its own renderers, there's no easy way to use faml with middleman currently.
 
