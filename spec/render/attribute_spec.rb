@@ -259,5 +259,12 @@ HAML
     it 'raises error when string interpolation is unterminated' do
       expect { render_string('%span(foo=1 bar="ba#{1") hello') }.to raise_error(Faml::SyntaxError)
     end
+
+    it 'renders __LINE__ correctly' do
+      expect(render_string(<<HAML)).to eq("<span a='2' b='1'></span>\n")
+%span(b=__LINE__
+  a=__LINE__)
+HAML
+    end
   end
 end

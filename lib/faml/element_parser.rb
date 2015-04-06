@@ -77,11 +77,10 @@ module Faml
 
       attributes = old_attributes
       unless new_attributes.empty?
-        t = to_old_syntax(new_attributes)
         if attributes.empty?
-          attributes = t
+          attributes = new_attributes
         else
-          attributes << ", " << t
+          attributes << ", " << new_attributes
         end
       end
       [attributes, rest]
@@ -130,7 +129,7 @@ module Faml
 
     def parse_new_attribute_list(text)
       s = StringScanner.new(text)
-      list = []
+      attributes = []
       until s.eos?
         name = scan_key(s)
         s.skip(/\s*/)
@@ -141,11 +140,12 @@ module Faml
         else
           value = 'true'
         end
-        s.skip(/\s*/)
+        spaces = s.scan(/\s*/)
+        line_count = spaces.count("\n")
 
-        list << [name, value]
+        attributes << "#{name.inspect} => #{value},#{"\n" * line_count}"
       end
-      list
+      attributes.join
     end
 
     def scan_key(scanner)
@@ -197,10 +197,6 @@ module Faml
           syntax_error!('Invalid attribute list (invalid variable name)')
         end
       end
-    end
-
-    def to_old_syntax(new_attributes)
-      new_attributes.map { |k, v| "#{k.inspect} => #{v}" }.join(', ')
     end
 
     def parse_nuke_whitespace(rest)

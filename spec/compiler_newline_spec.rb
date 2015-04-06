@@ -168,6 +168,14 @@ HAML
 HAML
       end
 
+      it 'keeps newlines in static HTML-style attributes' do
+        expect(render_string(<<HAML)).to eq("<span a='1' b='2'></span>\n3\n")
+%span(a=1
+  b=2)
+= __LINE__
+HAML
+      end
+
       it 'keeps newlines in dynamic attributes' do
         expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(2))
 %span{a: 1,
