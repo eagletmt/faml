@@ -1,3 +1,6 @@
+## 0.2.10 (2015-04-06)
+- Keep code newlines within Ruby multiline
+
 ## 0.2.9 (2015-04-04)
 - Keep code newlines with multiline
     - https://github.com/eagletmt/faml/issues/18
