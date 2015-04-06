@@ -197,6 +197,15 @@ HAML
 = __LINE__
 HAML
       end
+
+      it 'keeps newlines in Ruby multiline' do
+        expect(render_string(<<HAML)).to eq("1 2 3\n<span>4</span>\n")
+= [__LINE__,
+  __LINE__,
+  __LINE__].join(' ')
+%span= __LINE__
+HAML
+      end
     end
   end
 end

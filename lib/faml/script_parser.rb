@@ -28,11 +28,11 @@ module Faml
         create_node(Ast::Text) { |t| t.text = text[2 .. -1].strip }
       else
         node = create_node(Ast::Script)
-        node.script = text[1 .. -1].lstrip
-        if node.script.empty?
+        script = text[1 .. -1].lstrip
+        if script.empty?
           syntax_error!('No Ruby code to evaluate')
         end
-        node.script += RubyMultiline.read(@line_parser, node.script)
+        node.script = [script, *RubyMultiline.read(@line_parser, script)].join("\n")
         node
       end
     end
@@ -43,11 +43,11 @@ module Faml
         create_node(Ast::Text) { |t| t.text = text[3 .. -1].lstrip }
       when text[1] == '=' || text[1] == '~'
         node = create_node(Ast::Script)
-        node.script = text[2 .. -1].lstrip
-        if node.script.empty?
+        script = text[2 .. -1].lstrip
+        if script.empty?
           syntax_error!('No Ruby code to evaluate')
         end
-        node.script += RubyMultiline.read(@line_parser, node.script)
+        node.script = [script, *RubyMultiline.read(@line_parser, script)].join("\n")
         node.preserve = text[1] == '~'
         node
       else
@@ -65,11 +65,11 @@ module Faml
       when text[1] == '=' || text[1] == '~'
         node = create_node(Ast::Script)
         node.escape_html = false
-        node.script = text[2 .. -1].lstrip
-        if node.script.empty?
+        script = text[2 .. -1].lstrip
+        if script.empty?
           syntax_error!('No Ruby code to evaluate')
         end
-        node.script += RubyMultiline.read(@line_parser, node.script)
+        node.script = [script, *RubyMultiline.read(@line_parser, script)].join("\n")
         node.preserve = text[1] == '~'
         node
       else

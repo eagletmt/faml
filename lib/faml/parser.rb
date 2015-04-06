@@ -151,8 +151,8 @@ module Faml
         return
       end
       node = create_node(Ast::SilentScript)
-      node.script = text[/\A- *(.*)\z/, 1]
-      node.script += RubyMultiline.read(@line_parser, node.script)
+      script = text[/\A- *(.*)\z/, 1]
+      node.script = [script, *RubyMultiline.read(@line_parser, script)].join("\n")
       @ast << node
     end
 
