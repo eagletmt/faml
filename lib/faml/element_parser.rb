@@ -112,14 +112,12 @@ module Faml
       s = StringScanner.new(text)
       s.pos = 1
       depth = 1
-      new_attributes = []
       loop do
         pre_pos = s.pos
         depth = ParserUtils.balance(s, '(', ')', depth)
         if depth == 0
           t = s.string.byteslice(pre_pos ... s.pos-1)
-          new_attributes.concat(parse_new_attribute_list(t))
-          return [new_attributes, s.rest]
+          return [parse_new_attribute_list(t), s.rest]
         else
           if @line_parser.has_next?
             text << "\n" << @line_parser.next_line
