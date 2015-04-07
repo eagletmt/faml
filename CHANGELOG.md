@@ -1,3 +1,7 @@
+## 0.2.11 (2015-04-07)
+- Keep code newlines within multiline in HTML-style attribute list
+    - https://github.com/eagletmt/faml/issues/19
+
 ## 0.2.10 (2015-04-06)
 - Keep code newlines within Ruby multiline
 
