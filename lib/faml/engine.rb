@@ -11,10 +11,6 @@ module Faml
       filename: nil,
     )
 
-    def initialize(opts = {})
-      super(opts)
-    end
-
     use Parser
     use Compiler
     use Html
