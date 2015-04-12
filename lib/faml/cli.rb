@@ -3,6 +3,8 @@ require 'thor'
 
 module Faml
   class CLI < Thor
+    package_name 'faml'
+
     desc 'render FILE', 'Render haml template'
     def render(file)
       code = compile_file(file)
@@ -24,6 +26,16 @@ module Faml
     def temple(file)
       require 'pp'
       pp Faml::Compiler.new(filename: file).call(parse_file(file))
+    end
+
+    desc 'version', 'Print version'
+    option :numeric, type: :boolean, default: false, desc: 'Print version number only'
+    def version
+      if options[:numeric]
+        puts VERSION
+      else
+        puts "faml #{VERSION}"
+      end
     end
 
     private
