@@ -32,7 +32,6 @@ Faml::Engine.options[:format] = :xhtml
 Faml::Engine.options[:autoclose] = []
 # Disable auto preserve
 Faml::Engine.options[:preserve] = []
-#
 ```
 
 ### Rails, sinatra
