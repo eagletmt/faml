@@ -2,6 +2,10 @@ require 'faml/attribute_builder'
 
 module Faml
   class Html < Temple::HTML::Fast
+    # Override temple's default
+    self.options[:format] = :html
+    self.options[:attr_quote] = "'"
+
     def on_haml_tag(name, self_closing, attrs, content = nil)
       name = name.to_s
       closed = self_closing && (!content || empty_exp?(content))

@@ -11,13 +11,8 @@ module Faml
       filename: nil,
     )
 
-    DEFAULT_OPTIONS = {
-        format: :html,
-        attr_quote: "'",
-    }.freeze
-
     def initialize(opts = {})
-      super(DEFAULT_OPTIONS.merge(opts))
+      super(opts)
     end
 
     use Parser
