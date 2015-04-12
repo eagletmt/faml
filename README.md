@@ -23,6 +23,17 @@ Or install it yourself as:
     $ gem install faml
 
 ## Usage
+You can set several options via `Faml::Engine.options` .
+
+```ruby
+# Render in XHTML format
+Faml::Engine.options[:format] = :xhtml
+# Disable autoclose
+Faml::Engine.options[:autoclose] = []
+# Disable auto preserve
+Faml::Engine.options[:preserve] = []
+#
+```
 
 ### Rails, sinatra
 Just replace your `gem 'haml'` with `gem 'faml'` .
