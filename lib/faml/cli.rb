@@ -6,14 +6,16 @@ module Faml
     package_name 'faml'
 
     desc 'render FILE', 'Render haml template'
+    option :format, type: :string, default: :html, desc: 'HTML format'
     def render(file)
-      code = compile_file(file)
+      code = compile_file(file, format: options[:format].to_sym)
       puts instance_eval(code, file)
     end
 
     desc 'compile FILE', 'Compile haml template'
+    option :format, type: :string, default: :html, desc: 'HTML format'
     def compile(file)
-      puts compile_file(file)
+      puts compile_file(file, format: options[:format].to_sym)
     end
 
     desc 'parse FILE', 'Render faml AST'
@@ -23,9 +25,10 @@ module Faml
     end
 
     desc 'temple FILE', 'Render temple AST'
+    option :format, type: :string, default: :html, desc: 'HTML format'
     def temple(file)
       require 'pp'
-      pp Faml::Compiler.new(filename: file).call(parse_file(file))
+      pp Faml::Compiler.new(filename: file, format: options[:format].to_sym).call(parse_file(file))
     end
 
     desc 'version', 'Print version'
@@ -40,8 +43,8 @@ module Faml
 
     private
 
-    def compile_file(file)
-      Faml::Engine.new(filename: file).call(File.read(file))
+    def compile_file(file, opts)
+      Faml::Engine.new(opts.merge(filename: file)).call(File.read(file))
     end
 
     def parse_file(file)
