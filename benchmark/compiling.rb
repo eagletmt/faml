@@ -17,7 +17,7 @@ slim_code = ARGV[1] ? File.read(ARGV[1]) : nil
 Benchmark.ips do |x|
   x.report('Haml') { Haml::Engine.new(haml_code, ugly: true, escape_html: true) }
   x.report('Faml') { Faml::Engine.new.call(haml_code) }
-  x.report('Hamlit') { Hamlit::Engine.new(escape_html: true).call(haml_code) }
+  x.report('Hamlit') { Hamlit::Engine.new.call(haml_code) }
   if slim_code
     x.report('Slim') { Slim::Engine.new.call(slim_code) }
   end

@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "coffee-script"
   spec.add_development_dependency "coveralls"
   spec.add_development_dependency "haml"  # for benchmark
-  spec.add_development_dependency "hamlit"  # for benchmark
+  spec.add_development_dependency "hamlit", ">= 0.6.0"  # for benchmark
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rake-compiler"
   spec.add_development_dependency "redcarpet"
