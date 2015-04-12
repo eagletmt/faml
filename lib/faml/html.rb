@@ -13,22 +13,18 @@ module Faml
     end
 
     def on_haml_attrs(code)
-      [:dynamic, "::Faml::AttributeBuilder.build(#{options[:attr_quote].inspect}, #{code})"]
+      [:dynamic, "::Faml::AttributeBuilder.build(#{options[:attr_quote].inspect}, #{options[:format] == :html}, #{code})"]
     end
 
     def on_haml_attr(name, value)
       if empty_exp?(value)
-        if @format == :html
-          [:static, " #{name}"]
-        else
-          [:static, " #{name}=#{options[:attr_quote]}#{name}#{options[:attr_quote]}"]
-        end
+        true_attribute(name)
       elsif value[0] == :dvalue
         sym = unique_name
         [:multi,
           [:code, "#{sym} = (#{value[1]})"],
           [:case, sym,
-            ['true', [:static, " #{name}"]],
+            ['true', true_attribute(name)],
             ['false, nil', [:multi]],
             [:else, [:multi,
               [:static, " #{name}=#{options[:attr_quote]}"],
@@ -53,6 +49,16 @@ module Faml
 
     def on_haml_preserve(sym)
       [:dynamic, "::Faml::Compiler.find_and_preserve(#{sym}.to_s)"]
+    end
+
+    private
+
+    def true_attribute(name)
+      if @format == :html
+        [:static, " #{name}"]
+      else
+        [:static, " #{name}=#{options[:attr_quote]}#{name}#{options[:attr_quote]}"]
+      end
     end
   end
 end

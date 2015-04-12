@@ -161,7 +161,7 @@ put_attribute(VALUE attr_quote, VALUE key, VALUE value)
 }
 
 static VALUE
-build_attribute(VALUE attr_quote, VALUE key, VALUE value)
+build_attribute(VALUE attr_quote, int is_html, VALUE key, VALUE value)
 {
   const char *key_cstr = StringValueCStr(key);
   if (strcmp(key_cstr, "class") == 0) {
@@ -199,10 +199,14 @@ build_attribute(VALUE attr_quote, VALUE key, VALUE value)
       return put_attribute(attr_quote, key, rb_ary_join(ary, rb_str_new_cstr("_")));
     }
   } else if (RB_TYPE_P(value, T_TRUE)) {
-    VALUE attr = rb_str_buf_new(1 + RSTRING_LEN(key));
-    rb_str_buf_cat(attr, " ", 1);
-    rb_str_buf_append(attr, key);
-    return attr;
+    if (is_html) {
+      VALUE attr = rb_str_buf_new(1 + RSTRING_LEN(key));
+      rb_str_buf_cat(attr, " ", 1);
+      rb_str_buf_append(attr, key);
+      return attr;
+    } else {
+      return put_attribute(attr_quote, key, key);
+    }
   } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
     return Qnil;
   } else {
@@ -215,14 +219,16 @@ static VALUE
 m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
 {
   VALUE attr_quote, attributes, keys, buf;
+  int is_html;
   long len, i;
 
-  rb_check_arity(argc, 1, UNLIMITED_ARGUMENTS);
+  rb_check_arity(argc, 2, UNLIMITED_ARGUMENTS);
   attr_quote = argv[0];
+  is_html = RTEST(argv[1]);
   attributes = rb_hash_new();
   rb_hash_aset(attributes, rb_str_new_cstr("id"), rb_ary_new());
   rb_hash_aset(attributes, rb_str_new_cstr("class"), rb_ary_new());
-  merge(attributes, argc-1, argv+1);
+  merge(attributes, argc-2, argv+2);
 
   keys = rb_funcall(attributes, id_keys, 0);
   rb_funcall(keys, id_sort_bang, 0);
@@ -230,7 +236,7 @@ m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
   buf = rb_ary_new_capa(len);
   for (i = 0; i < len; i++) {
     VALUE k = RARRAY_AREF(keys, i);
-    rb_ary_push(buf, build_attribute(attr_quote, k, rb_hash_lookup(attributes, k)));
+    rb_ary_push(buf, build_attribute(attr_quote, is_html, k, rb_hash_lookup(attributes, k)));
   }
 
   return rb_ary_join(buf, Qnil);
