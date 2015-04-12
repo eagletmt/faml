@@ -212,7 +212,7 @@ build_attribute(VALUE attr_quote, VALUE key, VALUE value)
 }
 
 static VALUE
-m_build(int argc, VALUE *argv, VALUE self)
+m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
 {
   VALUE attr_quote, attributes, keys, buf;
   long len, i;
@@ -237,7 +237,7 @@ m_build(int argc, VALUE *argv, VALUE self)
 }
 
 static VALUE
-m_normalize_data(VALUE self, VALUE data)
+m_normalize_data(RB_UNUSED_VAR(VALUE self), VALUE data)
 {
   return normalize_data(data);
 }
