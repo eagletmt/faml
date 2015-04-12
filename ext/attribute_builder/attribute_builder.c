@@ -9,7 +9,7 @@
 #endif
 
 VALUE rb_mAttributeBuilder;
-static ID id_keys, id_sort_bang, id_merge_bang, id_temple, id_utils, id_escape_html, id_gsub, id_to_s;
+static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_temple, id_utils, id_escape_html, id_gsub, id_to_s;
 
 static void
 concat_array_attribute(VALUE attributes, VALUE hash, VALUE key)
@@ -179,6 +179,7 @@ build_attribute(VALUE attr_quote, VALUE key, VALUE value)
         rb_ary_push(ary, rb_funcall(v, id_to_s, 0));
       }
       rb_funcall(ary, id_sort_bang, 0);
+      rb_funcall(ary, id_uniq_bang, 0);
       return put_attribute(attr_quote, key, rb_ary_join(ary, rb_str_new_cstr(" ")));
     }
   } else if (strcmp(key_cstr, "id") == 0) {
@@ -251,6 +252,7 @@ Init_attribute_builder(void)
 
   id_keys = rb_intern("keys");
   id_sort_bang = rb_intern("sort!");
+  id_uniq_bang = rb_intern("uniq!");
   id_merge_bang = rb_intern("merge!");
   id_temple = rb_intern("Temple");
   id_utils = rb_intern("Utils");

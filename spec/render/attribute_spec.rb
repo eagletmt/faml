@@ -62,6 +62,12 @@ HAML
     expect(render_string('%span.foo{class: 1} hello')).to eq("<span class='1 foo'>hello</span>\n")
   end
 
+  it 'remove duplicated classes' do
+    expect(render_string('%span.foo{class: :foo}')).to eq("<span class='foo'></span>\n")
+    expect(render_string('%span.foo{class: "foo bar"}')).to eq("<span class='bar foo'></span>\n")
+    expect(render_string('%span.foo{class: %w[foo bar]}')).to eq("<span class='bar foo'></span>\n")
+  end
+
   it 'strigify non-string ids' do
     expect(render_string('%span.#foo{id: :bar} hello')).to eq("<span id='foo_bar'>hello</span>\n")
   end

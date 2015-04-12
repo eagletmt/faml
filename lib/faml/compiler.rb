@@ -321,7 +321,8 @@ module Faml
         static_attributes[k.to_s] = v
       end
       unless static_class.empty?
-        static_attributes['class'] = [static_class.split(/ +/), static_attributes['class']].compact.flatten.map(&:to_s).sort.join(' ')
+        class_list = static_attributes.fetch('class', '').to_s.split(/ +/)
+        static_attributes['class'] = static_class.split(/ +/).concat(class_list).uniq.sort.join(' ')
       end
       unless static_id.empty?
         static_attributes['id'] = [static_id, static_attributes['id']].compact.join('_')
