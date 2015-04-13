@@ -1,3 +1,7 @@
+## 0.2.13 (2015-04-14)
+- Fix attribute rendering in non-html format when the value is true
+- Fix Faml::Engine constructor to allow user to set options via `Faml::Engine.options`
+
 ## 0.2.12 (2015-04-12)
 - Remove duplicated class values
     - For compatibility
