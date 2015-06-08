@@ -42,6 +42,23 @@
 
 ```
 
+## Hamlit
+```html
+<script>
+  (function() {
+    var square;
+  
+    square = function(x) {
+      return x * x;
+    };
+  
+    square(3);
+  
+  }).call(this);
+</script>
+
+```
+
 # [./spec/render/filters/coffee_spec.rb:15](../../../../spec/render/filters/coffee_spec.rb#L15)
 ## Input
 ```haml
@@ -70,6 +87,23 @@
 ```
 
 ## Haml
+```html
+<script>
+  (function() {
+    var square;
+  
+    square = function(x) {
+      return x * x;
+    };
+  
+    square(3);
+  
+  }).call(this);
+</script>
+
+```
+
+## Hamlit
 ```html
 <script>
   (function() {

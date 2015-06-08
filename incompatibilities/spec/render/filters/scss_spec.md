@@ -32,6 +32,16 @@ nav ul {
 
 ```
 
+## Hamlit
+```html
+<style>
+  nav ul {
+    margin: 0;
+    content: "hello"; }
+</style>
+
+```
+
 # [./spec/render/filters/scss_spec.rb:19](../../../../spec/render/filters/scss_spec.rb#L19)
 ## Input
 ```haml
@@ -55,6 +65,15 @@ nav ul {
 ```
 
 ## Haml
+```html
+<style>
+  nav ul {
+    margin: 5px; }
+</style>
+
+```
+
+## Hamlit
 ```html
 <style>
   nav ul {

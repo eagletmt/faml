@@ -7,7 +7,7 @@ world
 
 ```
 
-## Faml
+## Faml, Hamlit
 ```html
 <h1>hello</h1>
 world

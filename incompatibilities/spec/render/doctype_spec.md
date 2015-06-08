@@ -15,3 +15,8 @@
 
 ```
 
+## Hamlit (Error)
+```html
+Invalid xml directive in html mode
+```
+
