@@ -12,8 +12,21 @@ end
 require 'faml'
 
 module RenderSpecHelper
-  def render_string(str, options = {})
-    eval(Faml::Engine.new(options).call(str))
+  if ENV['GENERATE_INCOMPATIBILITIES'] == '1'
+    require_relative 'support/incompatibilities_generator'
+
+    def render_string(str, options = {})
+      eval(Faml::Engine.new(options).call(str)).tap do |html|
+        IncompatibilitiesGenerator.instance.record(str, options, html, RSpec.current_example)
+      end
+    rescue => e
+      IncompatibilitiesGenerator.instance.record(str, options, e, RSpec.current_example)
+      raise e
+    end
+  else
+    def render_string(str, options = {})
+      eval(Faml::Engine.new(options).call(str))
+    end
   end
 end
 
@@ -44,4 +57,10 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   config.include(RenderSpecHelper, type: :render)
+
+  if ENV['GENERATE_INCOMPATIBILITIES'] == '1'
+    config.after :suite do
+      IncompatibilitiesGenerator.instance.write_to('incompatibilities')
+    end
+  end
 end
