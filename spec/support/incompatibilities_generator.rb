@@ -70,7 +70,7 @@ class IncompatibilitiesGenerator
 ```
 
 EOS
-    if record.faml_result != record.haml_result && record.faml_result != record.hamlit_result
+    if record.faml_result != record.haml_result && record.faml_result != record.hamlit_result && record.haml_result != record.hamlit_result
       render_grouped_difference(file, 'Faml' => record.faml_result, 'Haml' => record.haml_result, 'Hamlit' => record.hamlit_result)
     elsif record.faml_result == record.haml_result
       render_grouped_difference(file, 'Faml, Haml' => record.faml_result, 'Hamlit' => record.hamlit_result)

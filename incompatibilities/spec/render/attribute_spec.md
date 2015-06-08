@@ -233,13 +233,7 @@ Expected to scan (?-mix:[a-zA-Z0-9_-]+) but got nil
 
 ```
 
-## Haml
-```html
-<span foo-bar='3'>hello</span>
-
-```
-
-## Hamlit
+## Haml, Hamlit
 ```html
 <span foo-bar='3'>hello</span>
 
@@ -285,13 +279,7 @@ Expected to scan (?-mix:[a-zA-Z0-9_-]+) but got nil
 
 ```
 
-## Haml
-```html
-<span foo-bar='x1y'>hello</span>
-
-```
-
-## Hamlit
+## Haml, Hamlit
 ```html
 <span foo-bar='x1y'>hello</span>
 
@@ -309,13 +297,7 @@ Expected to scan (?-mix:[a-zA-Z0-9_-]+) but got nil
 
 ```
 
-## Haml
-```html
-<span foo-bar='3'>hello</span>
-
-```
-
-## Hamlit
+## Haml, Hamlit
 ```html
 <span foo-bar='3'>hello</span>
 
@@ -598,13 +580,7 @@ Invalid attribute list: "(foo=1 bar=)".
 
 ```
 
-## Haml
-```html
-<span a='1' b='1'></span>
-
-```
-
-## Hamlit
+## Haml, Hamlit
 ```html
 <span a='1' b='1'></span>
 

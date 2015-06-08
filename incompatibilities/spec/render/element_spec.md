@@ -37,15 +37,7 @@ hello <span> &lt;/span&gt; </span>
 
 ```
 
-## Haml
-```html
-<span>
-hello <span> #@var </span>
-</span>
-
-```
-
-## Hamlit
+## Haml, Hamlit
 ```html
 <span>
 hello <span> #@var </span>

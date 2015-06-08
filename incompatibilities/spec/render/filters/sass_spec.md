@@ -19,17 +19,7 @@ nav ul {
 
 ```
 
-## Haml
-```html
-<style>
-  nav ul {
-    margin: 0;
-    content: "hello"; }
-</style>
-
-```
-
-## Hamlit
+## Haml, Hamlit
 ```html
 <style>
   nav ul {
@@ -58,16 +48,7 @@ nav ul {
 
 ```
 
-## Haml
-```html
-<style>
-  nav ul {
-    margin: 5px; }
-</style>
-
-```
-
-## Hamlit
+## Haml, Hamlit
 ```html
 <style>
   nav ul {

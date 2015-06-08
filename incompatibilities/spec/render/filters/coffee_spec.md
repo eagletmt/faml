@@ -25,24 +25,7 @@
 
 ```
 
-## Haml
-```html
-<script>
-  (function() {
-    var square;
-  
-    square = function(x) {
-      return x * x;
-    };
-  
-    square(3);
-  
-  }).call(this);
-</script>
-
-```
-
-## Hamlit
+## Haml, Hamlit
 ```html
 <script>
   (function() {
@@ -86,24 +69,7 @@
 
 ```
 
-## Haml
-```html
-<script>
-  (function() {
-    var square;
-  
-    square = function(x) {
-      return x * x;
-    };
-  
-    square(3);
-  
-  }).call(this);
-</script>
-
-```
-
-## Hamlit
+## Haml, Hamlit
 ```html
 <script>
   (function() {
