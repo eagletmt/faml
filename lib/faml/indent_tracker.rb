@@ -3,6 +3,13 @@ require 'faml/error'
 module Faml
   class IndentTracker
     class IndentMismatch < Error
+      attr_reader :current_level, :indent_levels
+
+      def initialize(current_level, indent_levels, lineno)
+        super("Unexpected indent level: #{current_level}: indent_level=#{indent_levels}", lineno)
+        @current_level = current_level
+        @indent_levels = indent_levels
+      end
     end
 
     def initialize(on_enter: nil, on_leave: nil)
@@ -73,7 +80,7 @@ module Faml
       end
 
       if indent_level != @indent_levels.last
-        raise IndentMismatch.new("Unexpected indent level: #{indent_level}: indent_level=#{@indent_levels}", lineno)
+        raise IndentMismatch.new(indent_level, @indent_levels.dup, lineno)
       end
     end
   end

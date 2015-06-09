@@ -42,15 +42,6 @@ HAML
 HAML
   end
 
-  it 'raises error if indent is wrong' do
-    expect { render_string(<<HAML) }.to raise_error(Faml::IndentTracker::IndentMismatch)
-%div
-    %div
-      %div
-  %div
-HAML
-  end
-
   it 'parses classes' do
     expect(render_string('%span.foo.bar hello')).to eq(%Q{<span class='foo bar'>hello</span>\n})
   end

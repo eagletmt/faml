@@ -1,4 +1,4 @@
-# [./spec/render/element_spec.rb:72](../../../spec/render/element_spec.rb#L72)
+# [./spec/render/element_spec.rb:63](../../../spec/render/element_spec.rb#L63)
 ## Input
 ```haml
 %.foo
@@ -20,7 +20,7 @@ Invalid tag: "%.foo".
 
 ```
 
-# [./spec/render/element_spec.rb:93](../../../spec/render/element_spec.rb#L93)
+# [./spec/render/element_spec.rb:84](../../../spec/render/element_spec.rb#L84)
 ## Input
 ```haml
 - @var = '</span>'
@@ -45,7 +45,7 @@ hello <span> #@var </span>
 
 ```
 
-# [./spec/render/element_spec.rb:126](../../../spec/render/element_spec.rb#L126)
+# [./spec/render/element_spec.rb:117](../../../spec/render/element_spec.rb#L117)
 ## Input
 ```haml
 %p/ hello
@@ -67,7 +67,7 @@ Self-closing tags can't have content.
 
 ```
 
-# [./spec/render/element_spec.rb:130](../../../spec/render/element_spec.rb#L130)
+# [./spec/render/element_spec.rb:121](../../../spec/render/element_spec.rb#L121)
 ## Input
 ```haml
 %p/
