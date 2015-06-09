@@ -186,6 +186,8 @@ module Faml
       end
       if @ast.is_a?(Ast::HamlComment)
         @indent_tracker.enter_comment!
+      else
+        @indent_tracker.check_indent_level!(@line_parser.lineno)
       end
       nil
     end

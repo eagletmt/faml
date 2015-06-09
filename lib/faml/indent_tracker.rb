@@ -12,6 +12,16 @@ module Faml
       end
     end
 
+    class InconsistentIndent < Error
+      attr_reader :previous_size, :current_size
+
+      def initialize(previous_size, current_size, lineno)
+        super("Inconsistent indentation: #{current_size} spaces used for indentation, but the rest of the document was indented using #{previous_size} spaces.", lineno)
+        @previous_size = previous_size
+        @current_size = current_size
+      end
+    end
+
     def initialize(on_enter: nil, on_leave: nil)
       @indent_levels = [0]
       @on_enter = on_enter || lambda { |level, text| }
@@ -46,17 +56,27 @@ module Faml
       @comment_level = @indent_levels[-2]
     end
 
+    def check_indent_level!(lineno)
+      if @indent_levels.size >= 3
+        previous_size = @indent_levels[-2] - @indent_levels[-3]
+        current_size = @indent_levels[-1] - @indent_levels[-2]
+        if previous_size != current_size
+          raise InconsistentIndent.new(previous_size, current_size, lineno)
+        end
+      end
+    end
+
     private
 
     def track(indent_level, text, lineno)
       if indent_level > @indent_levels.last
-        indent_enter(indent_level, text)
+        indent_enter(indent_level, text, lineno)
       elsif indent_level < @indent_levels.last
         indent_leave(indent_level, text, lineno)
       end
     end
 
-    def indent_enter(indent_level, text)
+    def indent_enter(indent_level, text, lineno)
       unless @comment_level
         @indent_levels.push(indent_level)
         @on_enter.call(indent_level, text)
