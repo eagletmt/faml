@@ -64,7 +64,7 @@ class IncompatibilitiesGenerator
     spec_path = Pathname.new(record.spec_path).relative_path_from(path.parent).to_s
     file.write <<"EOS"
 # [#{record.spec_path}:#{record.line_number}](#{spec_path}#L#{record.line_number})
-## Input
+## #{render_input_title(record.options)}
 ```haml
 #{record.template}
 ```
@@ -79,6 +79,14 @@ EOS
     else
       render_grouped_difference(file, 'Faml' => record.faml_result, 'Haml, Hamlit' => record.haml_result)
     end
+  end
+
+  def render_input_title(options)
+    title = 'Input'
+    if !options.empty?
+      title << " (with options=#{options.inspect})"
+    end
+    title
   end
 
   def render_grouped_difference(file, grouped_results)

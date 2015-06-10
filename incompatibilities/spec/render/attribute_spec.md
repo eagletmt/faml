@@ -184,7 +184,7 @@ Expected to scan (?-mix:[a-zA-Z0-9_-]+) but got nil
 ```
 
 # [./spec/render/attribute_spec.rb:92](../../../spec/render/attribute_spec.rb#L92)
-## Input
+## Input (with options={:format=>:xhtml})
 ```haml
 - foo = true
 %span{foo: foo, bar: 1} hello
@@ -203,7 +203,7 @@ Expected to scan (?-mix:[a-zA-Z0-9_-]+) but got nil
 ```
 
 # [./spec/render/attribute_spec.rb:92](../../../spec/render/attribute_spec.rb#L92)
-## Input
+## Input (with options={:format=>:xhtml})
 ```haml
 - h = {foo: true, bar: 1}
 %span{h} hello
