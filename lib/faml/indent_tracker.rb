@@ -22,6 +22,12 @@ module Faml
       end
     end
 
+    class HardTabNotAllowed < Error
+      def initialize(lineno)
+        super('Indentation with hard tabs are not allowed :-p', lineno)
+      end
+    end
+
     def initialize(on_enter: nil, on_leave: nil)
       @indent_levels = [0]
       @on_enter = on_enter || lambda { |level, text| }
@@ -30,6 +36,9 @@ module Faml
     end
 
     def process(line, lineno)
+      if line =~ /\A\t/
+        raise HardTabNotAllowed.new(lineno)
+      end
       indent, text = split(line)
       indent_level = indent.size
 

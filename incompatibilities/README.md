@@ -20,6 +20,7 @@
 - [spec/render/filters/sass_spec.md](spec/render/filters/sass_spec.md)
 - [spec/render/filters/scss_spec.md](spec/render/filters/scss_spec.md)
 - [spec/render/helpers_spec.md](spec/render/helpers_spec.md)
+- [spec/render/indent_spec.md](spec/render/indent_spec.md)
 - [spec/render/multiline_spec.md](spec/render/multiline_spec.md)
 - [spec/render/newline_spec.md](spec/render/newline_spec.md)
 - [spec/render/plain_spec.md](spec/render/plain_spec.md)

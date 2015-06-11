@@ -37,4 +37,11 @@ HAML
       expect(e.lineno).to eq(3)
     }
   end
+
+  it 'raises error if indented with hard tabs' do
+    expect { render_string(<<HAML) }.to raise_error(Faml::IndentTracker::HardTabNotAllowed)
+%p
+	%a
+HAML
+  end
 end
