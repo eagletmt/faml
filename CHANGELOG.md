@@ -1,3 +1,7 @@
+## 0.2.14 (2015-06-11)
+- Check indent size consistency for compatibility with Haml
+- Intentionally prohibit indentations with hard tabs
+
 ## 0.2.13 (2015-04-14)
 - Fix attribute rendering in non-html format when the value is true
 - Fix Faml::Engine constructor to allow user to set options via `Faml::Engine.options`
