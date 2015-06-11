@@ -4,13 +4,13 @@
 !<p>hello</p>
 ```
 
-## Faml, Hamlit
+## Faml
 ```html
 <p>hello</p>
 
 ```
 
-## Haml
+## Haml, Hamlit
 ```html
 !<p>hello</p>
 
@@ -31,7 +31,7 @@
 
 ## Hamlit
 ```html
-~ "<p>hello\n<pre>pre\nworld</pre></p>"
+!~ "<p>hello\n<pre>pre\nworld</pre></p>"
 
 ```
 

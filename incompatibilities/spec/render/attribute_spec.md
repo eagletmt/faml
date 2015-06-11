@@ -443,11 +443,10 @@ bar=3) hello
 
 ```
 
-## Hamlit (Error)
+## Hamlit
 ```html
-(eval):1: syntax error, unexpected tIDENTIFIER, expecting ')'
-...Temple::Utils.escape_html((1bar))); _buf << ("'>hello</span>...
-...                               ^
+<span foo='3'>hello</span>
+
 ```
 
 # [./spec/render/attribute_spec.rb:237](../../../spec/render/attribute_spec.rb#L237)

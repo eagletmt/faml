@@ -12,7 +12,7 @@
 
 ## Hamlit
 ```html
-~ "<p>hello</p>"
+&~ "<p>hello</p>"
 
 ```
 

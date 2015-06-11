@@ -2,7 +2,7 @@
 ## Versions
 - Haml 4.0.6
 - Faml 0.2.13
-- Hamlit 1.5.9
+- Hamlit 1.6.0
 
 ## Table of contents
 - [spec/compiler_newline_spec.md](spec/compiler_newline_spec.md)
