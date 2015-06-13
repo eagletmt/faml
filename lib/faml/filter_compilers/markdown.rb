@@ -10,6 +10,7 @@ module Faml
       def compile(ast)
         temple = [:multi, [:newline]]
         compile_with_tilt(temple, 'markdown', ast)
+        temple << [:static, "\n"]
       end
     end
 
