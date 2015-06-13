@@ -7,6 +7,28 @@ class IncompatibilitiesGenerator
   include Singleton
 
   class Record < Struct.new(:template, :options, :spec_path, :line_number, :faml_result, :haml_result, :hamlit_result)
+    def incompatible?
+      !all_error? && (faml_result != haml_result || faml_result != hamlit_result || haml_result != hamlit_result)
+    end
+
+    def grouped_difference
+      case
+      when faml_result != haml_result && faml_result != hamlit_result && haml_result != hamlit_result
+        { 'Faml' => faml_result, 'Haml' => haml_result, 'Hamlit' => hamlit_result }
+      when faml_result == haml_result
+        { 'Faml, Haml' => faml_result, 'Hamlit' => hamlit_result }
+      when faml_result == hamlit_result
+        { 'Faml, Hamlit' => faml_result, 'Haml' => haml_result }
+      else
+        { 'Faml' => faml_result, 'Haml, Hamlit' => haml_result }
+      end
+    end
+
+    private
+
+    def all_error?
+      [faml_result, haml_result, hamlit_result].all? { |r| r.is_a?(Exception) }
+    end
   end
 
   def initialize
@@ -23,9 +45,7 @@ class IncompatibilitiesGenerator
 
     incompatibilities = Hash.new { |h, k| h[k] = [] }
     @records.each do |record|
-      if record.faml_result.is_a?(Exception) && record.haml_result.is_a?(Exception) && record.hamlit_result.is_a?(Exception)
-        # All errored, not an incompatibility.
-      elsif record.faml_result != record.haml_result || record.faml_result != record.hamlit_result || record.haml_result != record.hamlit_result
+      if record.incompatible?
         incompatibilities[record.spec_path] << record
       end
     end
@@ -70,15 +90,7 @@ class IncompatibilitiesGenerator
 ```
 
 EOS
-    if record.faml_result != record.haml_result && record.faml_result != record.hamlit_result && record.haml_result != record.hamlit_result
-      render_grouped_difference(file, 'Faml' => record.faml_result, 'Haml' => record.haml_result, 'Hamlit' => record.hamlit_result)
-    elsif record.faml_result == record.haml_result
-      render_grouped_difference(file, 'Faml, Haml' => record.faml_result, 'Hamlit' => record.hamlit_result)
-    elsif record.faml_result == record.hamlit_result
-      render_grouped_difference(file, 'Faml, Hamlit' => record.faml_result, 'Haml' => record.haml_result)
-    else
-      render_grouped_difference(file, 'Faml' => record.faml_result, 'Haml, Hamlit' => record.haml_result)
-    end
+    render_grouped_difference(file, record.grouped_difference)
   end
 
   def render_input_title(options)
