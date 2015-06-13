@@ -17,3 +17,27 @@
 
 ```
 
+# [./spec/render/plain_spec.rb:21](../../../spec/render/plain_spec.rb#L21)
+## Input
+```haml
+hello
+  world
+
+```
+
+## Faml (Error)
+```html
+nesting within plain text is illegal
+```
+
+## Haml (Error)
+```html
+Illegal nesting: nesting within plain text is illegal.
+```
+
+## Hamlit
+```html
+hello
+
+```
+

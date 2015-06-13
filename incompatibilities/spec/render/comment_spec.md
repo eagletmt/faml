@@ -40,3 +40,27 @@ Unbalanced brackets.
 
 ```
 
+# [./spec/render/comment_spec.rb:55](../../../spec/render/comment_spec.rb#L55)
+## Input
+```haml
+/ hehehe
+  %span hello
+
+```
+
+## Faml (Error)
+```html
+Illegal nesting: nesting within a html comment that already has content is illegal.
+```
+
+## Haml (Error)
+```html
+Illegal nesting: nesting within a tag that already has content is illegal.
+```
+
+## Hamlit
+```html
+<!-- hehehe -->
+
+```
+
