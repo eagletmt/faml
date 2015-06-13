@@ -92,24 +92,6 @@ Hamlit::SyntaxError
 # [./spec/render/attribute_spec.rb:65](../../../spec/render/attribute_spec.rb#L65)
 ## Input
 ```haml
-%span.foo{class: :foo}
-```
-
-## Faml, Haml
-```html
-<span class='foo'></span>
-
-```
-
-## Hamlit
-```html
-<span class='foo foo'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:65](../../../spec/render/attribute_spec.rb#L65)
-## Input
-```haml
 %span.foo{class: "foo bar"}
 ```
 
@@ -122,24 +104,6 @@ Hamlit::SyntaxError
 ## Hamlit
 ```html
 <span class='foo bar foo'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:65](../../../spec/render/attribute_spec.rb#L65)
-## Input
-```haml
-%span.foo{class: %w[foo bar]}
-```
-
-## Faml, Haml
-```html
-<span class='bar foo'></span>
-
-```
-
-## Hamlit
-```html
-<span class='bar foo foo'></span>
 
 ```
 
