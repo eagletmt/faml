@@ -107,28 +107,6 @@ Hamlit::SyntaxError
 
 ```
 
-# [./spec/render/attribute_spec.rb:71](../../../spec/render/attribute_spec.rb#L71)
-## Input
-```haml
-%span.#foo{id: :bar} hello
-```
-
-## Faml
-```html
-<span id='foo_bar'>hello</span>
-
-```
-
-## Haml (Error)
-```html
-Illegal element: classes and ids must have values.
-```
-
-## Hamlit (Error)
-```html
-Expected to scan (?-mix:[a-zA-Z0-9_-]+) but got nil
-```
-
 # [./spec/render/attribute_spec.rb:75](../../../spec/render/attribute_spec.rb#L75)
 ## Input
 ```haml

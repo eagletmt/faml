@@ -65,6 +65,20 @@ HAML
     end
   end
 
+  context 'with invalid classes' do
+    it 'raises error' do
+      expect { render_string('%span. hello') }.to raise_error(Faml::SyntaxError)
+      expect { render_string('%span.{foo: "bar"} hello') }.to raise_error(Faml::SyntaxError)
+    end
+  end
+
+  context 'with invalid ids' do
+    it 'raises error' do
+      expect { render_string('%span# hello') }.to raise_error(Faml::SyntaxError)
+      expect { render_string('%span#{foo: "bar"} hello') }.to raise_error(Faml::SyntaxError)
+    end
+  end
+
   it 'parses #' do
     expect(render_string('#main')).to eq(%Q{<div id='main'></div>\n})
   end

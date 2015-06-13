@@ -39,12 +39,16 @@ module Faml
     def parse_class_and_id(class_and_id)
       classes = []
       id = ''
-      class_and_id.scan(/([#.])([-:_a-zA-Z0-9]+)/) do |type, prop|
-        case type
+      scanner = StringScanner.new(class_and_id)
+      until scanner.eos?
+        unless scanner.scan(/([#.])([-:_a-zA-Z0-9]+)/)
+          syntax_error!('Illegal element: classes and ids must have values.')
+        end
+        case scanner[1]
         when '.'
-          classes << prop
+          classes << scanner[2]
         when '#'
-          id = prop
+          id = scanner[2]
         end
       end
 

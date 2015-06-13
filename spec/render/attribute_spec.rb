@@ -69,7 +69,7 @@ HAML
   end
 
   it 'strigify non-string ids' do
-    expect(render_string('%span.#foo{id: :bar} hello')).to eq("<span id='foo_bar'>hello</span>\n")
+    expect(render_string('%span#foo{id: :bar} hello')).to eq("<span id='foo_bar'>hello</span>\n")
   end
 
   it 'escapes' do
