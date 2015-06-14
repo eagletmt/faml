@@ -10,6 +10,52 @@
 
 VALUE rb_mAttributeBuilder;
 static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_temple, id_utils, id_escape_html, id_gsub, id_to_s;
+  /* borrowed from https://github.com/rails/rails/blob/4-2-stable/actionview/lib/action_view/helpers/tag_helper.rb#L14-L19 */
+static const char *boolean_attributes[] = {
+  "disabled",
+  "readonly",
+  "multiple",
+  "checked",
+  "autobuffer",
+  "autoplay",
+  "controls",
+  "loop",
+  "selected",
+  "hidden",
+  "scoped",
+  "async",
+  "defer",
+  "reversed",
+  "ismap",
+  "seamless",
+  "muted",
+  "required",
+  "autofocus",
+  "novalidate",
+  "formnovalidate",
+  "open",
+  "pubdate",
+  "itemscope",
+  "allowfullscreen",
+  "default",
+  "inert",
+  "sortable",
+  "truespeed",
+  "typemustmatch",
+};
+
+static int
+boolean_attribute_p(const char *key)
+{
+  unsigned i;
+
+  for (i = 0; i < sizeof(boolean_attributes)/sizeof(boolean_attributes[0]); i++) {
+    if (strcmp(boolean_attributes[i], key) == 0) {
+      return 1;
+    }
+  }
+  return 0;
+}
 
 static void
 concat_array_attribute(VALUE attributes, VALUE hash, VALUE key)
@@ -198,19 +244,25 @@ build_attribute(VALUE attr_quote, int is_html, VALUE key, VALUE value)
       }
       return put_attribute(attr_quote, key, rb_ary_join(ary, rb_str_new_cstr("_")));
     }
-  } else if (RB_TYPE_P(value, T_TRUE)) {
-    if (is_html) {
-      VALUE attr = rb_str_buf_new(1 + RSTRING_LEN(key));
-      rb_str_buf_cat(attr, " ", 1);
-      rb_str_buf_append(attr, key);
-      return attr;
-    } else {
-      return put_attribute(attr_quote, key, key);
-    }
-  } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
-    return Qnil;
   } else {
-    return put_attribute(attr_quote, key, value);
+    if (boolean_attribute_p(key_cstr)) {
+      if (RB_TYPE_P(value, T_TRUE)) {
+        if (is_html) {
+          VALUE attr = rb_str_buf_new(1 + RSTRING_LEN(key));
+          rb_str_buf_cat(attr, " ", 1);
+          rb_str_buf_append(attr, key);
+          return attr;
+        } else {
+          return put_attribute(attr_quote, key, key);
+        }
+      } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
+        return Qnil;
+      } else {
+        return put_attribute(attr_quote, key, value);
+      }
+    } else {
+      return put_attribute(attr_quote, key, value);
+    }
   }
   return value;
 }
@@ -248,6 +300,17 @@ m_normalize_data(RB_UNUSED_VAR(VALUE self), VALUE data)
   return normalize_data(data);
 }
 
+static VALUE
+m_boolean_attribute_p(RB_UNUSED_VAR(VALUE self), VALUE key)
+{
+  const char *key_cstr = StringValueCStr(key);
+  if (boolean_attribute_p(key_cstr)) {
+    return Qtrue;
+  } else {
+    return Qfalse;
+  }
+}
+
 void
 Init_attribute_builder(void)
 {
@@ -255,6 +318,7 @@ Init_attribute_builder(void)
   rb_mAttributeBuilder = rb_define_module_under(mFaml, "AttributeBuilder");
   rb_define_singleton_method(rb_mAttributeBuilder, "build", RUBY_METHOD_FUNC(m_build), -1);
   rb_define_singleton_method(rb_mAttributeBuilder, "normalize_data", RUBY_METHOD_FUNC(m_normalize_data), 1);
+  rb_define_singleton_method(rb_mAttributeBuilder, "boolean_attribute?", RUBY_METHOD_FUNC(m_boolean_attribute_p), 1);
 
   id_keys = rb_intern("keys");
   id_sort_bang = rb_intern("sort!");

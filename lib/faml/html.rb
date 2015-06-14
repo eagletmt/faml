@@ -24,19 +24,19 @@ module Faml
       if empty_exp?(value)
         true_attribute(name)
       elsif value[0] == :dvalue
-        sym = unique_name
-        [:multi,
-          [:code, "#{sym} = (#{value[1]})"],
-          [:case, sym,
-            ['true', true_attribute(name)],
-            ['false, nil', [:multi]],
-            [:else, [:multi,
-              [:static, " #{name}=#{options[:attr_quote]}"],
-              [:escape, true, [:dynamic, sym]],
-              [:static, options[:attr_quote]],
-            ]],
-          ],
-        ]
+        if AttributeBuilder.boolean_attribute?(name)
+          sym = unique_name
+          [:multi,
+            [:code, "#{sym} = (#{value[1]})"],
+            [:case, sym,
+              ['true', true_attribute(name)],
+              ['false, nil', [:multi]],
+              [:else, dynamic_attribute(name, sym)],
+            ],
+          ]
+        else
+          dynamic_attribute(name, value[1])
+        end
       else
         [:multi,
           [:static, " #{name}=#{options[:attr_quote]}"],
@@ -63,6 +63,15 @@ module Faml
       else
         [:static, " #{name}=#{options[:attr_quote]}#{name}#{options[:attr_quote]}"]
       end
+    end
+
+    def dynamic_attribute(name, value)
+      [
+        :multi,
+        [:static, " #{name}=#{options[:attr_quote]}"],
+        [:escape, true, [:dynamic, value]],
+        [:static, options[:attr_quote]],
+      ]
     end
   end
 end
