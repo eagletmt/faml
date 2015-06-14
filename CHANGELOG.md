@@ -1,3 +1,7 @@
+## 0.2.15 (2015-06-14)
+- Improve compatibility of tilt filter indentations
+- Raise error when ids or classes don't have values
+
 ## 0.2.14 (2015-06-11)
 - Check indent size consistency for compatibility with Haml
 - Intentionally prohibit indentations with hard tabs
