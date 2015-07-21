@@ -24,6 +24,10 @@ class IncompatibilitiesGenerator
       end
     end
 
+    def only_hamlit?
+      faml_result == haml_result && faml_result != hamlit_result
+    end
+
     private
 
     def all_error?
@@ -59,7 +63,7 @@ class IncompatibilitiesGenerator
         end
       end
     end
-    render_toc(markdown_root, incompatibilities.keys)
+    render_toc(markdown_root, incompatibilities)
   end
 
   private
@@ -125,7 +129,7 @@ EOS
     markdown_root.join(spec_path).sub_ext('.md')
   end
 
-  def render_toc(markdown_root, spec_paths)
+  def render_toc(markdown_root, incompatibilities)
     toc_path = markdown_root.join('README.md')
     toc_path.open('w') do |f|
       f.puts '# Incompatibilities'
@@ -135,9 +139,14 @@ EOS
       f.puts "- Hamlit #{Hamlit::VERSION}"
       f.puts
       f.puts '## Table of contents'
-      spec_paths.sort.each do |spec_path|
+      incompatibilities.keys.sort.each do |spec_path|
         path = markdown_path(markdown_root, spec_path).relative_path_from(markdown_root)
-        f.puts "- [#{path}](#{path})"
+        link = "[#{path}](#{path})"
+        comment =
+          if incompatibilities[spec_path].all?(&:only_hamlit?)
+            " (Hamlit's incompatibility)"
+          end
+        f.puts "- #{link}#{comment}"
       end
     end
   end
