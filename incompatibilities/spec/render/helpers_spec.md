@@ -12,6 +12,6 @@
 
 ## Hamlit (Error)
 ```html
-undefined method `preserve' for #<Object:0x0000000436a0c0>
+undefined method `preserve' for #<Object:0x00000002ca2b08>
 ```
 
