@@ -155,7 +155,7 @@ module Faml
     def scan_key(scanner)
       scanner.scan(/[-:\w]+/).tap do |name|
         unless name
-          syntax_error!('Invalid attribute list (missing attributename)')
+          syntax_error!('Invalid attribute list (missing attribute name)')
         end
       end
     end

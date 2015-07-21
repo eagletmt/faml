@@ -401,7 +401,7 @@ bar=3) hello
 
 ## Faml (Error)
 ```html
-Invalid attribute list (missing attributename)
+Invalid attribute list (missing attribute name)
 ```
 
 ## Haml (Error)
