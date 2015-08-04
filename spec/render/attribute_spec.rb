@@ -80,8 +80,16 @@ HAML
     expect(render_string('%span{foo: 1}{bar: 2}')).to eq("<span foo='1'>{bar: 2}</span>\n")
   end
 
-  it 'renders only name if value is true' do
-    expect(render_string(%q|%span{foo: true, bar: 1} hello|)).to eq(%Q{<span bar='1' foo>hello</span>\n})
+  context 'with boolean attribute' do
+    it 'renders only name if value is true' do
+      expect(render_string(%q|%span{disabled: true, bar: 1} hello|)).to eq(%Q{<span bar='1' disabled>hello</span>\n})
+    end
+  end
+
+  context 'with non-boolean attribute' do
+    it 'renders true value' do
+      expect(render_string(%q|%span{foo: true, bar: 1} hello|)).to eq(%Q{<span bar='1' foo='true'>hello</span>\n})
+    end
   end
 
   it 'raises error when unparsable Ruby code is given' do
@@ -89,10 +97,20 @@ HAML
   end
 
   context 'with xhtml format' do
-    it 'renders name="name" if value is true' do
-      expect(render_string(%q|%span{foo: true, bar: 1} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='foo'>hello</span>\n})
-      expect(render_string(%Q|- foo = true\n%span{foo: foo, bar: 1} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='foo'>hello</span>\n})
-      expect(render_string(%Q|- h = {foo: true, bar: 1}\n%span{h} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='foo'>hello</span>\n})
+    context 'with boolean attribute' do
+      it 'renders name="name" if value is true' do
+        expect(render_string(%q|%span{disabled: true, bar: 1} hello|, format: :xhtml)).to eq(%Q{<span bar='1' disabled='disabled'>hello</span>\n})
+        expect(render_string(%Q|- disabled = true\n%span{disabled: disabled, bar: 1} hello|, format: :xhtml)).to eq(%Q{<span bar='1' disabled='disabled'>hello</span>\n})
+        expect(render_string(%Q|- h = {disabled: true, bar: 1}\n%span{h} hello|, format: :xhtml)).to eq(%Q{<span bar='1' disabled='disabled'>hello</span>\n})
+      end
+    end
+
+    context 'with non-boolean attribute' do
+      it 'renders name="true" if value is true' do
+        expect(render_string(%q|%span{foo: true, bar: 1} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='true'>hello</span>\n})
+        expect(render_string(%Q|- foo = true\n%span{foo: foo, bar: 1} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='true'>hello</span>\n})
+        expect(render_string(%Q|- h = {foo: true, bar: 1}\n%span{h} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='true'>hello</span>\n})
+      end
     end
   end
 
@@ -101,7 +119,7 @@ HAML
   end
 
   it 'renders code attributes' do
-    expect(render_string(<<HAML)).to eq(%Q|<span bar='{:hoge=&gt;:fuga}' baz foo='1'>hello</span>\n|)
+    expect(render_string(<<HAML)).to eq(%Q|<span bar='{:hoge=&gt;:fuga}' baz='true' foo='1'>hello</span>\n|)
 - attrs = { foo: 1, bar: { hoge: :fuga }, baz: true }
 %span{attrs} hello
 HAML
@@ -235,7 +253,7 @@ HAML
     end
 
     it 'parses key-only attribute' do
-      expect(render_string('%span(foo bar=1) hello')).to eq("<span bar='1' foo>hello</span>\n")
+      expect(render_string('%span(foo bar=1) hello')).to eq("<span bar='1' foo='true'>hello</span>\n")
     end
 
     it 'renders string interpolation' do

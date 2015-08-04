@@ -347,9 +347,9 @@ module Faml
 
     def compile_static_attribute(key, value)
       case
-      when value == true
+      when AttributeBuilder.boolean_attribute?(key) && value == true
         [[:haml, :attr, key, [:multi]]]
-      when value == false || value == nil
+      when AttributeBuilder.boolean_attribute?(key) && !value
         [[:multi]]
       when value.is_a?(Hash) && key == 'data'
         data = AttributeBuilder.normalize_data(value)
