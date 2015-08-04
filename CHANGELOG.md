@@ -1,3 +1,7 @@
+## 0.2.16 (2015-08-05)
+- Fix incompatibility to tilt 2.x
+    - https://github.com/eagletmt/faml/issues/23
+
 ## 0.2.15 (2015-06-14)
 - Improve compatibility of tilt filter indentations
 - Raise error when ids or classes don't have values
