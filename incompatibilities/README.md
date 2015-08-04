@@ -1,8 +1,8 @@
 # Incompatibilities
 ## Versions
 - Haml 4.0.6
-- Faml 0.2.15
-- Hamlit 1.7.1
+- Faml 0.2.16
+- Hamlit 1.7.2
 
 ## Table of contents
 - [spec/compiler_newline_spec.md](spec/compiler_newline_spec.md)

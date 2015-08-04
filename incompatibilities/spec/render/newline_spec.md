@@ -75,23 +75,6 @@
 # [./spec/render/newline_spec.rb:71](../../../spec/render/newline_spec.rb#L71)
 ## Input
 ```haml
-%div{foo: :bar} <b>hello</b>
-```
-
-## Faml, Haml
-```html
-<div foo='bar'><b>hello</b></div>
-
-```
-
-## Hamlit (Error)
-```html
-Generator supports only core expressions - found ["b>{foo: :bar}"]
-```
-
-# [./spec/render/newline_spec.rb:71](../../../spec/render/newline_spec.rb#L71)
-## Input
-```haml
 %div(foo="bar") <b>hello</b>
 ```
 
