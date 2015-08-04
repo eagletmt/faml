@@ -1,5 +1,11 @@
 require 'tilt'
-require 'tilt/haml'
+# Load tilt/haml only when haml is available
+begin
+  require 'haml'
+rescue LoadError
+else
+  require 'tilt/haml'
+end
 require 'faml/engine'
 
 module Faml
