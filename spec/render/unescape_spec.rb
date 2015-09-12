@@ -35,11 +35,4 @@ HAML
       expect(render_string('%span!~ "<p>hello\n<pre>pre\nworld</pre></p>"')).to eq("<span><p>hello\n<pre>pre&#x000A;world</pre></p></span>\n")
     end
   end
-
-  context 'without Ruby code' do
-    it 'raises error' do
-      expect { render_string('%span!=') }.to raise_error(HamlParser::Error)
-      expect { render_string('!=') }.to raise_error(HamlParser::Error)
-    end
-  end
 end

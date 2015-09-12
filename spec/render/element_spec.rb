@@ -22,15 +22,6 @@ HAML
 HAML
   end
 
-  it 'parses multi-line texts' do
-    expect(render_string(<<HAML)).to eq("<span>\n<b>\nhello\nworld\n</b>\n</span>\n")
-%span
-  %b
-    hello
-    world
-HAML
-  end
-
   it 'skips empty lines' do
     expect(render_string(<<HAML)).to eq("<span>\n<b>\nhello\n</b>\n</span>\n")
 %span
@@ -54,45 +45,12 @@ HAML
     expect(render_string('%span.foo#foo-bar.bar hello')).to eq(%Q{<span class='foo bar' id='foo-bar'>hello</span>\n})
   end
 
-  it "doesn't skip spaces before attribute list" do
-    expect(render_string('%span {hello}')).to eq("<span>{hello}</span>\n")
-    expect(render_string('%span (hello)')).to eq("<span>(hello)</span>\n")
-  end
-
-  context 'with invalid tag name' do
-    it 'raises error' do
-      expect { render_string('%.foo') }.to raise_error(HamlParser::Error)
-    end
-  end
-
-  context 'with invalid classes' do
-    it 'raises error' do
-      expect { render_string('%span. hello') }.to raise_error(HamlParser::Error)
-      expect { render_string('%span.{foo: "bar"} hello') }.to raise_error(HamlParser::Error)
-    end
-  end
-
-  context 'with invalid ids' do
-    it 'raises error' do
-      expect { render_string('%span# hello') }.to raise_error(HamlParser::Error)
-      expect { render_string('%span#{foo: "bar"} hello') }.to raise_error(HamlParser::Error)
-    end
-  end
-
   it 'parses #' do
     expect(render_string('#main')).to eq(%Q{<div id='main'></div>\n})
   end
 
   it 'parses .' do
     expect(render_string('.wrapper.main')).to eq(%Q{<div class='wrapper main'></div>\n})
-  end
-
-  it 'parses Ruby multiline' do
-    expect(render_string(<<HAML)).to eq("<div>\n<span>2+3i</span>\n</div>\n")
-%div
-  %span= Complex(2,
-3)
-HAML
   end
 
   it 'parses string interpolation' do
@@ -122,20 +80,5 @@ HAML
 
   it 'renders some attributes as self-closing by default' do
     expect(render_string('%meta{"http-equiv" => "Content-Type", :content => "text/html"}')).to eq("<meta content='text/html' http-equiv='Content-Type'>\n")
-  end
-
-  it 'parses == syntax' do
-    expect(render_string('%p== =#{1+2}hello')).to eq("<p>=3hello</p>\n")
-  end
-
-  it 'raises error if self-closing tag have text' do
-    expect { render_string('%p/ hello') }.to raise_error(HamlParser::Error)
-  end
-
-  it 'raises error if self-closing tag have children' do
-    expect { render_string(<<HAML) }.to raise_error(HamlParser::Error)
-%p/
-  hello
-HAML
   end
 end

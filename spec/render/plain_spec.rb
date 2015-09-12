@@ -17,11 +17,4 @@ HAML
   it 'raises error when interpolation is unterminated' do
     expect { render_string('%span foo#{1 + 2') }.to raise_error(Faml::TextCompiler::InvalidInterpolation)
   end
-
-  it 'raises error when text has children' do
-    expect { render_string(<<HAML) }.to raise_error(HamlParser::Error, /nesting within plain text/)
-hello
-  world
-HAML
-  end
 end

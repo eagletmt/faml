@@ -47,15 +47,4 @@ HAML
   world
 HAML
   end
-
-  it 'raises error if conditional comment bracket is unbalanced' do
-    expect { render_string('/[[if IE]') }.to raise_error(HamlParser::Error)
-  end
-
-  it 'raises error if both comment text and children are given' do
-    expect { render_string(<<HAML) }.to raise_error(HamlParser::Error)
-/ hehehe
-  %span hello
-HAML
-  end
 end
