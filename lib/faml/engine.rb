@@ -2,7 +2,7 @@ require 'temple'
 require 'faml/compiler'
 require 'faml/html'
 require 'faml/newline'
-require 'faml/parser'
+require 'haml_parser/parser'
 
 module Faml
   class Engine < Temple::Engine
@@ -11,7 +11,7 @@ module Faml
       filename: nil,
     )
 
-    use Parser
+    use HamlParser::Parser
     use Compiler
     use Html
     filter :Escapable

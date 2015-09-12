@@ -56,7 +56,7 @@ RSpec.describe 'Doctype rendering', type: :render do
   end
 
   it 'raises error when doctype has children' do
-    expect { render_string(<<HAML) }.to raise_error(Faml::SyntaxError, /nesting within a header command/)
+    expect { render_string(<<HAML) }.to raise_error(HamlParser::Error, /nesting within a header command/)
 !!!
   hello
 HAML

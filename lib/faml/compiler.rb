@@ -1,6 +1,6 @@
 require 'parser/current'
 require 'temple'
-require 'faml/ast'
+require 'haml_parser/ast'
 require 'faml/error'
 require 'faml/filter_compilers'
 require 'faml/helpers'
@@ -55,25 +55,25 @@ module Faml
 
     def compile(ast)
       case ast
-      when Ast::Root
+      when HamlParser::Ast::Root
         compile_root(ast)
-      when Ast::Doctype
+      when HamlParser::Ast::Doctype
         compile_doctype(ast)
-      when Ast::HtmlComment
+      when HamlParser::Ast::HtmlComment
         compile_html_comment(ast)
-      when Ast::HamlComment
+      when HamlParser::Ast::HamlComment
         compile_haml_comment(ast)
-      when Ast::Empty
+      when HamlParser::Ast::Empty
         [:multi]
-      when Ast::Element
+      when HamlParser::Ast::Element
         compile_element(ast)
-      when Ast::Script
+      when HamlParser::Ast::Script
         compile_script(ast)
-      when Ast::SilentScript
+      when HamlParser::Ast::SilentScript
         compile_silent_script(ast)
-      when Ast::Text
+      when HamlParser::Ast::Text
         compile_text(ast)
-      when Ast::Filter
+      when HamlParser::Ast::Filter
         compile_filter(ast)
       else
         raise "InternalError: Unknown AST node #{ast.class}: #{ast.inspect}"
@@ -108,13 +108,13 @@ module Faml
 
     def need_newline?(child)
       case child
-      when Ast::Script
+      when HamlParser::Ast::Script
         child.children.empty?
-      when Ast::SilentScript, Ast::HamlComment, Ast::Empty
+      when HamlParser::Ast::SilentScript, HamlParser::Ast::HamlComment, HamlParser::Ast::Empty
         false
-      when Ast::Element
+      when HamlParser::Ast::Element
         !child.nuke_outer_whitespace
-      when Ast::Filter
+      when HamlParser::Ast::Filter
         FilterCompilers.find(child.name).need_newline?
       else
         true
@@ -122,11 +122,11 @@ module Faml
     end
 
     def suppress_code_newline?(ast)
-      ast.is_a?(Ast::Script) ||
-        ast.is_a?(Ast::SilentScript) ||
-        (ast.is_a?(Ast::Element) && suppress_code_newline?(ast.oneline_child)) ||
-        (ast.is_a?(Ast::Element) && !ast.children.empty?) ||
-        (ast.is_a?(Ast::HtmlComment) && !ast.conditional.empty?)
+      ast.is_a?(HamlParser::Ast::Script) ||
+        ast.is_a?(HamlParser::Ast::SilentScript) ||
+        (ast.is_a?(HamlParser::Ast::Element) && suppress_code_newline?(ast.oneline_child)) ||
+        (ast.is_a?(HamlParser::Ast::Element) && !ast.children.empty?) ||
+        (ast.is_a?(HamlParser::Ast::HtmlComment) && !ast.conditional.empty?)
     end
 
     def compile_text(ast)

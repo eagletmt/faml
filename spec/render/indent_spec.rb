@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe 'Indent', type: :render do
   it 'raises error if indent is wrong' do
-    expect { render_string(<<HAML) }.to raise_error(Faml::IndentTracker::IndentMismatch) { |e|
+    expect { render_string(<<HAML) }.to raise_error(HamlParser::IndentTracker::IndentMismatch) { |e|
 %div
     %div
         %div
@@ -15,7 +15,7 @@ HAML
   end
 
   it 'raises error if the current indent is deeper than the previous one' do
-    expect { render_string(<<HAML) }.to raise_error(Faml::IndentTracker::InconsistentIndent) { |e|
+    expect { render_string(<<HAML) }.to raise_error(HamlParser::IndentTracker::InconsistentIndent) { |e|
 %div
   %div
       %div
@@ -27,7 +27,7 @@ HAML
   end
 
   it 'raises error if the current indent is shallower than the previous one' do
-    expect { render_string(<<HAML) }.to raise_error(Faml::IndentTracker::InconsistentIndent) { |e|
+    expect { render_string(<<HAML) }.to raise_error(HamlParser::IndentTracker::InconsistentIndent) { |e|
 %div
     %div
       %div
@@ -39,7 +39,7 @@ HAML
   end
 
   it 'raises error if indented with hard tabs' do
-    expect { render_string(<<HAML) }.to raise_error(Faml::IndentTracker::HardTabNotAllowed)
+    expect { render_string(<<HAML) }.to raise_error(HamlParser::IndentTracker::HardTabNotAllowed)
 %p
 	%a
 HAML

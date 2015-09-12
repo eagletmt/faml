@@ -61,21 +61,21 @@ HAML
 
   context 'with invalid tag name' do
     it 'raises error' do
-      expect { render_string('%.foo') }.to raise_error(Faml::SyntaxError)
+      expect { render_string('%.foo') }.to raise_error(HamlParser::Error)
     end
   end
 
   context 'with invalid classes' do
     it 'raises error' do
-      expect { render_string('%span. hello') }.to raise_error(Faml::SyntaxError)
-      expect { render_string('%span.{foo: "bar"} hello') }.to raise_error(Faml::SyntaxError)
+      expect { render_string('%span. hello') }.to raise_error(HamlParser::Error)
+      expect { render_string('%span.{foo: "bar"} hello') }.to raise_error(HamlParser::Error)
     end
   end
 
   context 'with invalid ids' do
     it 'raises error' do
-      expect { render_string('%span# hello') }.to raise_error(Faml::SyntaxError)
-      expect { render_string('%span#{foo: "bar"} hello') }.to raise_error(Faml::SyntaxError)
+      expect { render_string('%span# hello') }.to raise_error(HamlParser::Error)
+      expect { render_string('%span#{foo: "bar"} hello') }.to raise_error(HamlParser::Error)
     end
   end
 
@@ -129,11 +129,11 @@ HAML
   end
 
   it 'raises error if self-closing tag have text' do
-    expect { render_string('%p/ hello') }.to raise_error(Faml::SyntaxError)
+    expect { render_string('%p/ hello') }.to raise_error(HamlParser::Error)
   end
 
   it 'raises error if self-closing tag have children' do
-    expect { render_string(<<HAML) }.to raise_error(Faml::SyntaxError)
+    expect { render_string(<<HAML) }.to raise_error(HamlParser::Error)
 %p/
   hello
 HAML

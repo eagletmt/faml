@@ -19,7 +19,7 @@ HAML
   end
 
   it 'raises error when text has children' do
-    expect { render_string(<<HAML) }.to raise_error(Faml::SyntaxError, /nesting within plain text/)
+    expect { render_string(<<HAML) }.to raise_error(HamlParser::Error, /nesting within plain text/)
 hello
   world
 HAML
