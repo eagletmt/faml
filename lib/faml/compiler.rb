@@ -373,9 +373,7 @@ module Faml
       else
         temple << [:code, "#{sym} = #{ast.script}"] << [:newline]
         compile_children(ast, temple)
-        if !ast.mid_block_keyword
-          temple << [:code, 'end']
-        end
+        temple << [:code, 'end']
       end
       if !ast.escape_html && ast.preserve
         temple << [:haml, :preserve, sym]
