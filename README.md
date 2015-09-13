@@ -92,9 +92,9 @@ If you find other incompatibility, please report it to me :-p.
 I use [temple](https://github.com/judofyr/temple) to achieve faster template rendering.
 It's used by [slim](https://github.com/slim-template/slim) template language & engine which is known as fast.
 
-1. Faml::Parser converts source language (Haml template) to own AST (Faml::Ast) .
-    - You can see the Faml::Ast by running `faml parse template.haml` .
-2. Faml::Compiler compiles Faml::Ast into Temple AST.
+1. HamlParser::Parser converts source language (Haml template) to own AST (HamlParser::Ast) .
+    - You can see the HamlParser::Ast by running `haml_parser template.haml` .
+2. Faml::Compiler compiles HamlParser::Ast into Temple AST.
     - You can see the Temple AST by running `faml temple template.haml` .
 3. Temple compiles its AST into Ruby code.
     - You can see the Ruby code by running `faml compile template.haml` .
