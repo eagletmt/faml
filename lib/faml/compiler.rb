@@ -1,6 +1,6 @@
-require 'parser/current'
-require 'temple'
 require 'haml_parser/ast'
+require 'ripper/sexp'
+require 'temple'
 require 'faml/error'
 require 'faml/filter_compilers'
 require 'faml/helpers'
@@ -295,14 +295,9 @@ module Faml
     end
 
     def assert_valid_ruby_code!(text)
-      parser = ::Parser::CurrentRuby.new
-      parser.diagnostics.consumer = nil
-      buffer = ::Parser::Source::Buffer.new('(faml)')
-      buffer.source = "call(#{text})"
-      parser.parse(buffer)
-      true
-    rescue ::Parser::SyntaxError
-      raise UnparsableRubyCode.new("Unparsable Ruby code is given to attributes: #{text}", nil)
+      unless Ripper.sexp("call(#{text})")
+        raise UnparsableRubyCode.new("Unparsable Ruby code is given to attributes: #{text}", nil)
+      end
     end
 
     def build_optimized_attributes(parser, static_id, static_class)
