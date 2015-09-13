@@ -1,3 +1,8 @@
+## 0.3.0 (2015-09-13)
+- Move Haml parser and AST definition to haml_parser
+    - https://github.com/eagletmt/haml_parser
+    - Remove `faml parse` subcommand
+
 ## 0.2.16 (2015-08-05)
 - Fix incompatibility to tilt 2.x
     - https://github.com/eagletmt/faml/issues/23

@@ -1,13 +1,13 @@
 # Incompatibilities
 ## Versions
-- Haml 4.0.6
-- Faml 0.2.16
+- Haml 4.0.7
+- Faml 0.3.0
 - Hamlit 1.7.2
 
 ## Table of contents
 - [spec/compiler_newline_spec.md](spec/compiler_newline_spec.md)
 - [spec/render/attribute_spec.md](spec/render/attribute_spec.md)
-- [spec/render/comment_spec.md](spec/render/comment_spec.md)
+- [spec/render/comment_spec.md](spec/render/comment_spec.md) (Hamlit's incompatibility)
 - [spec/render/doctype_spec.md](spec/render/doctype_spec.md)
 - [spec/render/element_spec.md](spec/render/element_spec.md)
 - [spec/render/filters/cdata_spec.md](spec/render/filters/cdata_spec.md) (Hamlit's incompatibility)
@@ -17,7 +17,6 @@
 - [spec/render/filters/markdown_spec.md](spec/render/filters/markdown_spec.md)
 - [spec/render/filters/preserve_spec.md](spec/render/filters/preserve_spec.md) (Hamlit's incompatibility)
 - [spec/render/helpers_spec.md](spec/render/helpers_spec.md) (Hamlit's incompatibility)
-- [spec/render/indent_spec.md](spec/render/indent_spec.md)
 - [spec/render/multiline_spec.md](spec/render/multiline_spec.md) (Hamlit's incompatibility)
 - [spec/render/newline_spec.md](spec/render/newline_spec.md) (Hamlit's incompatibility)
 - [spec/render/plain_spec.md](spec/render/plain_spec.md) (Hamlit's incompatibility)

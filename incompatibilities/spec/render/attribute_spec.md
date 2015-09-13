@@ -1,4 +1,4 @@
-# [./spec/render/attribute_spec.rb:52](../../../spec/render/attribute_spec.rb#L52)
+# [./spec/render/attribute_spec.rb:48](../../../spec/render/attribute_spec.rb#L48)
 ## Input
 ```haml
 - h1 = {class: 'c1', id: ['id1', 'id3']}
@@ -19,7 +19,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:65](../../../spec/render/attribute_spec.rb#L65)
+# [./spec/render/attribute_spec.rb:61](../../../spec/render/attribute_spec.rb#L61)
 ## Input
 ```haml
 %span.foo{class: "foo bar"}
@@ -37,7 +37,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:75](../../../spec/render/attribute_spec.rb#L75)
+# [./spec/render/attribute_spec.rb:71](../../../spec/render/attribute_spec.rb#L71)
 ## Input
 ```haml
 %span{class: "x\"y'z"} hello
@@ -55,7 +55,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:92](../../../spec/render/attribute_spec.rb#L92)
+# [./spec/render/attribute_spec.rb:84](../../../spec/render/attribute_spec.rb#L84)
 ## Input (with options={:format=>:xhtml})
 ```haml
 - foo = true
@@ -74,7 +74,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:92](../../../spec/render/attribute_spec.rb#L92)
+# [./spec/render/attribute_spec.rb:84](../../../spec/render/attribute_spec.rb#L84)
 ## Input (with options={:format=>:xhtml})
 ```haml
 - h = {foo: true, bar: 1}
@@ -93,7 +93,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:99](../../../spec/render/attribute_spec.rb#L99)
+# [./spec/render/attribute_spec.rb:91](../../../spec/render/attribute_spec.rb#L91)
 ## Input
 ```haml
 %span{foo: {bar: 1+2}} hello
@@ -111,7 +111,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:103](../../../spec/render/attribute_spec.rb#L103)
+# [./spec/render/attribute_spec.rb:95](../../../spec/render/attribute_spec.rb#L95)
 ## Input
 ```haml
 - attrs = { foo: 1, bar: { hoge: :fuga }, baz: true }
@@ -137,7 +137,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:117](../../../spec/render/attribute_spec.rb#L117)
+# [./spec/render/attribute_spec.rb:109](../../../spec/render/attribute_spec.rb#L109)
 ## Input
 ```haml
 - data = { foo: 1 }
@@ -157,7 +157,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:124](../../../spec/render/attribute_spec.rb#L124)
+# [./spec/render/attribute_spec.rb:116](../../../spec/render/attribute_spec.rb#L116)
 ## Input
 ```haml
 %span{foo: {bar: 1+2}} hello
@@ -175,31 +175,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:157](../../../spec/render/attribute_spec.rb#L157)
-## Input
-```haml
-%span{foo: 1
-, bar: 2} hello
-
-```
-
-## Faml (Error)
-```html
-Unmatched brace
-```
-
-## Haml (Error)
-```html
-Unbalanced brackets.
-```
-
-## Hamlit
-```html
-<span bar='2' foo='1'>hello</span>
-
-```
-
-# [./spec/render/attribute_spec.rb:166](../../../spec/render/attribute_spec.rb#L166)
+# [./spec/render/attribute_spec.rb:138](../../../spec/render/attribute_spec.rb#L138)
 ## Input
 ```haml
 %span{data: {foo: 1, bar: 'baz', :hoge => :fuga, k1: { k2: 'v3' }}} hello
@@ -217,7 +193,7 @@ Unbalanced brackets.
 
 ```
 
-# [./spec/render/attribute_spec.rb:174](../../../spec/render/attribute_spec.rb#L174)
+# [./spec/render/attribute_spec.rb:146](../../../spec/render/attribute_spec.rb#L146)
 ## Input
 ```haml
 %span{data: {foo: 1, bar: 2+3}} hello
@@ -235,7 +211,7 @@ Unbalanced brackets.
 
 ```
 
-# [./spec/render/attribute_spec.rb:178](../../../spec/render/attribute_spec.rb#L178)
+# [./spec/render/attribute_spec.rb:150](../../../spec/render/attribute_spec.rb#L150)
 ## Input
 ```haml
 - data = { foo: 1, bar: 2 }
@@ -255,7 +231,7 @@ Unbalanced brackets.
 
 ```
 
-# [./spec/render/attribute_spec.rb:186](../../../spec/render/attribute_spec.rb#L186)
+# [./spec/render/attribute_spec.rb:158](../../../spec/render/attribute_spec.rb#L158)
 ## Input
 ```haml
 %span{b: __LINE__,
@@ -270,188 +246,6 @@ Unbalanced brackets.
 ```
 
 ## Hamlit
-```html
-<span a='1' b='1'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:212](../../../spec/render/attribute_spec.rb#L212)
-## Input
-```haml
-%span{data: {foo: 1,
-  bar: 2}}
-  %span hello
-
-```
-
-## Faml, Haml
-```html
-<span data-bar='2' data-foo='1'>
-<span>hello</span>
-</span>
-
-```
-
-## Hamlit
-```html
-<span data-foo='1' data-bar='2'>
-<span>hello</span>
-</span>
-
-```
-
-# [./spec/render/attribute_spec.rb:220](../../../spec/render/attribute_spec.rb#L220)
-## Input
-```haml
-%span(foo=1
-
-bar=3) hello
-
-```
-
-## Faml, Haml
-```html
-<span bar='3' foo='1'>hello</span>
-
-```
-
-## Hamlit
-```html
-<span foo='3'>hello</span>
-
-```
-
-# [./spec/render/attribute_spec.rb:237](../../../spec/render/attribute_spec.rb#L237)
-## Input
-```haml
-%span(foo bar=1) hello
-```
-
-## Faml, Haml
-```html
-<span bar='1' foo>hello</span>
-
-```
-
-## Hamlit
-```html
-<span = foo>hello</span>
-
-```
-
-# [./spec/render/attribute_spec.rb:241](../../../spec/render/attribute_spec.rb#L241)
-## Input
-```haml
-%span(foo=1 bar='baz#{1 + 2}') hello
-```
-
-## Faml, Haml
-```html
-<span bar='baz3' foo='1'>hello</span>
-
-```
-
-## Hamlit
-```html
-<span bar='baz#{1 + 2}' foo='1'>hello</span>
-
-```
-
-# [./spec/render/attribute_spec.rb:246](../../../spec/render/attribute_spec.rb#L246)
-## Input
-```haml
-%span(foo=1 bar="ba\"z") hello
-```
-
-## Faml, Hamlit
-```html
-<span bar='ba&quot;z' foo='1'>hello</span>
-
-```
-
-## Haml
-```html
-<span bar='ba"z' foo='1'>hello</span>
-
-```
-
-# [./spec/render/attribute_spec.rb:246](../../../spec/render/attribute_spec.rb#L246)
-## Input
-```haml
-%span(foo=1 bar='ba\'z') hello
-```
-
-## Faml, Hamlit
-```html
-<span bar='ba&#39;z' foo='1'>hello</span>
-
-```
-
-## Haml
-```html
-<span bar="ba'z" foo='1'>hello</span>
-
-```
-
-# [./spec/render/attribute_spec.rb:255](../../../spec/render/attribute_spec.rb#L255)
-## Input
-```haml
-%span(foo=1 3.14=3) hello
-```
-
-## Faml (Error)
-```html
-Invalid attribute list (missing attribute name)
-```
-
-## Haml (Error)
-```html
-Invalid attribute list: "(foo=1 3.14=3)".
-```
-
-## Hamlit
-```html
-<span 3.14 foo='1'>hello</span>
-
-```
-
-# [./spec/render/attribute_spec.rb:259](../../../spec/render/attribute_spec.rb#L259)
-## Input
-```haml
-%span(foo=1 bar=) hello
-```
-
-## Faml (Error)
-```html
-Invalid attribute list (invalid variable name)
-```
-
-## Haml (Error)
-```html
-Invalid attribute list: "(foo=1 bar=)".
-```
-
-## Hamlit
-```html
-<span bar foo='1'>hello</span>
-
-```
-
-# [./spec/render/attribute_spec.rb:271](../../../spec/render/attribute_spec.rb#L271)
-## Input
-```haml
-%span(b=__LINE__
-  a=__LINE__)
-
-```
-
-## Faml
-```html
-<span a='2' b='1'></span>
-
-```
-
-## Haml, Hamlit
 ```html
 <span a='1' b='1'></span>
 
