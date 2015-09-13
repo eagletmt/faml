@@ -18,12 +18,6 @@ module Faml
       puts compile_file(file, format: options[:format].to_sym)
     end
 
-    desc 'parse FILE', 'Render faml AST'
-    def parse(file)
-      require 'pp'
-      pp parse_file(file)
-    end
-
     desc 'temple FILE', 'Render temple AST'
     option :format, type: :string, default: :html, desc: 'HTML format'
     def temple(file)
@@ -48,7 +42,7 @@ module Faml
     end
 
     def parse_file(file)
-      Faml::Parser.new(filename: file).call(File.read(file))
+      HamlParser::Parser.new(filename: file).call(File.read(file))
     end
   end
 end

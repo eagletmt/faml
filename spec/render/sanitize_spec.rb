@@ -26,11 +26,4 @@ HAML
       expect(render_string('%span&~ "<p>hello</p>"')).to eq("<span>&lt;p&gt;hello&lt;/p&gt;</span>\n")
     end
   end
-
-  context 'without Ruby code' do
-    it 'raises error' do
-      expect { render_string('%span&=') }.to raise_error(Faml::SyntaxError)
-      expect { render_string('&=') }.to raise_error(Faml::SyntaxError)
-    end
-  end
 end

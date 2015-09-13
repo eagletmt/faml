@@ -1,6 +1,6 @@
 require 'strscan'
 require 'faml/error'
-require 'faml/parser_utils'
+require 'haml_parser/utils'
 
 module Faml
   class TextCompiler
@@ -59,7 +59,7 @@ module Faml
 
     def find_close_brace(scanner, lineno)
       pos = scanner.pos
-      depth = ParserUtils.balance(scanner, '{', '}')
+      depth = HamlParser::Utils.balance(scanner, '{', '}')
       if depth != 0
         raise InvalidInterpolation.new(scanner.string, lineno)
       else

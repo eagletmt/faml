@@ -9,10 +9,6 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string('%span{class: "x", "old" => 2} hello')).to eq(%Q{<span class='x' old='2'>hello</span>\n})
   end
 
-  it 'is not element with id attribute' do
-    expect(render_string('#{1 + 2}')).to eq("3\n")
-  end
-
   it 'renders attributes with symbol literal' do
     expect(render_string("%span{foo: 'baz'}")).to eq("<span foo='baz'></span>\n")
     expect(render_string("%span{:foo => 'baz'}")).to eq("<span foo='baz'></span>\n")
@@ -74,10 +70,6 @@ HAML
 
   it 'escapes' do
     expect(render_string(%q|%span{class: "x\"y'z"} hello|)).to eq(%Q{<span class='x&quot;y&#39;z'>hello</span>\n})
-  end
-
-  it "doesn't parse extra brace" do
-    expect(render_string('%span{foo: 1}{bar: 2}')).to eq("<span foo='1'>{bar: 2}</span>\n")
   end
 
   it 'renders only name if value is true' do
@@ -142,26 +134,6 @@ HAML
     expect(render_string("- h = {foo_bar: 'baz'}\n%span{data: h}")).to eq("<span data-foo-bar='baz'></span>\n")
   end
 
-  context 'with unmatched brace' do
-    it 'raises error' do
-      expect { render_string('%span{foo hello') }.to raise_error(Faml::SyntaxError)
-    end
-
-    it 'tries to parse next lines' do
-      expect(render_string(<<HAML)).to eq("<span bar='2' foo='1'>hello</span>\n")
-%span{foo: 1,
-bar: 2} hello
-HAML
-    end
-
-    it "doesn't try to parse next lines without trailing comma" do
-      expect { render_string(<<HAML) }.to raise_error(Faml::SyntaxError)
-%span{foo: 1
-, bar: 2} hello
-HAML
-    end
-  end
-
   context 'with data attributes' do
     it 'renders nested attributes' do
       expect(render_string(%q|%span{data: {foo: 1, bar: 'baz', :hoge => :fuga, k1: { k2: 'v3' }}} hello|)).to eq(%Q{<span data-bar='baz' data-foo='1' data-hoge='fuga' data-k1-k2='v3'>hello</span>\n})
@@ -188,91 +160,5 @@ HAML
 %span{b: __LINE__,
   a: __LINE__}
 HAML
-  end
-
-  describe 'with HTML-style attributes' do
-    it 'parses simple values' do
-      expect(render_string('%span(foo=1 bar=3) hello')).to eq("<span bar='3' foo='1'>hello</span>\n")
-    end
-
-    it 'parses variables' do
-      expect(render_string(<<HAML)).to eq("<span bar='3' foo='xxx'>hello</span>\n")
-- foo = 'xxx'
-%span(foo=foo bar=3) hello
-HAML
-    end
-
-    it 'parses attributes with old syntax' do
-      expect(render_string(<<HAML)).to eq("<span bar='3' foo='foo'>hello</span>\n")
-- foo = 'foo'
-%span(foo=foo){bar: 3} hello
-HAML
-    end
-
-    it 'parses multiline attribute list' do
-      expect(render_string(<<HAML)).to eq("<span data-bar='2' data-foo='1'>\n<span>hello</span>\n</span>\n")
-%span{data: {foo: 1,
-  bar: 2}}
-  %span hello
-HAML
-    end
-
-    it 'parses HTML-style multiline attribute list' do
-      expect(render_string(<<HAML)).to eq("<span bar='3' foo='1'>hello</span>\n")
-%span(foo=1
-
-bar=3) hello
-HAML
-    end
-
-    it "doesn't parse extra parens" do
-      expect(render_string('%span(foo=1)(bar=3) hello')).to eq("<span foo='1'>(bar=3) hello</span>\n")
-    end
-
-    it 'parses quoted value' do
-      expect(render_string('%span(foo=1 bar="baz") hello')).to eq("<span bar='baz' foo='1'>hello</span>\n")
-      expect(render_string("%span(foo=1 bar='baz') hello")).to eq("<span bar='baz' foo='1'>hello</span>\n")
-    end
-
-    it 'parses key-only attribute' do
-      expect(render_string('%span(foo bar=1) hello')).to eq("<span bar='1' foo>hello</span>\n")
-    end
-
-    it 'renders string interpolation' do
-      expect(render_string(%q|%span(foo=1 bar="baz#{1 + 2}") hello|)).to eq("<span bar='baz3' foo='1'>hello</span>\n")
-      expect(render_string(%q|%span(foo=1 bar='baz#{1 + 2}') hello|)).to eq("<span bar='baz3' foo='1'>hello</span>\n")
-    end
-
-    it 'parses escapes' do
-      expect(render_string(%q|%span(foo=1 bar="ba\"z") hello|)).to eq("<span bar='ba&quot;z' foo='1'>hello</span>\n")
-      expect(render_string(%q|%span(foo=1 bar='ba\'z') hello|)).to eq("<span bar='ba&#39;z' foo='1'>hello</span>\n")
-    end
-
-    it 'raises error when attributes list is unterminated' do
-      expect { render_string('%span(foo=1 bar=2') }.to raise_error(Faml::SyntaxError)
-    end
-
-    it 'raises error when key is not alnum' do
-      expect { render_string('%span(foo=1 3.14=3) hello') }.to raise_error(Faml::SyntaxError)
-    end
-
-    it 'raises error when value is missing' do
-      expect { render_string('%span(foo=1 bar=) hello') }.to raise_error(Faml::SyntaxError)
-    end
-
-    it 'raises error when quote is unterminated' do
-      expect { render_string('%span(foo=1 bar="baz) hello') }.to raise_error(Faml::SyntaxError)
-    end
-
-    it 'raises error when string interpolation is unterminated' do
-      expect { render_string('%span(foo=1 bar="ba#{1") hello') }.to raise_error(Faml::SyntaxError)
-    end
-
-    it 'renders __LINE__ correctly' do
-      expect(render_string(<<HAML)).to eq("<span a='2' b='1'></span>\n")
-%span(b=__LINE__
-  a=__LINE__)
-HAML
-    end
   end
 end

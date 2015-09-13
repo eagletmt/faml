@@ -54,7 +54,7 @@ RSpec.describe 'Faml with Rails', type: :request do
   end
 
   describe 'compile time errors' do
-    describe Faml::SyntaxError do
+    describe HamlParser::Error do
       it 'has proper backtrace' do
         expect { get '/books/syntax_error' }.to raise_error { |e|
           expect(e.backtrace[0]).to end_with('app/views/books/syntax_error.html.haml:2')
@@ -62,7 +62,7 @@ RSpec.describe 'Faml with Rails', type: :request do
       end
     end
 
-    describe Faml::IndentTracker::IndentMismatch do
+    describe HamlParser::IndentTracker::IndentMismatch do
       it 'has proper backtrace' do
         expect { get '/books/indent_error' }.to raise_error { |e|
           expect(e.backtrace[0]).to end_with('app/views/books/indent_error.html.haml:3')
