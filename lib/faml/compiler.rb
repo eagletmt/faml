@@ -1,10 +1,11 @@
-require 'parser/current'
+require 'ripper'
 require 'temple'
 require 'haml_parser/ast'
 require 'faml/error'
 require 'faml/filter_compilers'
 require 'faml/helpers'
 require 'faml/rails_helpers'
+require 'faml/ruby_syntax_checker'
 require 'faml/static_hash_parser'
 require 'faml/text_compiler'
 
@@ -295,13 +296,9 @@ module Faml
     end
 
     def assert_valid_ruby_code!(text)
-      parser = ::Parser::CurrentRuby.new
-      parser.diagnostics.consumer = nil
-      buffer = ::Parser::Source::Buffer.new('(faml)')
-      buffer.source = "call(#{text})"
-      parser.parse(buffer)
+      RubySyntaxChecker.new("call(#{text})", '(faml)').parse
       true
-    rescue ::Parser::SyntaxError
+    rescue RubySyntaxChecker::Error
       raise UnparsableRubyCode.new("Unparsable Ruby code is given to attributes: #{text}", nil)
     end
 
