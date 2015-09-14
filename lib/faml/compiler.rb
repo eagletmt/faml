@@ -1,5 +1,5 @@
 require 'haml_parser/ast'
-require 'ripper/sexp'
+require 'ripper'
 require 'temple'
 require 'faml/error'
 require 'faml/filter_compilers'
@@ -295,7 +295,9 @@ module Faml
     end
 
     def assert_valid_ruby_code!(text)
-      unless Ripper.sexp("call(#{text})")
+      ripper = Ripper.new("call(#{text})")
+      ripper.parse
+      if ripper.error?
         raise UnparsableRubyCode.new("Unparsable Ruby code is given to attributes: #{text}", nil)
       end
     end
