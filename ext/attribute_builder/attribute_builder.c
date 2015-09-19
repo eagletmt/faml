@@ -9,7 +9,7 @@
 #endif
 
 VALUE rb_mAttributeBuilder;
-static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_temple, id_utils, id_escape_html, id_gsub, id_to_s;
+static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_temple, id_utils, id_escape_html, id_gsub, id_to_s, id_id, id_class;
 
 static void
 concat_array_attribute(VALUE attributes, VALUE hash, VALUE key)
@@ -132,8 +132,8 @@ merge(VALUE attributes, int argc, VALUE *argv)
 
     Check_Type(argv[i], T_HASH);
     h = stringify_keys(argv[i]);
-    concat_array_attribute(attributes, h, rb_str_new_cstr("class"));
-    concat_array_attribute(attributes, h, rb_str_new_cstr("id"));
+    concat_array_attribute(attributes, h, rb_const_get(rb_mAttributeBuilder, id_class));
+    concat_array_attribute(attributes, h, rb_const_get(rb_mAttributeBuilder, id_id));
     normalize(h);
     rb_funcall(attributes, id_merge_bang, 1, h);
   }
@@ -226,8 +226,8 @@ m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
   attr_quote = argv[0];
   is_html = RTEST(argv[1]);
   attributes = rb_hash_new();
-  rb_hash_aset(attributes, rb_str_new_cstr("id"), rb_ary_new());
-  rb_hash_aset(attributes, rb_str_new_cstr("class"), rb_ary_new());
+  rb_hash_aset(attributes, rb_const_get(rb_mAttributeBuilder, id_id), rb_ary_new());
+  rb_hash_aset(attributes, rb_const_get(rb_mAttributeBuilder, id_class), rb_ary_new());
   merge(attributes, argc-2, argv+2);
 
   keys = rb_funcall(attributes, id_keys, 0);
@@ -265,5 +265,11 @@ Init_attribute_builder(void)
   id_escape_html = rb_intern("escape_html");
   id_gsub = rb_intern("gsub");
   id_to_s = rb_intern("to_s");
+  id_id = rb_intern("ID");
+  id_class = rb_intern("CLASS");
+
+  rb_const_set(rb_mAttributeBuilder, id_id, rb_obj_freeze(rb_str_new_cstr("id")));
+  rb_const_set(rb_mAttributeBuilder, id_class, rb_obj_freeze(rb_str_new_cstr("class")));
+
   rb_require("temple");
 }
