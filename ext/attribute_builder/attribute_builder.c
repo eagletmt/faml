@@ -9,7 +9,8 @@
 #endif
 
 VALUE rb_mAttributeBuilder;
-static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_temple, id_utils, id_escape_html, id_gsub, id_to_s, id_id, id_class;
+static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_temple, id_utils, id_escape_html, id_gsub, id_to_s;
+static ID id_id, id_class, id_underscore, id_hyphen, id_space, id_empty;
 
 static void
 concat_array_attribute(VALUE attributes, VALUE hash, VALUE key)
@@ -54,7 +55,7 @@ normalize_data_i2(VALUE key, VALUE value, VALUE ptr)
   struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
   VALUE k = rb_funcall(arg->key, id_to_s, 0);
 
-  k = rb_funcall(k, id_gsub, 2, rb_str_new_cstr("_"), rb_str_new_cstr("-"));
+  k = rb_funcall(k, id_gsub, 2, rb_const_get(rb_mAttributeBuilder, id_underscore), rb_const_get(rb_mAttributeBuilder, id_hyphen));
   rb_str_cat(k, "-", 1);
   rb_str_append(k, key);
   rb_hash_aset(arg->normalized, k, value);
@@ -73,7 +74,7 @@ normalize_data_i(VALUE key, VALUE value, VALUE normalized)
     rb_hash_foreach(normalize_data(value), normalize_data_i2, (VALUE)(&arg));
   } else {
     key = rb_funcall(key, id_to_s, 0);
-    key = rb_funcall(key, id_gsub, 2, rb_str_new_cstr("_"), rb_str_new_cstr("-"));
+    key = rb_funcall(key, id_gsub, 2, rb_const_get(rb_mAttributeBuilder, id_underscore), rb_const_get(rb_mAttributeBuilder, id_hyphen));
     rb_hash_aset(normalized, key, value);
   }
   return ST_CONTINUE;
@@ -170,7 +171,7 @@ build_attribute(VALUE attr_quote, int is_html, VALUE key, VALUE value)
     Check_Type(value, T_ARRAY);
     len = RARRAY_LEN(value);
     if (len == 0) {
-      return rb_str_new_cstr("");
+      return rb_const_get(rb_mAttributeBuilder, id_empty);
     } else {
       long i;
       VALUE ary = rb_ary_new_capa(len);
@@ -180,7 +181,7 @@ build_attribute(VALUE attr_quote, int is_html, VALUE key, VALUE value)
       }
       rb_funcall(ary, id_sort_bang, 0);
       rb_funcall(ary, id_uniq_bang, 0);
-      return put_attribute(attr_quote, key, rb_ary_join(ary, rb_str_new_cstr(" ")));
+      return put_attribute(attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_space)));
     }
   } else if (strcmp(key_cstr, "id") == 0) {
     long len = RARRAY_LEN(value);
@@ -188,7 +189,7 @@ build_attribute(VALUE attr_quote, int is_html, VALUE key, VALUE value)
     Check_Type(value, T_ARRAY);
     len = RARRAY_LEN(value);
     if (len == 0) {
-      return rb_str_new_cstr("");
+      return rb_const_get(rb_mAttributeBuilder, id_empty);
     } else {
       long i;
       VALUE ary = rb_ary_new_capa(len);
@@ -196,7 +197,7 @@ build_attribute(VALUE attr_quote, int is_html, VALUE key, VALUE value)
         VALUE v = RARRAY_AREF(value, i);
         rb_ary_push(ary, rb_funcall(v, id_to_s, 0));
       }
-      return put_attribute(attr_quote, key, rb_ary_join(ary, rb_str_new_cstr("_")));
+      return put_attribute(attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_underscore)));
     }
   } else if (RB_TYPE_P(value, T_TRUE)) {
     if (is_html) {
@@ -208,7 +209,7 @@ build_attribute(VALUE attr_quote, int is_html, VALUE key, VALUE value)
       return put_attribute(attr_quote, key, key);
     }
   } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
-    return Qnil;
+    return rb_const_get(rb_mAttributeBuilder, id_empty);
   } else {
     return put_attribute(attr_quote, key, value);
   }
@@ -265,11 +266,20 @@ Init_attribute_builder(void)
   id_escape_html = rb_intern("escape_html");
   id_gsub = rb_intern("gsub");
   id_to_s = rb_intern("to_s");
+
   id_id = rb_intern("ID");
   id_class = rb_intern("CLASS");
+  id_underscore = rb_intern("UNDERSCORE");
+  id_hyphen = rb_intern("HYPHEN");
+  id_space = rb_intern("SPACE");
+  id_empty = rb_intern("EMPTY");
 
   rb_const_set(rb_mAttributeBuilder, id_id, rb_obj_freeze(rb_str_new_cstr("id")));
   rb_const_set(rb_mAttributeBuilder, id_class, rb_obj_freeze(rb_str_new_cstr("class")));
+  rb_const_set(rb_mAttributeBuilder, id_underscore, rb_obj_freeze(rb_str_new_cstr("_")));
+  rb_const_set(rb_mAttributeBuilder, id_hyphen, rb_obj_freeze(rb_str_new_cstr("-")));
+  rb_const_set(rb_mAttributeBuilder, id_space, rb_obj_freeze(rb_str_new_cstr(" ")));
+  rb_const_set(rb_mAttributeBuilder, id_empty, rb_obj_freeze(rb_str_new_cstr("")));
 
   rb_require("temple");
 }
