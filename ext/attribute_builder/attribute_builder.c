@@ -10,7 +10,7 @@
 
 VALUE rb_mAttributeBuilder;
 static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_temple, id_utils, id_escape_html, id_gsub, id_to_s;
-static ID id_id, id_class, id_underscore, id_hyphen, id_space, id_empty;
+static ID id_id, id_class, id_underscore, id_hyphen, id_space, id_equal;
 
 static void
 concat_array_attribute(VALUE attributes, VALUE hash, VALUE key)
@@ -144,29 +144,25 @@ merge(VALUE attributes, int argc, VALUE *argv)
   }
 }
 
-static VALUE
-put_attribute(VALUE attr_quote, VALUE key, VALUE value)
+static void
+put_attribute(VALUE buf, VALUE attr_quote, VALUE key, VALUE value)
 {
-  VALUE utils_class, str;
-  long len;
+  VALUE utils_class;
 
   value = rb_funcall(value, id_to_s, 0);
   utils_class = rb_const_get(rb_const_get(rb_cObject, id_temple), id_utils);
   value = rb_funcall(utils_class, id_escape_html, 1, value);
 
-  len = 2 + 2*RSTRING_LEN(attr_quote) + RSTRING_LEN(key) + RSTRING_LEN(value);
-  str = rb_str_buf_new(len);
-  rb_str_buf_cat(str, " ", 1);
-  rb_str_buf_append(str, key);
-  rb_str_buf_cat(str, "=", 1);
-  rb_str_buf_append(str, attr_quote);
-  rb_str_buf_append(str, value);
-  rb_str_buf_append(str, attr_quote);
-  return str;
+  rb_ary_push(buf, rb_const_get(rb_mAttributeBuilder, id_space));
+  rb_ary_push(buf, key);
+  rb_ary_push(buf, rb_const_get(rb_mAttributeBuilder, id_equal));
+  rb_ary_push(buf, attr_quote);
+  rb_ary_push(buf, value);
+  rb_ary_push(buf, attr_quote);
 }
 
-static VALUE
-build_attribute(VALUE attr_quote, int is_html, VALUE key, VALUE value)
+static void
+build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value)
 {
   const char *key_cstr = StringValueCStr(key);
   if (strcmp(key_cstr, "class") == 0) {
@@ -174,9 +170,7 @@ build_attribute(VALUE attr_quote, int is_html, VALUE key, VALUE value)
 
     Check_Type(value, T_ARRAY);
     len = RARRAY_LEN(value);
-    if (len == 0) {
-      return rb_const_get(rb_mAttributeBuilder, id_empty);
-    } else {
+    if (len != 0) {
       long i;
       VALUE ary = rb_ary_new_capa(len);
       for (i = 0; i < len; i++) {
@@ -185,39 +179,34 @@ build_attribute(VALUE attr_quote, int is_html, VALUE key, VALUE value)
       }
       rb_funcall(ary, id_sort_bang, 0);
       rb_funcall(ary, id_uniq_bang, 0);
-      return put_attribute(attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_space)));
+      put_attribute(buf, attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_space)));
     }
   } else if (strcmp(key_cstr, "id") == 0) {
     long len = RARRAY_LEN(value);
 
     Check_Type(value, T_ARRAY);
     len = RARRAY_LEN(value);
-    if (len == 0) {
-      return rb_const_get(rb_mAttributeBuilder, id_empty);
-    } else {
+    if (len != 0) {
       long i;
       VALUE ary = rb_ary_new_capa(len);
       for (i = 0; i < len; i++) {
         VALUE v = RARRAY_AREF(value, i);
         rb_ary_push(ary, rb_funcall(v, id_to_s, 0));
       }
-      return put_attribute(attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_underscore)));
+      put_attribute(buf, attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_underscore)));
     }
   } else if (RB_TYPE_P(value, T_TRUE)) {
     if (is_html) {
-      VALUE attr = rb_str_buf_new(1 + RSTRING_LEN(key));
-      rb_str_buf_cat(attr, " ", 1);
-      rb_str_buf_append(attr, key);
-      return attr;
+      rb_ary_push(buf, rb_const_get(rb_mAttributeBuilder, id_space));
+      rb_ary_push(buf, key);
     } else {
-      return put_attribute(attr_quote, key, key);
+      put_attribute(buf, attr_quote, key, key);
     }
   } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
-    return rb_const_get(rb_mAttributeBuilder, id_empty);
+    /* do nothing */
   } else {
-    return put_attribute(attr_quote, key, value);
+    put_attribute(buf, attr_quote, key, value);
   }
-  return value;
 }
 
 static VALUE
@@ -236,10 +225,10 @@ m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
   keys = rb_funcall(attributes, id_keys, 0);
   rb_funcall(keys, id_sort_bang, 0);
   len = RARRAY_LEN(keys);
-  buf = rb_ary_new_capa(len);
+  buf = rb_ary_new();
   for (i = 0; i < len; i++) {
     VALUE k = RARRAY_AREF(keys, i);
-    rb_ary_push(buf, build_attribute(attr_quote, is_html, k, rb_hash_lookup(attributes, k)));
+    build_attribute(buf, attr_quote, is_html, k, rb_hash_lookup(attributes, k));
   }
 
   return rb_ary_join(buf, Qnil);
@@ -274,14 +263,14 @@ Init_attribute_builder(void)
   id_underscore = rb_intern("UNDERSCORE");
   id_hyphen = rb_intern("HYPHEN");
   id_space = rb_intern("SPACE");
-  id_empty = rb_intern("EMPTY");
+  id_equal = rb_intern("=");
 
   rb_const_set(rb_mAttributeBuilder, id_id, rb_obj_freeze(rb_str_new_cstr("id")));
   rb_const_set(rb_mAttributeBuilder, id_class, rb_obj_freeze(rb_str_new_cstr("class")));
   rb_const_set(rb_mAttributeBuilder, id_underscore, rb_obj_freeze(rb_str_new_cstr("_")));
   rb_const_set(rb_mAttributeBuilder, id_hyphen, rb_obj_freeze(rb_str_new_cstr("-")));
   rb_const_set(rb_mAttributeBuilder, id_space, rb_obj_freeze(rb_str_new_cstr(" ")));
-  rb_const_set(rb_mAttributeBuilder, id_empty, rb_obj_freeze(rb_str_new_cstr("")));
+  rb_const_set(rb_mAttributeBuilder, id_equal, rb_obj_freeze(rb_str_new_cstr("=")));
 
   rb_require("temple");
 }
