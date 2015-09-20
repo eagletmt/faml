@@ -261,7 +261,7 @@ Init_attribute_builder(void)
   id_underscore = rb_intern("UNDERSCORE");
   id_hyphen = rb_intern("HYPHEN");
   id_space = rb_intern("SPACE");
-  id_equal = rb_intern("=");
+  id_equal = rb_intern("EQUAL");
 
   rb_const_set(rb_mAttributeBuilder, id_id, rb_obj_freeze(rb_str_new_cstr("id")));
   rb_const_set(rb_mAttributeBuilder, id_class, rb_obj_freeze(rb_str_new_cstr("class")));
