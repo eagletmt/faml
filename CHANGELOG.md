@@ -1,3 +1,7 @@
+## 0.3.1 (2015-09-20)
+- Improve `Faml::AttributeBuilder.build` performance
+    - Reduce String allocations
+
 ## 0.3.0 (2015-09-13)
 - Move Haml parser and AST definition to haml_parser
     - https://github.com/eagletmt/haml_parser
