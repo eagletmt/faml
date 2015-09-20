@@ -24,8 +24,12 @@ concat_array_attribute(VALUE attributes, VALUE hash, VALUE key)
 
     v = rb_Array(v);
     ary = rb_hash_lookup(attributes, key);
-    Check_Type(ary, T_ARRAY);
-    rb_ary_concat(ary, v);
+    if (NIL_P(ary)) {
+      rb_hash_aset(attributes, key, v);
+    } else {
+      Check_Type(ary, T_ARRAY);
+      rb_ary_concat(ary, v);
+    }
   }
 }
 
@@ -227,8 +231,6 @@ m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
   attr_quote = argv[0];
   is_html = RTEST(argv[1]);
   attributes = rb_hash_new();
-  rb_hash_aset(attributes, rb_const_get(rb_mAttributeBuilder, id_id), rb_ary_new());
-  rb_hash_aset(attributes, rb_const_get(rb_mAttributeBuilder, id_class), rb_ary_new());
   merge(attributes, argc-2, argv+2);
 
   keys = rb_funcall(attributes, id_keys, 0);
