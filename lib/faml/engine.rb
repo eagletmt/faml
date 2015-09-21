@@ -1,8 +1,8 @@
-require 'temple'
-require 'faml/compiler'
-require 'faml/html'
-require 'faml/newline'
 require 'haml_parser/parser'
+require 'temple'
+require_relative 'compiler'
+require_relative 'html'
+require_relative 'newline'
 
 module Faml
   class Engine < Temple::Engine

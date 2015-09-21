@@ -1,6 +1,6 @@
-require 'strscan'
-require 'faml/error'
 require 'haml_parser/utils'
+require 'strscan'
+require_relative 'error'
 
 module Faml
   class TextCompiler

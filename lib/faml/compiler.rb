@@ -1,13 +1,13 @@
 require 'ripper'
 require 'temple'
 require 'haml_parser/ast'
-require 'faml/error'
-require 'faml/filter_compilers'
-require 'faml/helpers'
-require 'faml/rails_helpers'
-require 'faml/ruby_syntax_checker'
-require 'faml/static_hash_parser'
-require 'faml/text_compiler'
+require_relative 'error'
+require_relative 'filter_compilers'
+require_relative 'helpers'
+require_relative 'rails_helpers'
+require_relative 'ruby_syntax_checker'
+require_relative 'static_hash_parser'
+require_relative 'text_compiler'
 
 module Faml
   class Compiler < Temple::Parser

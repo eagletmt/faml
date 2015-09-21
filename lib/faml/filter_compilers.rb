@@ -1,4 +1,4 @@
-require 'faml/error'
+require_relative 'error'
 
 module Faml
   module FilterCompilers
@@ -28,14 +28,14 @@ module Faml
   end
 end
 
-require 'faml/filter_compilers/cdata'
-require 'faml/filter_compilers/coffee'
-require 'faml/filter_compilers/css'
-require 'faml/filter_compilers/escaped'
-require 'faml/filter_compilers/javascript'
-require 'faml/filter_compilers/markdown'
-require 'faml/filter_compilers/plain'
-require 'faml/filter_compilers/preserve'
-require 'faml/filter_compilers/ruby'
-require 'faml/filter_compilers/sass'
-require 'faml/filter_compilers/scss'
+require_relative 'filter_compilers/cdata'
+require_relative 'filter_compilers/coffee'
+require_relative 'filter_compilers/css'
+require_relative 'filter_compilers/escaped'
+require_relative 'filter_compilers/javascript'
+require_relative 'filter_compilers/markdown'
+require_relative 'filter_compilers/plain'
+require_relative 'filter_compilers/preserve'
+require_relative 'filter_compilers/ruby'
+require_relative 'filter_compilers/sass'
+require_relative 'filter_compilers/scss'

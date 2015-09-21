@@ -1,4 +1,4 @@
-require 'faml/filter_compilers/tilt_base'
+require_relative 'tilt_base'
 
 module Faml
   module FilterCompilers

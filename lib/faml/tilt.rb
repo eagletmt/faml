@@ -6,7 +6,7 @@ rescue LoadError
 else
   require 'tilt/haml'
 end
-require 'faml/engine'
+require_relative 'engine'
 
 module Faml
   class Tilt < Tilt::Template

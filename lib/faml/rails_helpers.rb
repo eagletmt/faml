@@ -1,4 +1,4 @@
-require 'faml/helpers'
+require_relative 'helpers'
 
 module Faml
   # Don't use these methods!

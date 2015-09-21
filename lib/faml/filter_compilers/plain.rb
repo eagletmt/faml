@@ -1,4 +1,4 @@
-require 'faml/filter_compilers/base'
+require_relative 'base'
 
 module Faml
   module FilterCompilers

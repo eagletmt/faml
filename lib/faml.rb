@@ -1,10 +1,10 @@
-require 'faml/engine'
-require 'faml/tilt'
-require 'faml/version'
+require_relative 'faml/engine'
+require_relative 'faml/tilt'
+require_relative 'faml/version'
 
 begin
   gem 'rails'
   require 'rails'
-  require 'faml/railtie'
+  require_relative 'faml/railtie'
 rescue LoadError
 end

@@ -1,4 +1,4 @@
-require 'faml/text_compiler'
+require_relative '../text_compiler'
 
 module Faml
   module FilterCompilers

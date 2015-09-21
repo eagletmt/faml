@@ -1,7 +1,6 @@
 require 'temple'
 require 'tilt'
-require 'faml/filter_compilers/base'
-require 'faml/text_compiler'
+require_relative 'base'
 
 module Faml
   module FilterCompilers

@@ -1,4 +1,4 @@
-require 'faml'
+require_relative '../faml'
 require 'thor'
 
 module Faml
