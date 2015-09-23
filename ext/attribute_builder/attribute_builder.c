@@ -1,5 +1,7 @@
 #include <ruby.h>
+#include <ruby/encoding.h>
 #include <ruby/version.h>
+#include "houdini.h"
 
 #if (RUBY_API_VERSION_MAJOR > 2) || (RUBY_API_VERSION_MAJOR == 2 && RUBY_API_VERSION_MINOR >= 1)
 /* define nothing */
@@ -9,7 +11,7 @@
 #endif
 
 VALUE rb_mAttributeBuilder;
-static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_temple, id_utils, id_escape_html, id_gsub, id_to_s;
+static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_gsub, id_to_s;
 static ID id_id, id_class, id_underscore, id_hyphen, id_space, id_equal;
 
 static void
@@ -143,11 +145,14 @@ merge(VALUE attributes, int argc, VALUE *argv)
 static void
 put_attribute(VALUE buf, VALUE attr_quote, VALUE key, VALUE value)
 {
-  VALUE utils_class;
+  gh_buf ob = GH_BUF_INIT;
 
   value = rb_funcall(value, id_to_s, 0);
-  utils_class = rb_const_get(rb_const_get(rb_cObject, id_temple), id_utils);
-  value = rb_funcall(utils_class, id_escape_html, 1, value);
+  Check_Type(value, T_STRING);
+  if (houdini_escape_html(&ob, (const uint8_t *)RSTRING_PTR(value), RSTRING_LEN(value))) {
+    value = rb_enc_str_new(ob.ptr, ob.size, rb_utf8_encoding());
+    gh_buf_free(&ob);
+  }
 
   rb_ary_push(buf, rb_const_get(rb_mAttributeBuilder, id_space));
   rb_ary_push(buf, key);
@@ -250,9 +255,6 @@ Init_attribute_builder(void)
   id_sort_bang = rb_intern("sort!");
   id_uniq_bang = rb_intern("uniq!");
   id_merge_bang = rb_intern("merge!");
-  id_temple = rb_intern("Temple");
-  id_utils = rb_intern("Utils");
-  id_escape_html = rb_intern("escape_html");
   id_gsub = rb_intern("gsub");
   id_to_s = rb_intern("to_s");
 
@@ -269,6 +271,4 @@ Init_attribute_builder(void)
   rb_const_set(rb_mAttributeBuilder, id_hyphen, rb_obj_freeze(rb_str_new_cstr("-")));
   rb_const_set(rb_mAttributeBuilder, id_space, rb_obj_freeze(rb_str_new_cstr(" ")));
   rb_const_set(rb_mAttributeBuilder, id_equal, rb_obj_freeze(rb_str_new_cstr("=")));
-
-  rb_require("temple");
 }

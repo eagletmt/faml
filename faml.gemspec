@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/eagletmt/faml"
   spec.license       = "MIT"
 
-  spec.files         = `git ls-files -z`.split("\x0")
+  spec.files         = `git ls-files -z`.split("\x0") + `git -C vendor/houdini ls-files -z`.split("\x0").map { |path| "vendor/houdini/#{path}" }
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.extensions    = ['ext/attribute_builder/extconf.rb']
   spec.test_files    = spec.files.grep(%r{^(test|spec|features|incompatibilities)/})
