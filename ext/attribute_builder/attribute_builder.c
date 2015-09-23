@@ -91,6 +91,16 @@ normalize_data(VALUE data)
   return normalized;
 }
 
+static int
+put_data_attribute(VALUE key, VALUE val, VALUE hash)
+{
+  VALUE k = rb_str_buf_new(5 + RSTRING_LEN(key));
+  rb_str_buf_cat(k, "data-", 5);
+  rb_str_buf_append(k, key);
+  rb_hash_aset(hash, k, val);
+  return ST_CONTINUE;
+}
+
 static void
 normalize(VALUE hash)
 {
@@ -102,20 +112,11 @@ normalize(VALUE hash)
     const char *key_cstr = StringValueCStr(key);
     VALUE value = rb_hash_lookup(hash, key);
     if (RB_TYPE_P(value, T_HASH) && strcmp(key_cstr, "data") == 0) {
-      VALUE data, data_keys;
-      long data_len, j;
+      VALUE data;
 
       rb_hash_delete(hash, key);
       data = normalize_data(value);
-      data_keys = rb_funcall(data, id_keys, 0);
-      data_len = RARRAY_LEN(data_keys);
-      for (j = 0; j < data_len; j++) {
-        VALUE data_key = RARRAY_AREF(data_keys, j);
-        VALUE k = rb_str_buf_new(5 + RSTRING_LEN(data_key));
-        rb_str_buf_cat(k, "data-", 5);
-        rb_str_buf_append(k, data_key);
-        rb_hash_aset(hash, k, rb_hash_lookup(data, data_key));
-      }
+      rb_hash_foreach(data, put_data_attribute, hash);
     } else if (!(RB_TYPE_P(value, T_TRUE) || RB_TYPE_P(value, T_FALSE) || NIL_P(value))) {
       rb_hash_aset(hash, key, rb_funcall(value, id_to_s, 0));
     }
