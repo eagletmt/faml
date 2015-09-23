@@ -1,3 +1,14 @@
+## 0.3.2 (2015-09-24)
+- Fix illegal constant name
+- Use `require_relative` if possible
+    - It improves loading performance a little especially when there's long
+      `$LOAD_PATH` by Bundler.
+- Improve `Faml::AttributeBuilder.build` performance
+    - Call `escape_html` C-API (vmg/houdini) directly.
+    - Avoid `String#gsub` for performance
+- Allow NUL characters in attribute keys
+    - You should not include NUL characters, of course.
+
 ## 0.3.1 (2015-09-20)
 - Improve `Faml::AttributeBuilder.build` performance
     - Reduce String allocations
