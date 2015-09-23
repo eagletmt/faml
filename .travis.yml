@@ -19,9 +19,6 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - gemfile: gemfiles/rails_edge.gemfile
-    # https://github.com/rspec/rspec-rails/pull/1264
-    - rvm: 2.2
-      gemfile: gemfiles/rails_4.0.gemfile
   exclude:
     # Rails 5 requires to run on Ruby 2.2.0 or newer.
     - rvm: 2.0.0
