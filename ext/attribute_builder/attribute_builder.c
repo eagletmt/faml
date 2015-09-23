@@ -11,7 +11,7 @@
 #endif
 
 VALUE rb_mAttributeBuilder;
-static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_to_s;
+static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang;
 static ID id_id, id_class, id_underscore, id_hyphen, id_space, id_equal;
 
 static void
@@ -34,7 +34,7 @@ concat_array_attribute(VALUE attributes, VALUE hash, VALUE key)
 static int
 stringify_keys_i(VALUE key, VALUE value, VALUE arg)
 {
-  key = rb_funcall(key, id_to_s, 0);
+  key = rb_convert_type(key, T_STRING, "String", "to_s");
   rb_hash_aset(arg, key, value);
   return ST_CONTINUE;
 }
@@ -78,7 +78,7 @@ static int
 normalize_data_i2(VALUE key, VALUE value, VALUE ptr)
 {
   struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
-  VALUE k = rb_funcall(arg->key, id_to_s, 0);
+  VALUE k = rb_convert_type(arg->key, T_STRING, "String", "to_s");
 
   k = substitute_underscores(k);
   if (OBJ_FROZEN(k)) {
@@ -101,7 +101,7 @@ normalize_data_i(VALUE key, VALUE value, VALUE normalized)
     arg.normalized = normalized;
     rb_hash_foreach(normalize_data(value), normalize_data_i2, (VALUE)(&arg));
   } else {
-    key = rb_funcall(key, id_to_s, 0);
+    key = rb_convert_type(key, T_STRING, "String", "to_s");
     key = substitute_underscores(key);
     rb_hash_aset(normalized, key, value);
   }
@@ -138,11 +138,8 @@ normalize(VALUE hash)
   for (i = 0; i < len; i++) {
     VALUE key = RARRAY_AREF(keys, i);
     VALUE value = rb_hash_lookup(hash, key);
-    VALUE key_str = key;
+    VALUE key_str = rb_convert_type(key, T_STRING, "String", "to_s");
 
-    if (!RB_TYPE_P(key, T_STRING)) {
-      key_str = rb_funcall(key, id_to_s, 0);
-    }
     if (RB_TYPE_P(value, T_HASH) && RSTRING_LEN(key_str) == 4 && memcmp(RSTRING_PTR(key_str), "data", 4) == 0) {
       VALUE data;
 
@@ -150,7 +147,7 @@ normalize(VALUE hash)
       data = normalize_data(value);
       rb_hash_foreach(data, put_data_attribute, hash);
     } else if (!(RB_TYPE_P(value, T_TRUE) || RB_TYPE_P(value, T_FALSE) || NIL_P(value))) {
-      rb_hash_aset(hash, key_str, rb_funcall(value, id_to_s, 0));
+      rb_hash_aset(hash, key_str, rb_convert_type(value, T_STRING, "String", "to_s"));
     }
   }
 }
@@ -177,8 +174,7 @@ put_attribute(VALUE buf, VALUE attr_quote, VALUE key, VALUE value)
 {
   gh_buf ob = GH_BUF_INIT;
 
-  value = rb_funcall(value, id_to_s, 0);
-  Check_Type(value, T_STRING);
+  value = rb_convert_type(value, T_STRING, "String", "to_s");
   if (houdini_escape_html(&ob, (const uint8_t *)RSTRING_PTR(value), RSTRING_LEN(value))) {
     value = rb_enc_str_new(ob.ptr, ob.size, rb_utf8_encoding());
     gh_buf_free(&ob);
@@ -195,10 +191,7 @@ put_attribute(VALUE buf, VALUE attr_quote, VALUE key, VALUE value)
 static void
 build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value)
 {
-  if (!RB_TYPE_P(key, T_STRING)) {
-    key = rb_funcall(key, id_to_s, 0);
-  }
-  Check_Type(key, T_STRING);
+  key = rb_convert_type(key, T_STRING, "String", "to_s");
   if (RSTRING_LEN(key) == 5 && memcmp(RSTRING_PTR(key), "class", 5) == 0) {
     long len;
 
@@ -209,7 +202,7 @@ build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value
       VALUE ary = rb_ary_new_capa(len);
       for (i = 0; i < len; i++) {
         VALUE v = RARRAY_AREF(value, i);
-        rb_ary_push(ary, rb_funcall(v, id_to_s, 0));
+        rb_ary_push(ary, rb_convert_type(v, T_STRING, "String", "to_s"));
       }
       rb_funcall(ary, id_sort_bang, 0);
       rb_funcall(ary, id_uniq_bang, 0);
@@ -225,7 +218,7 @@ build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value
       VALUE ary = rb_ary_new_capa(len);
       for (i = 0; i < len; i++) {
         VALUE v = RARRAY_AREF(value, i);
-        rb_ary_push(ary, rb_funcall(v, id_to_s, 0));
+        rb_ary_push(ary, rb_convert_type(v, T_STRING, "String", "to_s"));
       }
       put_attribute(buf, attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_underscore)));
     }
@@ -288,7 +281,6 @@ Init_attribute_builder(void)
   id_sort_bang = rb_intern("sort!");
   id_uniq_bang = rb_intern("uniq!");
   id_merge_bang = rb_intern("merge!");
-  id_to_s = rb_intern("to_s");
 
   id_id = rb_intern("ID");
   id_class = rb_intern("CLASS");
