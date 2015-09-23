@@ -161,4 +161,17 @@ HAML
   a: __LINE__}
 HAML
   end
+
+  it 'allows NUL characters' do
+    expect(render_string('%span{"foo\0bar" => "hello"}')).to eq("<span foo\0bar='hello'></span>\n")
+    expect(render_string(<<'HAML')).to eq("<span foo\0bar='hello'></span>\n")
+- val = "hello"
+%span{"foo\0bar" => val}
+HAML
+    expect(render_string(<<'HAML')).to eq("<span foo\0bar='hello'></span>\n")
+- key = "foo\0bar"
+- val = "hello"
+%span{key => val}
+HAML
+  end
 end

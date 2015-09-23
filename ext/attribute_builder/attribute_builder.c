@@ -137,16 +137,20 @@ normalize(VALUE hash)
   long i;
   for (i = 0; i < len; i++) {
     VALUE key = RARRAY_AREF(keys, i);
-    const char *key_cstr = StringValueCStr(key);
     VALUE value = rb_hash_lookup(hash, key);
-    if (RB_TYPE_P(value, T_HASH) && strcmp(key_cstr, "data") == 0) {
+    VALUE key_str = key;
+
+    if (!RB_TYPE_P(key, T_STRING)) {
+      key_str = rb_funcall(key, id_to_s, 0);
+    }
+    if (RB_TYPE_P(value, T_HASH) && RSTRING_LEN(key_str) == 4 && memcmp(RSTRING_PTR(key_str), "data", 4) == 0) {
       VALUE data;
 
       rb_hash_delete(hash, key);
       data = normalize_data(value);
       rb_hash_foreach(data, put_data_attribute, hash);
     } else if (!(RB_TYPE_P(value, T_TRUE) || RB_TYPE_P(value, T_FALSE) || NIL_P(value))) {
-      rb_hash_aset(hash, key, rb_funcall(value, id_to_s, 0));
+      rb_hash_aset(hash, key_str, rb_funcall(value, id_to_s, 0));
     }
   }
 }
@@ -191,8 +195,11 @@ put_attribute(VALUE buf, VALUE attr_quote, VALUE key, VALUE value)
 static void
 build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value)
 {
-  const char *key_cstr = StringValueCStr(key);
-  if (strcmp(key_cstr, "class") == 0) {
+  if (!RB_TYPE_P(key, T_STRING)) {
+    key = rb_funcall(key, id_to_s, 0);
+  }
+  Check_Type(key, T_STRING);
+  if (RSTRING_LEN(key) == 5 && memcmp(RSTRING_PTR(key), "class", 5) == 0) {
     long len;
 
     Check_Type(value, T_ARRAY);
@@ -208,7 +215,7 @@ build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value
       rb_funcall(ary, id_uniq_bang, 0);
       put_attribute(buf, attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_space)));
     }
-  } else if (strcmp(key_cstr, "id") == 0) {
+  } else if (RSTRING_LEN(key) == 2 && memcmp(RSTRING_PTR(key), "id", 2) == 0) {
     long len = RARRAY_LEN(value);
 
     Check_Type(value, T_ARRAY);
