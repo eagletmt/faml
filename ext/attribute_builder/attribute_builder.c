@@ -78,12 +78,8 @@ static int
 normalize_data_i2(VALUE key, VALUE value, VALUE ptr)
 {
   struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
-  VALUE k = rb_convert_type(arg->key, T_STRING, "String", "to_s");
+  VALUE k = rb_str_dup(arg->key);
 
-  k = substitute_underscores(k);
-  if (OBJ_FROZEN(k)) {
-    k = rb_str_dup(k);
-  }
   rb_str_cat(k, "-", 1);
   rb_str_append(k, key);
   rb_hash_aset(arg->normalized, k, value);
@@ -95,14 +91,15 @@ static VALUE normalize_data(VALUE data);
 static int
 normalize_data_i(VALUE key, VALUE value, VALUE normalized)
 {
+  key = rb_convert_type(key, T_STRING, "String", "to_s");
+  key = substitute_underscores(key);
+
   if (RB_TYPE_P(value, T_HASH)) {
     struct normalize_data_i2_arg arg;
     arg.key = key;
     arg.normalized = normalized;
     rb_hash_foreach(normalize_data(value), normalize_data_i2, (VALUE)(&arg));
   } else {
-    key = rb_convert_type(key, T_STRING, "String", "to_s");
-    key = substitute_underscores(key);
     rb_hash_aset(normalized, key, value);
   }
   return ST_CONTINUE;
