@@ -108,7 +108,6 @@ normalize(VALUE hash)
       rb_hash_delete(hash, key);
       data = normalize_data(value);
       data_keys = rb_funcall(data, id_keys, 0);
-      rb_funcall(data_keys, id_sort_bang, 0);
       data_len = RARRAY_LEN(data_keys);
       for (j = 0; j < data_len; j++) {
         VALUE data_key = RARRAY_AREF(data_keys, j);
