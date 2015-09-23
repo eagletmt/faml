@@ -191,7 +191,7 @@ put_attribute(VALUE buf, VALUE attr_quote, VALUE key, VALUE value)
 static void
 build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value)
 {
-  key = rb_convert_type(key, T_STRING, "String", "to_s");
+  Check_Type(key, T_STRING);
   if (RSTRING_LEN(key) == 5 && memcmp(RSTRING_PTR(key), "class", 5) == 0) {
     long len;
 
