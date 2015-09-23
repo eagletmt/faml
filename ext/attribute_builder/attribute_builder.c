@@ -11,7 +11,7 @@
 #endif
 
 VALUE rb_mAttributeBuilder;
-static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_gsub, id_to_s;
+static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_to_s;
 static ID id_id, id_class, id_underscore, id_hyphen, id_space, id_equal;
 
 static void
@@ -51,13 +51,39 @@ struct normalize_data_i2_arg {
   VALUE key, normalized;
 };
 
+static VALUE
+substitute_underscores(VALUE str)
+{
+  int frozen;
+  long i, len;
+
+  /* gsub('_', '-') */
+  Check_Type(str, T_STRING);
+  len = RSTRING_LEN(str);
+  frozen = OBJ_FROZEN(str);
+  for (i = 0; i < len; i++) {
+    if (RSTRING_PTR(str)[i] == '_') {
+      if (frozen) {
+        str = rb_str_dup(str);
+        frozen = 0;
+      }
+      rb_str_update(str, i, 1, rb_const_get(rb_mAttributeBuilder, id_hyphen));
+    }
+  }
+
+  return str;
+}
+
 static int
 normalize_data_i2(VALUE key, VALUE value, VALUE ptr)
 {
   struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
   VALUE k = rb_funcall(arg->key, id_to_s, 0);
 
-  k = rb_funcall(k, id_gsub, 2, rb_const_get(rb_mAttributeBuilder, id_underscore), rb_const_get(rb_mAttributeBuilder, id_hyphen));
+  k = substitute_underscores(k);
+  if (OBJ_FROZEN(k)) {
+    k = rb_str_dup(k);
+  }
   rb_str_cat(k, "-", 1);
   rb_str_append(k, key);
   rb_hash_aset(arg->normalized, k, value);
@@ -76,7 +102,7 @@ normalize_data_i(VALUE key, VALUE value, VALUE normalized)
     rb_hash_foreach(normalize_data(value), normalize_data_i2, (VALUE)(&arg));
   } else {
     key = rb_funcall(key, id_to_s, 0);
-    key = rb_funcall(key, id_gsub, 2, rb_const_get(rb_mAttributeBuilder, id_underscore), rb_const_get(rb_mAttributeBuilder, id_hyphen));
+    key = substitute_underscores(key);
     rb_hash_aset(normalized, key, value);
   }
   return ST_CONTINUE;
@@ -255,7 +281,6 @@ Init_attribute_builder(void)
   id_sort_bang = rb_intern("sort!");
   id_uniq_bang = rb_intern("uniq!");
   id_merge_bang = rb_intern("merge!");
-  id_gsub = rb_intern("gsub");
   id_to_s = rb_intern("to_s");
 
   id_id = rb_intern("ID");
