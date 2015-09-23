@@ -1,3 +1,6 @@
 [submodule "haml-spec"]
 	path = haml-spec
 	url = https://github.com/haml/haml-spec
+[submodule "vendor/houdini"]
+	path = vendor/houdini
+	url = https://github.com/vmg/houdini
