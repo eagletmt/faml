@@ -153,6 +153,16 @@ HAML
 %span{data: data} hello
 HAML
     end
+
+    it 'skips falsey data attributes' do
+      expect(render_string('%span{data: { foo: nil }}')).to eq("<span></span>\n")
+      expect(render_string("- v = nil\n%span{data: { foo: v }}")).to eq("<span></span>\n")
+    end
+
+    it 'renders true data attributes' do
+      expect(render_string('%span{data: { foo: true }}')).to eq("<span data-foo></span>\n")
+      expect(render_string("- v = true\n%span{data: { foo: v }}")).to eq("<span data-foo></span>\n")
+    end
   end
 
   it 'renders __LINE__ correctly' do

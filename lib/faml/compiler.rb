@@ -343,18 +343,24 @@ module Faml
     end
 
     def compile_static_attribute(key, value)
-      case
-      when value == true
-        [[:haml, :attr, key, [:multi]]]
-      when value == false || value == nil
-        [[:multi]]
-      when value.is_a?(Hash) && key == 'data'
+      if value.is_a?(Hash) && key == 'data'
         data = AttributeBuilder.normalize_data(value)
         data.keys.sort.map do |k|
-          [:haml, :attr, "data-#{k}", [:static, Temple::Utils.escape_html(data[k])]]
+          compile_static_simple_attribute("data-#{k}", data[k])
         end
       else
-        [[:haml, :attr, key, [:static, Temple::Utils.escape_html(value)]]]
+        [compile_static_simple_attribute(key, value)]
+      end
+    end
+
+    def compile_static_simple_attribute(key, value)
+      case
+      when value == true
+        [:haml, :attr, key, [:multi]]
+      when value == false || value == nil
+        [:multi]
+      else
+        [:haml, :attr, key, [:static, Temple::Utils.escape_html(value)]]
       end
     end
 
