@@ -77,12 +77,15 @@ substitute_underscores(VALUE str)
 static int
 normalize_data_i2(VALUE key, VALUE value, VALUE ptr)
 {
-  struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
-  VALUE k = rb_str_dup(arg->key);
+  if (!(RB_TYPE_P(value, T_FALSE) || NIL_P(value))) {
+    struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
+    VALUE k = rb_str_dup(arg->key);
 
-  rb_str_cat(k, "-", 1);
-  rb_str_append(k, key);
-  rb_hash_aset(arg->normalized, k, value);
+    k = rb_str_dup(arg->key);
+    rb_str_cat(k, "-", 1);
+    rb_str_append(k, key);
+    rb_hash_aset(arg->normalized, k, value);
+  }
   return ST_CONTINUE;
 }
 
@@ -99,7 +102,7 @@ normalize_data_i(VALUE key, VALUE value, VALUE normalized)
     arg.key = key;
     arg.normalized = normalized;
     rb_hash_foreach(normalize_data(value), normalize_data_i2, (VALUE)(&arg));
-  } else {
+  } else if (!(RB_TYPE_P(value, T_FALSE) || NIL_P(value))) {
     rb_hash_aset(normalized, key, value);
   }
   return ST_CONTINUE;
@@ -144,7 +147,11 @@ normalize(VALUE hash)
       rb_hash_delete(hash, key);
       data = normalize_data(value);
       rb_hash_foreach(data, put_data_attribute, hash);
-    } else if (!(RB_TYPE_P(value, T_TRUE) || RB_TYPE_P(value, T_FALSE) || NIL_P(value))) {
+    } else if (RB_TYPE_P(value, T_TRUE)) {
+      /* Keep Qtrue value */
+    } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
+      rb_hash_delete(hash, key);
+    } else {
       rb_hash_aset(hash, key, rb_convert_type(value, T_STRING, "String", "to_s"));
     }
   }
@@ -227,8 +234,6 @@ build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value
     } else {
       put_attribute(buf, attr_quote, key, key);
     }
-  } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
-    /* do nothing */
   } else {
     put_attribute(buf, attr_quote, key, value);
   }
