@@ -135,16 +135,17 @@ normalize(VALUE hash)
   for (i = 0; i < len; i++) {
     VALUE key = RARRAY_AREF(keys, i);
     VALUE value = rb_hash_lookup(hash, key);
-    VALUE key_str = rb_convert_type(key, T_STRING, "String", "to_s");
 
-    if (RB_TYPE_P(value, T_HASH) && RSTRING_LEN(key_str) == 4 && memcmp(RSTRING_PTR(key_str), "data", 4) == 0) {
+    /* key must be String because it is already stringified by stringify_keys */
+    Check_Type(key, T_STRING);
+    if (RB_TYPE_P(value, T_HASH) && RSTRING_LEN(key) == 4 && memcmp(RSTRING_PTR(key), "data", 4) == 0) {
       VALUE data;
 
       rb_hash_delete(hash, key);
       data = normalize_data(value);
       rb_hash_foreach(data, put_data_attribute, hash);
     } else if (!(RB_TYPE_P(value, T_TRUE) || RB_TYPE_P(value, T_FALSE) || NIL_P(value))) {
-      rb_hash_aset(hash, key_str, rb_convert_type(value, T_STRING, "String", "to_s"));
+      rb_hash_aset(hash, key, rb_convert_type(value, T_STRING, "String", "to_s"));
     }
   }
 }
