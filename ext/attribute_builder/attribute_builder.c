@@ -102,8 +102,13 @@ normalize_data_i(VALUE key, VALUE value, VALUE normalized)
     arg.key = key;
     arg.normalized = normalized;
     rb_hash_foreach(normalize_data(value), normalize_data_i2, (VALUE)(&arg));
-  } else if (!(RB_TYPE_P(value, T_FALSE) || NIL_P(value))) {
+  } else if (RB_TYPE_P(value, T_TRUE)) {
+    /* Keep Qtrue value */
     rb_hash_aset(normalized, key, value);
+  } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
+    /* Delete falsey values */
+  } else {
+    rb_hash_aset(normalized, key, rb_convert_type(value, T_STRING, "String", "to_s"));
   }
   return ST_CONTINUE;
 }
@@ -179,7 +184,7 @@ put_attribute(VALUE buf, VALUE attr_quote, VALUE key, VALUE value)
 {
   gh_buf ob = GH_BUF_INIT;
 
-  value = rb_convert_type(value, T_STRING, "String", "to_s");
+  Check_Type(value, T_STRING);
   if (houdini_escape_html(&ob, (const uint8_t *)RSTRING_PTR(value), RSTRING_LEN(value))) {
     value = rb_enc_str_new(ob.ptr, ob.size, rb_utf8_encoding());
     gh_buf_free(&ob);
