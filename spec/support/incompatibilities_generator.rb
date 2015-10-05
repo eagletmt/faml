@@ -6,7 +6,7 @@ require 'hamlit/version'
 class IncompatibilitiesGenerator
   include Singleton
 
-  class Record < Struct.new(:template, :options, :spec_path, :line_number, :faml_result, :haml_result, :hamlit_result)
+  Record = Struct.new(:template, :options, :spec_path, :line_number, :faml_result, :haml_result, :hamlit_result) do
     def incompatible?
       !all_error? && (faml_result != haml_result || faml_result != hamlit_result || haml_result != hamlit_result)
     end
