@@ -7,7 +7,7 @@ require 'slim'
 require 'escape_utils/html/haml'
 
 unless ARGV[0]
-  $stderr.puts "Usage: #{$0} template.haml [template.slim]"
+  $stderr.puts "Usage: #{$PROGRAM_NAME} template.haml [template.slim]"
   exit 1
 end
 
