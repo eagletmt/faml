@@ -42,7 +42,7 @@ RSpec.describe 'Faml with Rails', type: :request do
   it 'works with :escaped filter' do
     get '/books/escaped'
     expect(response).to be_ok
-    expect(response.body).to include("&lt;marquee&gt;escape me&lt;/marquee&gt;")
+    expect(response.body).to include('&lt;marquee&gt;escape me&lt;/marquee&gt;')
   end
 
   describe 'preserve helper' do

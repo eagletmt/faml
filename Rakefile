@@ -22,7 +22,7 @@ namespace :benchmark do
       sh 'ruby', 'benchmark/rendering.rb', standard_haml_path
     end
 
-    desc "Run rendering benchmark for attribute builder"
+    desc 'Run rendering benchmark for attribute builder'
     task :attributes do
       sh 'ruby', 'benchmark/rendering.rb', 'benchmark/attribute_builder.haml', 'benchmark/attribute_builder.slim'
     end

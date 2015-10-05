@@ -86,7 +86,7 @@ HAML
     end
 
     it 'allows double rmnl' do
-      expect(render_string(<<HAML)).to eq("<div><span>hello</span></div>")
+      expect(render_string(<<HAML)).to eq('<div><span>hello</span></div>')
 %div><
   %span><= 'hello'
 HAML

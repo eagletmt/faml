@@ -34,7 +34,7 @@ module Faml
       while s.scan_until(INTERPOLATION_BEGIN)
         escapes = s[1].size
         pre = s.string.byteslice(pos ... (s.pos - s.matched.size))
-        temple << [:static, pre] << [:static, "\\" * (escapes/2)]
+        temple << [:static, pre] << [:static, '\\' * (escapes/2)]
         if escapes % 2 == 0
           # perform interpolation
           if s[2] == '#{'

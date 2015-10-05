@@ -166,7 +166,7 @@ module Faml
         end
         compile_children(ast, temple)
         unless ast.conditional.empty?
-          temple << [:static, "<![endif]"]
+          temple << [:static, '<![endif]']
         end
         [:multi, [:html, :comment, temple]]
       end

@@ -33,7 +33,7 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string('%span.c2{class: ["c1", "c3"]}')).to eq("<span class='c1 c2 c3'></span>\n")
   end
 
-  it "renders boolean attributes" do
+  it 'renders boolean attributes' do
     expect(render_string('%input{checked: true}')).to eq("<input checked>\n")
     expect(render_string('%input{checked: false}')).to eq("<input>\n")
     expect(render_string('%input{checked: nil}')).to eq("<input>\n")
