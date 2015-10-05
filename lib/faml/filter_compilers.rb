@@ -19,7 +19,7 @@ module Faml
 
     def self.find(name)
       name = name.to_s
-      if compilers.has_key?(name.to_s)
+      if compilers.key?(name.to_s)
         compilers[name].new
       else
         raise NotFound.new(name)

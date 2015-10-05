@@ -276,7 +276,7 @@ module Faml
         return nil
       end
 
-      if dynamic_attributes.has_key?('data')
+      if dynamic_attributes.key?('data')
         # XXX: Quit optimization...
         return nil
       end
@@ -288,7 +288,7 @@ module Faml
       end
 
       (static_attributes.keys + dynamic_attributes.keys).sort.flat_map do |k|
-        if static_attributes.has_key?(k)
+        if static_attributes.key?(k)
           compile_static_attribute(k, static_attributes[k])
         else
           compile_dynamic_attribute(k, dynamic_attributes[k])
@@ -332,7 +332,7 @@ module Faml
       dynamic_attributes = {}
       parser.dynamic_attributes.each do |k, v|
         k = k.to_s
-        if static_attributes.has_key?(k)
+        if static_attributes.key?(k)
           if StaticHashParser::SPECIAL_ATTRIBUTES.include?(k)
             # XXX: Quit optimization
             return nil
