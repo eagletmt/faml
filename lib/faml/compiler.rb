@@ -47,8 +47,8 @@ module Faml
       # Taken from the original haml code
       re = %r{<(#{options[:preserve].map(&Regexp.method(:escape)).join('|')})([^>]*)>(.*?)(<\/\1>)}im
       input.to_s.gsub(re) do |s|
-        s =~ re # Can't rely on $1, etc. existing since Rails' SafeBuffer#gsub is incompatible
-        "<#{$1}#{$2}>#{Helpers.preserve($3)}</#{$1}>"
+        m = s.match(re) # Can't rely on $1, etc. existing since Rails' SafeBuffer#gsub is incompatible
+        "<#{m[1]}#{m[2]}>#{Helpers.preserve(m[3])}</#{m[1]}>"
       end
     end
 
