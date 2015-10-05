@@ -18,17 +18,17 @@ Benchmark.ips do |x|
   obj = Object.new
 
   Haml::Engine.new(haml_code, ugly: true, escape_html: true).def_method(obj, :haml)
-  obj.instance_eval %{
+  obj.instance_eval "
     def faml_array; #{Faml::Engine.new.call(haml_code)}; end
     def faml_string; #{Faml::Engine.new(generator: Temple::Generators::RailsOutputBuffer).call(haml_code)}; end
     def hamlit_array; #{Hamlit::Engine.new.call(haml_code)}; end
     def hamlit_string; #{Hamlit::Engine.new(generator: Temple::Generators::RailsOutputBuffer).call(haml_code)}; end
-  }
+  "
   if slim_code
-    obj.instance_eval %{
+    obj.instance_eval "
       def slim_array; #{Slim::Engine.new.call(slim_code)}; end
       def slim_string; #{Slim::Engine.new(generator: Temple::Generators::RailsOutputBuffer).call(slim_code)}; end
-    }
+    "
   end
 
   x.report('Haml') { obj.haml }
