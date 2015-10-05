@@ -20,7 +20,7 @@ module Faml
     use Newline
     filter :StaticMerger
     use :Generator do
-      options[:generator].new(options.to_hash.reject {|k,v| !options[:generator].options.valid_key?(k) })
+      options[:generator].new(options.to_hash.reject { |k, _| !options[:generator].options.valid_key?(k) })
     end
   end
 end

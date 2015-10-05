@@ -12,8 +12,8 @@ module Faml
         escape_code = Temple::Filters::Escapable.new(use_html_safe: false).instance_variable_get(:@escape_code)
         sym = unique_name
         [:multi,
-          [:capture, sym, temple],
-          [:dynamic, escape_code % sym],
+         [:capture, sym, temple],
+         [:dynamic, escape_code % sym],
         ]
       end
     end

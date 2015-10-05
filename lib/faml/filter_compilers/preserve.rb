@@ -11,8 +11,8 @@ module Faml
         compile_texts(temple, ast.lineno, ast.texts, keep_last_empty_lines: true)
         sym = unique_name
         [:multi,
-          [:capture, sym, temple],
-          [:dynamic, "::Faml::FilterCompilers::Preserve.preserve(#{sym})"],
+         [:capture, sym, temple],
+         [:dynamic, "::Faml::FilterCompilers::Preserve.preserve(#{sym})"],
         ]
       end
 

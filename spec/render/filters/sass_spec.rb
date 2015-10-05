@@ -14,7 +14,7 @@ HAML
     expect(html).to include('content: "hello"')
   end
 
-   it 'parses string interpolation' do
+  it 'parses string interpolation' do
     html = render_string(<<'HAML')
 :sass
   nav

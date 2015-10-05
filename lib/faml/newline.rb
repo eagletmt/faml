@@ -3,7 +3,7 @@ require 'temple'
 module Faml
   class Newline < Temple::Filter
     def on_multi(*exprs)
-      i = exprs.size-1
+      i = exprs.size - 1
       marker = false
       while i >= 0
         case exprs[i]

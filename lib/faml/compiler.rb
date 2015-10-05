@@ -45,7 +45,7 @@ module Faml
 
     def self.find_and_preserve(input)
       # Taken from the original haml code
-      re = /<(#{options[:preserve].map(&Regexp.method(:escape)).join('|')})([^>]*)>(.*?)(<\/\1>)/im
+      re = %r{<(#{options[:preserve].map(&Regexp.method(:escape)).join('|')})([^>]*)>(.*?)(<\/\1>)}im
       input.to_s.gsub(re) do |s|
         s =~ re # Can't rely on $1, etc. existing since Rails' SafeBuffer#gsub is incompatible
         "<#{$1}#{$2}>#{Helpers.preserve($3)}</#{$1}>"
@@ -228,7 +228,8 @@ module Faml
         return compile_static_id_and_class(static_id, static_class)
       end
 
-      if attrs = try_optimize_attributes(text, static_id, static_class)
+      attrs = try_optimize_attributes(text, static_id, static_class)
+      if attrs
         line_count = text.count("\n")
         return [:multi, [:html, :attrs, *attrs]].concat([[:newline]] * line_count)
       end
@@ -357,7 +358,7 @@ module Faml
       case
       when value == true
         [:haml, :attr, key, [:multi]]
-      when value == false || value == nil
+      when value == false || value.nil?
         [:multi]
       else
         [:haml, :attr, key, [:static, Temple::Utils.escape_html(value)]]

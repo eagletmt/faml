@@ -3,8 +3,8 @@ require 'faml/attribute_builder'
 module Faml
   class Html < Temple::HTML::Fast
     # Override temple's default
-    self.options[:format] = :html
-    self.options[:attr_quote] = "'"
+    options[:format] = :html
+    options[:attr_quote] = "'"
 
     def on_haml_tag(name, self_closing, attrs, content = nil)
       name = name.to_s
@@ -12,7 +12,7 @@ module Faml
       result = [:multi, [:static, "<#{name}"], compile(attrs)]
       result << [:static, (closed && @format != :html ? ' /' : '') + '>']
       result << compile(content) if content
-      result << [:static, "</#{name}>"] if !closed
+      result << [:static, "</#{name}>"] unless closed
       result
     end
 
@@ -26,22 +26,22 @@ module Faml
       elsif value[0] == :dvalue
         sym = unique_name
         [:multi,
-          [:code, "#{sym} = (#{value[1]})"],
-          [:case, sym,
-            ['true', true_attribute(name)],
-            ['false, nil', [:multi]],
-            [:else, [:multi,
-              [:static, " #{name}=#{options[:attr_quote]}"],
-              [:escape, true, [:dynamic, sym]],
-              [:static, options[:attr_quote]],
-            ]],
-          ],
+         [:code, "#{sym} = (#{value[1]})"],
+         [:case, sym,
+          ['true', true_attribute(name)],
+          ['false, nil', [:multi]],
+          [:else, [:multi,
+                   [:static, " #{name}=#{options[:attr_quote]}"],
+                   [:escape, true, [:dynamic, sym]],
+                   [:static, options[:attr_quote]],
+                  ]],
+         ],
         ]
       else
         [:multi,
-          [:static, " #{name}=#{options[:attr_quote]}"],
-          compile(value),
-          [:static, options[:attr_quote]]]
+         [:static, " #{name}=#{options[:attr_quote]}"],
+         compile(value),
+         [:static, options[:attr_quote]]]
       end
     end
 

@@ -9,8 +9,8 @@ class HamlTest < Minitest::Test
       define_method("test_spec: #{name} (#{context[0]})") do
         html             = test['html']
         haml             = test['haml']
-        locals           = Hash[(test['locals'] || {}).map {|x, y| [x.to_sym, y]}]
-        options          = Hash[(test['config'] || {}).map {|x, y| [x.to_sym, y]}]
+        locals           = Hash[(test['locals'] || {}).map { |x, y| [x.to_sym, y] }]
+        options          = Hash[(test['config'] || {}).map { |x, y| [x.to_sym, y] }]
         options[:format] = options[:format].to_sym if options.key?(:format)
         tilt = Tilt.new("#{name}.haml", nil, options) { haml }
         result = tilt.render(Object.new, locals)

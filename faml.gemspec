@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Faml::VERSION
   spec.authors       = ['Kohei Suzuki']
   spec.email         = ['eagletmt@gmail.com']
-  spec.summary       = %q{Faster implementation of Haml template language.}
-  spec.description   = %q{Faster implementation of Haml template language.}
+  spec.summary       = 'Faster implementation of Haml template language.'
+  spec.description   = 'Faster implementation of Haml template language.'
   spec.homepage      = 'https://github.com/eagletmt/faml'
   spec.license       = 'MIT'
 
@@ -30,13 +30,13 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'coffee-script'
   spec.add_development_dependency 'coveralls'
-  spec.add_development_dependency 'haml'  # for benchmark
-  spec.add_development_dependency 'hamlit', '>= 0.6.0'  # for benchmark
+  spec.add_development_dependency 'haml' # for benchmark
+  spec.add_development_dependency 'hamlit', '>= 0.6.0' # for benchmark
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rake-compiler'
   spec.add_development_dependency 'redcarpet'
   spec.add_development_dependency 'rspec', '>= 3'
   spec.add_development_dependency 'sass'
   spec.add_development_dependency 'simplecov'
-  spec.add_development_dependency 'slim'  # for benchmark
+  spec.add_development_dependency 'slim' # for benchmark
 end

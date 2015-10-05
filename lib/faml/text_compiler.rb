@@ -33,9 +33,9 @@ module Faml
       pos = s.pos
       while s.scan_until(INTERPOLATION_BEGIN)
         escapes = s[1].size
-        pre = s.string.byteslice(pos ... (s.pos - s.matched.size))
-        temple << [:static, pre] << [:static, '\\' * (escapes/2)]
-        if escapes % 2 == 0
+        pre = s.string.byteslice(pos...(s.pos - s.matched.size))
+        temple << [:static, pre] << [:static, '\\' * (escapes / 2)]
+        if escapes.even?
           # perform interpolation
           if s[2] == '#{'
             temple << [:escape, escape_html, [:dynamic, find_close_brace(s, lineno)]]
@@ -63,7 +63,7 @@ module Faml
       if depth != 0
         raise InvalidInterpolation.new(scanner.string, lineno)
       else
-        scanner.string.byteslice(pos ... (scanner.pos-1))
+        scanner.string.byteslice(pos...(scanner.pos - 1))
       end
     end
   end

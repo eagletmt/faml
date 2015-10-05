@@ -50,8 +50,8 @@ module Faml
       end
       key = node.children[0]
       val = node.children[1]
-
-      if key_static = try_static_key(key)
+      key_static = try_static_key(key)
+      if key_static
         try_static_value(key_static, val)
       else
         throw FAILURE_TAG

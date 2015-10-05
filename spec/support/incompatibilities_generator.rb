@@ -70,7 +70,7 @@ class IncompatibilitiesGenerator
 
   def render_haml(template, options)
     obj = Object.new
-    Haml::Engine.new(template, {ugly: true, escape_html: true}.merge(options)).def_method(obj, :haml)
+    Haml::Engine.new(template, { ugly: true, escape_html: true }.merge(options)).def_method(obj, :haml)
     obj.haml
   rescue Exception => e
     e
@@ -99,7 +99,7 @@ EOS
 
   def render_input_title(options)
     title = 'Input'
-    if !options.empty?
+    unless options.empty?
       title << " (with options=#{options.inspect})"
     end
     title
