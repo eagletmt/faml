@@ -18,7 +18,7 @@ module Faml
       @code = Engine.new(options.merge(filename: filename)).call(data)
     end
 
-    def precompiled_template(locals = {})
+    def precompiled_template(_locals = {})
       @code
     end
   end
