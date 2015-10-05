@@ -1,0 +1,44 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  Exclude:
+    - 'haml-spec/**/*'
+
+Lint/HandleExceptions:
+  Exclude:
+    # Ignore LoadError
+    - 'lib/faml.rb'
+    - 'lib/faml/tilt.rb'
+Lint/Eval:
+  Exclude:
+    - 'lib/faml/static_hash_parser.rb'
+    - 'spec/spec_helper.rb'
+
+Style/BarePercentLiterals:
+  EnforcedStyle: percent_q
+Style/CaseEquality:
+  Enabled: false
+Style/GlobalVars:
+  Exclude:
+    - '**/extconf.rb'
+Style/GuardClause:
+  Enabled: false
+Style/HashSyntax:
+  Exclude:
+    - 'Rakefile'
+Style/IfUnlessModifier:
+  Enabled: false
+Style/PercentLiteralDelimiters:
+  Enabled: false
+Style/RaiseArgs:
+  EnforcedStyle: compact
+Style/SignalException:
+  Enabled: false
+Style/TrailingComma:
+  Enabled: false
+Style/TrailingWhitespace:
+  Exclude:
+    - 'spec/render/multiline_spec.rb'
+
+Style/UnneededPercentQ:
+  Enabled: false  # buggy
