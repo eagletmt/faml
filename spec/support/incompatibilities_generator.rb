@@ -72,7 +72,7 @@ class IncompatibilitiesGenerator
     obj = Object.new
     Haml::Engine.new(template, { ugly: true, escape_html: true }.merge(options)).def_method(obj, :haml)
     obj.haml
-  rescue => e
+  rescue StandardError, SyntaxError => e
     e
   end
 
@@ -80,7 +80,7 @@ class IncompatibilitiesGenerator
     obj = Object.new
     obj.instance_eval "def hamlit; #{Hamlit::Engine.new(options).call(template)}; end"
     obj.hamlit
-  rescue => e
+  rescue StandardError, SyntaxError => e
     e
   end
 
