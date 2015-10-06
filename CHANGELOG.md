@@ -1,3 +1,10 @@
+## 0.3.3 (2015-10-07)
+- Improve `Faml::AttributeBuilder.build` performance
+    - Optimize string conversions
+- Fix handling true/false/nil values in data attribute
+- Add `stats` subcommand
+    - Currently, it shows AST ratio and element attribute's ratio.
+
 ## 0.3.2 (2015-09-24)
 - Fix illegal constant name
 - Use `require_relative` if possible
