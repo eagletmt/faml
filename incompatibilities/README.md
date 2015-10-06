@@ -1,7 +1,7 @@
 # Incompatibilities
 ## Versions
 - Haml 4.0.7
-- Faml 0.3.2
+- Faml 0.3.3
 - Hamlit 1.7.2
 
 ## Table of contents
@@ -15,6 +15,7 @@
 - [spec/render/filters/escaped_spec.md](spec/render/filters/escaped_spec.md) (Hamlit's incompatibility)
 - [spec/render/filters/javascript_spec.md](spec/render/filters/javascript_spec.md)
 - [spec/render/filters/markdown_spec.md](spec/render/filters/markdown_spec.md)
+- [spec/render/filters/plain_spec.md](spec/render/filters/plain_spec.md)
 - [spec/render/filters/preserve_spec.md](spec/render/filters/preserve_spec.md) (Hamlit's incompatibility)
 - [spec/render/helpers_spec.md](spec/render/helpers_spec.md) (Hamlit's incompatibility)
 - [spec/render/multiline_spec.md](spec/render/multiline_spec.md) (Hamlit's incompatibility)
