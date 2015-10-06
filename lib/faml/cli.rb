@@ -25,6 +25,12 @@ module Faml
       pp Faml::Compiler.new(filename: file, format: options[:format].to_sym).call(parse_file(file))
     end
 
+    desc 'stats FILE/DIR ...', 'Show statistics'
+    def stats(*paths)
+      require_relative 'stats'
+      Stats.new(*paths).report
+    end
+
     desc 'version', 'Print version'
     option :numeric, type: :boolean, default: false, desc: 'Print version number only'
     def version
