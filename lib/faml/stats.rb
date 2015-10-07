@@ -8,6 +8,7 @@ module Faml
     Info = Struct.new(
       :empty_attribute_count,
       :static_attribute_count,
+      :static_id_or_class_attribute_count,
       :dynamic_attribute_count,
       :dynamic_attribute_with_data_count,
       :dynamic_attribute_with_newline_count,
@@ -101,7 +102,7 @@ module Faml
         if ast.static_class.empty? && ast.static_id.empty?
           info.empty_attribute_count += 1
         else
-          info.static_attribute_count += 1
+          info.static_id_or_class_attribute_count += 1
         end
       else
         static_hash_parser = StaticHashParser.new
@@ -129,6 +130,7 @@ module Faml
       ruby = info.ruby_attribute_count
       total = static + dynamic + ruby
       puts 'Attribute stats'
+      printf("  Attributes with id or class only: %d\n", info.static_id_or_class_attribute_count)
       printf("  Static attributes: %d (%.2f%%)\n", static, static * 100.0 / total)
       printf("  Dynamic attributes: %d (%.2f%%)\n", dynamic, dynamic * 100.0 / total)
       printf("    with data: %d\n", info.dynamic_attribute_with_data_count)
