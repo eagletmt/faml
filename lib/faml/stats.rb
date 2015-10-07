@@ -130,6 +130,7 @@ module Faml
       ruby = info.ruby_attribute_count
       total = static + dynamic + ruby
       puts 'Attribute stats'
+      printf("  Empty attributes: %d\n", info.empty_attribute_count)
       printf("  Attributes with id or class only: %d\n", info.static_id_or_class_attribute_count)
       printf("  Static attributes: %d (%.2f%%)\n", static, static * 100.0 / total)
       printf("  Dynamic attributes: %d (%.2f%%)\n", dynamic, dynamic * 100.0 / total)
