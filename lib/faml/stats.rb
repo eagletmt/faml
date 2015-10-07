@@ -110,7 +110,7 @@ module Faml
           if static_hash_parser.dynamic_attributes.empty?
             info.static_attribute_count += 1
           else
-            if static_hash_parser.dynamic_attributes.key?('data')
+            if static_hash_parser.dynamic_attributes.key?('data') || static_hash_parser.dynamic_attributes.key?(:data)
               info.dynamic_attribute_with_data_count += 1
             elsif ast.attributes.include?("\n")
               info.dynamic_attribute_with_newline_count += 1
