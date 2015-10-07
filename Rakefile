@@ -1,6 +1,6 @@
 require 'bundler/gem_tasks'
 
-task :default => [:compile, :spec]
+task :default => [:compile, :spec, :rubocop]
 
 require 'rake/extensiontask'
 Rake::ExtensionTask.new('attribute_builder') do |ext|
@@ -9,6 +9,9 @@ end
 
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
+
+require 'rubocop/rake_task'
+RuboCop::RakeTask.new(:rubocop)
 
 task :benchmark => ['benchmark:rendering', 'benchmark:compiling']
 

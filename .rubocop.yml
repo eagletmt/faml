@@ -16,26 +16,36 @@ Lint/Eval:
 
 Style/BarePercentLiterals:
   EnforcedStyle: percent_q
+
 Style/CaseEquality:
   Enabled: false
+
 Style/GlobalVars:
   Exclude:
     - '**/extconf.rb'
+
 Style/GuardClause:
   Enabled: false
+
 Style/HashSyntax:
   Exclude:
     - 'Rakefile'
+
 Style/IfUnlessModifier:
   Enabled: false
+
 Style/PercentLiteralDelimiters:
   Enabled: false
+
 Style/RaiseArgs:
   EnforcedStyle: compact
+
 Style/SignalException:
   Enabled: false
+
 Style/TrailingComma:
   Enabled: false
+
 Style/TrailingWhitespace:
   Exclude:
     - 'spec/render/multiline_spec.rb'
