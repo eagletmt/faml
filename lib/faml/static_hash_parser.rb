@@ -60,14 +60,14 @@ module Faml
 
     def try_static_key(node)
       case node.type
-      when :sym, :int, :float, :str
+      when :sym, :int, :float, :str, :rational, :complex
         node.children[0]
       end
     end
 
     def try_static_value(key_static, node)
       case node.type
-      when :sym, :int, :float, :str
+      when :sym, :int, :float, :str, :rational, :complex
         @static_attributes[key_static] = node.children[0]
       when :true
         @static_attributes[key_static] = true
