@@ -58,35 +58,23 @@ module Faml
       end
     end
 
-    SYMBOL_FIRST_CHARS = [
-      ':',  # { :'foo' => 'bar' } or { :"foo" => 'bar' }
-      "'",  # { 'foo': 'bar' }
-      '"',  # { "foo": 'bar' }
-    ].freeze
-
-    def eval_symbol(code)
-      if SYMBOL_FIRST_CHARS.include?(code[0])
-        eval(code).to_sym
-      else
-        code.to_sym
-      end
-    end
-
     def try_static_key(node)
       case node.type
-      when :sym
-        eval_symbol(node.location.expression.source)
-      when :int, :float, :str
-        eval(node.location.expression.source)
+      when :sym, :int, :float, :str
+        node.children[0]
       end
     end
 
     def try_static_value(key_static, node)
       case node.type
-      when :sym
-        @static_attributes[key_static] = eval_symbol(node.location.expression.source)
-      when :true, :false, :nil, :int, :float, :str
-        @static_attributes[key_static] = eval(node.location.expression.source)
+      when :sym, :int, :float, :str
+        @static_attributes[key_static] = node.children[0]
+      when :true
+        @static_attributes[key_static] = true
+      when :false
+        @static_attributes[key_static] = false
+      when :nil
+        @static_attributes[key_static] = nil
       when :dstr
         @dynamic_attributes[key_static] = node.location.expression.source
       when :send
