@@ -19,6 +19,9 @@ Style/BarePercentLiterals:
 Style/CaseEquality:
   Enabled: false
 
+Style/FormatString:
+  EnforcedStyle: sprintf
+
 Style/GlobalVars:
   Exclude:
     - '**/extconf.rb'

@@ -110,7 +110,7 @@ EOS
       file.write <<"EOS"
 ## #{render_section(title, result)}
 ```html
-#{result}
+#{render_body(result)}
 ```
 
 EOS
@@ -122,6 +122,22 @@ EOS
       "#{title} (Error)"
     else
       title
+    end
+  end
+
+  def render_body(result)
+    if result.is_a?(Exception)
+      result
+    else
+      result.gsub(/[[:cntrl:]]/) do |m|
+        n = m[0].ord
+        if n == 0x0a
+          # Print NL character as is
+          m[0]
+        else
+          "<0x#{sprintf('%02X', n)}>"
+        end
+      end
     end
   end
 
