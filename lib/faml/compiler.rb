@@ -318,13 +318,23 @@ module Faml
       parser.static_attributes.each do |k, v|
         static_attributes[k.to_s] = v
       end
+
+      class_list = Array(static_attributes['class']).flat_map { |c| c.to_s.split(/ +/) }
       unless static_class.empty?
-        class_list = static_attributes.fetch('class', '').to_s.split(/ +/)
-        static_attributes['class'] = static_class.split(/ +/).concat(class_list).uniq.sort.join(' ')
+        class_list.concat(static_class.split(/ +/))
       end
+      unless class_list.empty?
+        static_attributes['class'] = class_list.uniq.sort.join(' ')
+      end
+
+      id_list = Array(static_attributes['id'])
       unless static_id.empty?
-        static_attributes['id'] = [static_id, static_attributes['id']].compact.join('_')
+        id_list = [static_id].concat(id_list)
       end
+      unless id_list.empty?
+        static_attributes['id'] = id_list.join('_')
+      end
+
       static_attributes
     end
 

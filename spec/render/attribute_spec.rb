@@ -30,7 +30,7 @@ RSpec.describe 'Attributes rendering', type: :render do
 
   it 'renders array class' do
     expect(render_string('%span.c2{class: "c1"}')).to eq("<span class='c1 c2'></span>\n")
-    expect(render_string('%span.c2{class: ["c1", "c3"]}')).to eq("<span class='c1 c2 c3'></span>\n")
+    expect(render_string('%span.c2{class: ["c1", "c3", :c2]}')).to eq("<span class='c1 c2 c3'></span>\n")
   end
 
   it 'renders boolean attributes' do
@@ -119,6 +119,7 @@ HAML
 
   it 'merges static id' do
     expect(render_string('#foo{id: "bar"} baz')).to eq("<div id='foo_bar'>baz</div>\n")
+    expect(render_string('#foo{id: %w[bar baz]} hoge')).to eq("<div id='foo_bar_baz'>hoge</div>\n")
   end
 
   it 'merges static class' do

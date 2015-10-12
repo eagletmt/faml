@@ -85,7 +85,8 @@ module Faml
         end
       when :hash
         try_static_hash_value(key_static, node)
-        # TODO: Add array case
+      when :array
+        try_static_array_value(key_static, node)
       else
         throw FAILURE_TAG
       end
@@ -112,6 +113,13 @@ module Faml
         end.join(', ')
         @dynamic_attributes[key_static] = "{#{expr}}"
       end
+    end
+
+    def try_static_array_value(key_static, node)
+      arr = node.children.map do |child|
+        try_static_value(key_static, child)
+      end
+      @static_attributes[key_static] = arr
     end
   end
 end
