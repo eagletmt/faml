@@ -10,6 +10,8 @@
 # define rb_ary_new_capa rb_ary_new2
 #endif
 
+#define FOREACH_FUNC(func) ((int (*)(ANYARGS))(func))
+
 VALUE rb_mAttributeBuilder;
 static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang;
 static ID id_id, id_class, id_underscore, id_hyphen, id_space, id_equal;
@@ -43,7 +45,7 @@ static VALUE
 stringify_keys(VALUE hash)
 {
   VALUE h = rb_hash_new();
-  rb_hash_foreach(hash, stringify_keys_i, h);
+  rb_hash_foreach(hash, FOREACH_FUNC(stringify_keys_i), h);
   return h;
 }
 
@@ -101,7 +103,7 @@ normalize_data_i(VALUE key, VALUE value, VALUE normalized)
     struct normalize_data_i2_arg arg;
     arg.key = key;
     arg.normalized = normalized;
-    rb_hash_foreach(normalize_data(value), normalize_data_i2, (VALUE)(&arg));
+    rb_hash_foreach(normalize_data(value), FOREACH_FUNC(normalize_data_i2), (VALUE)(&arg));
   } else if (RB_TYPE_P(value, T_TRUE)) {
     /* Keep Qtrue value */
     rb_hash_aset(normalized, key, value);
@@ -120,7 +122,7 @@ normalize_data(VALUE data)
 
   Check_Type(data, T_HASH);
   normalized = rb_hash_new();
-  rb_hash_foreach(data, normalize_data_i, normalized);
+  rb_hash_foreach(data, FOREACH_FUNC(normalize_data_i), normalized);
   return normalized;
 }
 
@@ -151,7 +153,7 @@ normalize(VALUE hash)
 
       rb_hash_delete(hash, key);
       data = normalize_data(value);
-      rb_hash_foreach(data, put_data_attribute, hash);
+      rb_hash_foreach(data, FOREACH_FUNC(put_data_attribute), hash);
     } else if (RB_TYPE_P(value, T_TRUE)) {
       /* Keep Qtrue value */
     } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
