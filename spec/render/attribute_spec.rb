@@ -68,12 +68,24 @@ HAML
     expect(render_string('%span{class: []}')).to eq("<span></span>\n")
   end
 
+  it 'skips falsey array elements in class' do
+    expect(render_string('%span{class: [1, nil, false, true]}')).to eq("<span class='1 true'></span>\n")
+    expect(render_string("- v = [1, nil, false, true]\n%span{class: v}")).to eq("<span class='1 true'></span>\n")
+    expect(render_string("- h = { class: [1, nil, false, true] }\n%span{h}")).to eq("<span class='1 true'></span>\n")
+  end
+
   it 'strigify non-string ids' do
     expect(render_string('%span#foo{id: :bar} hello')).to eq("<span id='foo_bar'>hello</span>\n")
   end
 
   it 'skips empty array class' do
     expect(render_string('%span{id: []}')).to eq("<span></span>\n")
+  end
+
+  it 'skips falsey array elements in id' do
+    expect(render_string('%span{id: [1, nil, false, true]}')).to eq("<span id='1_true'></span>\n")
+    expect(render_string("- v = [1, nil, false, true]\n%span{id: v}")).to eq("<span id='1_true'></span>\n")
+    expect(render_string("- h = { id: [1, nil, false, true] }\n%span{h}")).to eq("<span id='1_true'></span>\n")
   end
 
   it 'escapes' do

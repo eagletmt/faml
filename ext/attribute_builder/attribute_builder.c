@@ -214,7 +214,9 @@ build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value
       VALUE ary = rb_ary_new_capa(len);
       for (i = 0; i < len; i++) {
         VALUE v = RARRAY_AREF(value, i);
-        rb_ary_push(ary, rb_convert_type(v, T_STRING, "String", "to_s"));
+        if (RTEST(v)) {
+          rb_ary_push(ary, rb_convert_type(v, T_STRING, "String", "to_s"));
+        }
       }
       rb_funcall(ary, id_sort_bang, 0);
       rb_funcall(ary, id_uniq_bang, 0);
@@ -230,7 +232,9 @@ build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value
       VALUE ary = rb_ary_new_capa(len);
       for (i = 0; i < len; i++) {
         VALUE v = RARRAY_AREF(value, i);
-        rb_ary_push(ary, rb_convert_type(v, T_STRING, "String", "to_s"));
+        if (RTEST(v)) {
+          rb_ary_push(ary, rb_convert_type(v, T_STRING, "String", "to_s"));
+        }
       }
       put_attribute(buf, attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_underscore)));
     }
