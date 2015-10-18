@@ -79,7 +79,7 @@ substitute_underscores(VALUE str)
 static int
 normalize_data_i2(VALUE key, VALUE value, VALUE ptr)
 {
-  if (!(RB_TYPE_P(value, T_FALSE) || NIL_P(value))) {
+  if (RTEST(value)) {
     struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
     VALUE k = rb_str_dup(arg->key);
 
@@ -107,7 +107,7 @@ normalize_data_i(VALUE key, VALUE value, VALUE normalized)
   } else if (RB_TYPE_P(value, T_TRUE)) {
     /* Keep Qtrue value */
     rb_hash_aset(normalized, key, value);
-  } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
+  } else if (!RTEST(value)) {
     /* Delete falsey values */
   } else {
     rb_hash_aset(normalized, key, rb_convert_type(value, T_STRING, "String", "to_s"));
@@ -156,7 +156,7 @@ normalize(VALUE hash)
       rb_hash_foreach(data, FOREACH_FUNC(put_data_attribute), hash);
     } else if (RB_TYPE_P(value, T_TRUE)) {
       /* Keep Qtrue value */
-    } else if (RB_TYPE_P(value, T_FALSE) || NIL_P(value)) {
+    } else if (!RTEST(value)) {
       rb_hash_delete(hash, key);
     } else {
       rb_hash_aset(hash, key, rb_convert_type(value, T_STRING, "String", "to_s"));
