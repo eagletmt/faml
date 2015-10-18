@@ -319,7 +319,7 @@ module Faml
         static_attributes[k.to_s] = v
       end
 
-      class_list = Array(static_attributes['class']).flat_map { |c| c.to_s.split(/ +/) }
+      class_list = Array(static_attributes.delete('class')).flat_map { |c| c.to_s.split(/ +/) }
       unless static_class.empty?
         class_list.concat(static_class.split(/ +/))
       end
@@ -327,7 +327,7 @@ module Faml
         static_attributes['class'] = class_list.uniq.sort.join(' ')
       end
 
-      id_list = Array(static_attributes['id'])
+      id_list = Array(static_attributes.delete('id'))
       unless static_id.empty?
         id_list = [static_id].concat(id_list)
       end

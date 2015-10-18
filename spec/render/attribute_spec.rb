@@ -64,8 +64,16 @@ HAML
     expect(render_string('%span.foo{class: %w[foo bar]}')).to eq("<span class='bar foo'></span>\n")
   end
 
+  it 'skips empty array class' do
+    expect(render_string('%span{class: []}')).to eq("<span></span>\n")
+  end
+
   it 'strigify non-string ids' do
     expect(render_string('%span#foo{id: :bar} hello')).to eq("<span id='foo_bar'>hello</span>\n")
+  end
+
+  it 'skips empty array class' do
+    expect(render_string('%span{id: []}')).to eq("<span></span>\n")
   end
 
   it 'escapes' do
