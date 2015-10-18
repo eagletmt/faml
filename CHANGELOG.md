@@ -1,3 +1,11 @@
+## 0.3.4 (2015-10-19)
+- Support array, rational and complex literal optimization
+    - Now `%div{class: %w[foo bar], data: { foo: 1i, bar: 2r }}` is compiled into string literal.
+- Remove `Kernel#eval` from compiler
+- Improve `faml stats` subcommand
+    - Show more detailed attribute information
+    - Fix several bugs
+
 ## 0.3.3 (2015-10-07)
 - Improve `Faml::AttributeBuilder.build` performance
     - Optimize string conversions
