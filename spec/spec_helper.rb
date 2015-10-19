@@ -16,11 +16,12 @@ module RenderSpecHelper
     require_relative 'support/incompatibilities_generator'
 
     def render_string(str, options = {})
+      loc = caller_locations(1..1)[0]
       eval(Faml::Engine.new(options).call(str)).tap do |html|
-        IncompatibilitiesGenerator.instance.record(str, options, html, RSpec.current_example)
+        IncompatibilitiesGenerator.instance.record(str, options, html, RSpec.current_example, loc.lineno)
       end
     rescue => e
-      IncompatibilitiesGenerator.instance.record(str, options, e, RSpec.current_example)
+      IncompatibilitiesGenerator.instance.record(str, options, e, RSpec.current_example, loc.lineno)
       raise e
     end
   else

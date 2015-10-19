@@ -6,7 +6,7 @@ require 'hamlit/version'
 class IncompatibilitiesGenerator
   include Singleton
 
-  Record = Struct.new(:template, :options, :spec_path, :line_number, :faml_result, :haml_result, :hamlit_result) do
+  Record = Struct.new(:template, :options, :spec_path, :line_number, :caller_lineno, :faml_result, :haml_result, :hamlit_result) do
     def incompatible?
       !all_error? && (faml_result != haml_result || faml_result != hamlit_result || haml_result != hamlit_result)
     end
@@ -39,9 +39,9 @@ class IncompatibilitiesGenerator
     @records = []
   end
 
-  def record(template, options, faml_result, example)
+  def record(template, options, faml_result, example, caller_lineno)
     m = example.location.match(/\A(.+):(\d+)\z/)
-    @records.push(Record.new(template, options, m[1], m[2].to_i, faml_result, render_haml(template, options), render_hamlit(template, options)))
+    @records.push(Record.new(template, options, m[1], m[2].to_i, caller_lineno, faml_result, render_haml(template, options), render_hamlit(template, options)))
   end
 
   def write_to(markdown_root)
