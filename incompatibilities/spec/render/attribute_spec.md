@@ -58,24 +58,6 @@
 # [./spec/render/attribute_spec.rb:71](../../../spec/render/attribute_spec.rb#L71)
 ## Input
 ```haml
-%span{class: [1, nil, false, true]}
-```
-
-## Faml, Haml
-```html
-<span class='1 true'></span>
-
-```
-
-## Hamlit
-```html
-<span class='1  false true'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:71](../../../spec/render/attribute_spec.rb#L71)
-## Input
-```haml
 - v = [1, nil, false, true]
 %span{class: v}
 ```
@@ -111,6 +93,24 @@
 
 ```
 
+# [./spec/render/attribute_spec.rb:71](../../../spec/render/attribute_spec.rb#L71)
+## Input
+```haml
+%span{class: [1, nil, false, true]}
+```
+
+## Faml, Haml
+```html
+<span class='1 true'></span>
+
+```
+
+## Hamlit
+```html
+<span class='1  false true'></span>
+
+```
+
 # [./spec/render/attribute_spec.rb:81](../../../spec/render/attribute_spec.rb#L81)
 ## Input
 ```haml
@@ -126,24 +126,6 @@
 ## Hamlit
 ```html
 <span id=''></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:85](../../../spec/render/attribute_spec.rb#L85)
-## Input
-```haml
-%span{id: [1, nil, false, true]}
-```
-
-## Faml, Haml
-```html
-<span id='1_true'></span>
-
-```
-
-## Hamlit
-```html
-<span id='1__false_true'></span>
 
 ```
 
@@ -171,6 +153,24 @@
 ```haml
 - h = { id: [1, nil, false, true] }
 %span{h}
+```
+
+## Faml, Haml
+```html
+<span id='1_true'></span>
+
+```
+
+## Hamlit
+```html
+<span id='1__false_true'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:85](../../../spec/render/attribute_spec.rb#L85)
+## Input
+```haml
+%span{id: [1, nil, false, true]}
 ```
 
 ## Faml, Haml

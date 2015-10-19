@@ -1,3 +1,10 @@
+## 0.3.5 (2015-10-19)
+- Fix empty class or id rendering
+    - It's a regression in v0.3.4.
+- Ignore falsey elements in class or id array
+    - For compatibility with haml
+    - `%span{class: [1, nil, false, true]}` now renders `<span class='1 true'></span>` .
+
 ## 0.3.4 (2015-10-19)
 - Support array, rational and complex literal optimization
     - Now `%div{class: %w[foo bar], data: { foo: 1i, bar: 2r }}` is compiled into string literal.
