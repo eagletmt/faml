@@ -1,3 +1,8 @@
+## 0.3.6 (2015-11-06)
+- Fix attribute escape on forward slashes
+    - https://github.com/eagletmt/faml/pull/30
+    - It's regression in v0.3.2
+
 ## 0.3.5 (2015-10-19)
 - Fix empty class or id rendering
     - It's a regression in v0.3.4.
