@@ -187,7 +187,7 @@ put_attribute(VALUE buf, VALUE attr_quote, VALUE key, VALUE value)
   gh_buf ob = GH_BUF_INIT;
 
   Check_Type(value, T_STRING);
-  if (houdini_escape_html(&ob, (const uint8_t *)RSTRING_PTR(value), RSTRING_LEN(value))) {
+  if (houdini_escape_html0(&ob, (const uint8_t *)RSTRING_PTR(value), RSTRING_LEN(value), 0)) {
     value = rb_enc_str_new(ob.ptr, ob.size, rb_utf8_encoding());
     gh_buf_free(&ob);
   }
