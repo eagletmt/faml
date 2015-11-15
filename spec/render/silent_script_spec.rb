@@ -84,6 +84,15 @@ HAML
     expect(render_string("%br\n-\n%br")).to eq("<br>\n<br>\n")
   end
 
+  it 'allows empty else body' do
+    expect(render_string(<<HAML)).to eq("ok\nfinish\n")
+- if true
+  ok
+- else
+finish
+HAML
+  end
+
   it 'checks indent levels' do
     expect(render_string(<<HAML)).to eq("<span>hello</span>\n")
 - if true

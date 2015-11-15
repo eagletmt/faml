@@ -3,6 +3,7 @@ require 'temple'
 require_relative 'compiler'
 require_relative 'html'
 require_relative 'newline'
+require_relative 'script_end'
 
 module Faml
   class Engine < Temple::Engine
@@ -18,6 +19,7 @@ module Faml
     filter :ControlFlow
     filter :MultiFlattener
     use Newline
+    use ScriptEnd
     filter :StaticMerger
     use :Generator do
       options[:generator].new(options.to_hash.reject { |k, _| !options[:generator].options.valid_key?(k) })
