@@ -397,11 +397,17 @@ module Faml
       temple
     end
 
+    SKIP_END_KEYWORDS = %w[elsif else when].freeze
+
     def compile_silent_script(ast)
-      temple = [:multi, [:code, ast.script], [:newline]]
+      temple = [:multi]
+      if SKIP_END_KEYWORDS.include?(ast.keyword)
+        temple << [:rmend]
+      end
+      temple << [:code, ast.script] << [:newline]
       compile_children(ast, temple)
-      if !ast.children.empty? && !ast.mid_block_keyword
-        temple << [:code, 'end']
+      if !ast.children.empty? || ast.keyword
+        temple << [:mkend]
       end
       temple
     end
