@@ -1,3 +1,7 @@
+## 0.4.1 (2015-11-16)
+- Fix "end" insertion for `rescue` and `ensure` cases
+    - It's regression in v0.4.0
+
 ## 0.4.0 (2015-11-15)
 - Fix "end" insertion for empty else clause
     = https://github.com/eagletmt/faml/pull/31
