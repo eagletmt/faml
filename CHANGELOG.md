@@ -1,3 +1,8 @@
+## 0.4.0 (2015-11-15)
+- Fix "end" insertion for empty else clause
+    = https://github.com/eagletmt/faml/pull/31
+    - It also requires haml_parser v0.2.0 or above.
+
 ## 0.3.6 (2015-11-06)
 - Fix attribute escape on forward slashes
     - https://github.com/eagletmt/faml/pull/30
