@@ -3,8 +3,8 @@ require_relative 'faml/tilt'
 require_relative 'faml/version'
 
 begin
-  gem 'rails'
   require 'rails'
-  require_relative 'faml/railtie'
 rescue LoadError
+else
+  require_relative 'faml/railtie'
 end
