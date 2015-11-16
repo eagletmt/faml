@@ -93,6 +93,24 @@ finish
 HAML
   end
 
+  it 'allows empty rescue body' do
+    expect(render_string(<<HAML)).to eq("finish\n")
+- begin
+  - raise
+- rescue
+finish
+HAML
+  end
+
+  it 'allows empty ensure body' do
+    expect(render_string(<<HAML)).to eq("ok\nfinish\n")
+- begin
+  ok
+- ensure
+finish
+HAML
+  end
+
   it 'checks indent levels' do
     expect(render_string(<<HAML)).to eq("<span>hello</span>\n")
 - if true

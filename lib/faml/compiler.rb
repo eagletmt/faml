@@ -397,7 +397,7 @@ module Faml
       temple
     end
 
-    SKIP_END_KEYWORDS = %w[elsif else when].freeze
+    SKIP_END_KEYWORDS = %w[elsif else when rescue ensure].freeze
 
     def compile_silent_script(ast)
       temple = [:multi]
