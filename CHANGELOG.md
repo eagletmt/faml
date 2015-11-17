@@ -1,3 +1,7 @@
+## 0.5.0 (2015-11-17)
+- Support object reference syntax
+    - https://github.com/eagletmt/faml/pull/32
+
 ## 0.4.2 (2015-11-16)
 - Fix CLI slow startup
     - https://github.com/eagletmt/faml/issues/21
