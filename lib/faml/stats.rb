@@ -13,6 +13,7 @@ module Faml
       :dynamic_attribute_with_data_count,
       :dynamic_attribute_with_newline_count,
       :ruby_attribute_count,
+      :object_reference_count,
       :multi_attribute_count,
       :ast_types
     ) do
@@ -99,6 +100,11 @@ module Faml
     end
 
     def collect_attribute_info(info, ast)
+      if ast.object_ref
+        info.object_reference_count += 1
+        return
+      end
+
       if ast.attributes.empty?
         if ast.static_class.empty? && ast.static_id.empty?
           info.empty_attribute_count += 1
@@ -133,7 +139,7 @@ module Faml
     def report_attribute_stats(info)
       static = info.static_attribute_count
       dynamic = info.dynamic_attribute_count + info.dynamic_attribute_with_data_count + info.dynamic_attribute_with_newline_count
-      ruby = info.ruby_attribute_count + info.multi_attribute_count
+      ruby = info.ruby_attribute_count + info.multi_attribute_count + info.object_reference_count
       total = static + dynamic + ruby
       puts 'Attribute stats'
       printf("  Empty attributes: %d\n", info.empty_attribute_count)
@@ -144,6 +150,7 @@ module Faml
       printf("    with newline: %d\n", info.dynamic_attribute_with_newline_count)
       printf("  Ruby attributes: %d (%.2f%%)\n", ruby, ruby * 100.0 / total)
       printf("    with multiple arguments: %d\n", info.multi_attribute_count)
+      printf("    with object reference: %d\n", info.object_reference_count)
     end
 
     def report_ast_stats(info)
