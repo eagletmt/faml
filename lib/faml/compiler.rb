@@ -4,6 +4,7 @@ require 'haml_parser/ast'
 require_relative 'error'
 require_relative 'filter_compilers'
 require_relative 'helpers'
+require_relative 'object_ref'
 require_relative 'rails_helpers'
 require_relative 'ruby_syntax_checker'
 require_relative 'static_hash_parser'
@@ -181,7 +182,7 @@ module Faml
         :haml, :tag,
         ast.tag_name,
         self_closing?(ast),
-        compile_attributes(ast.attributes, ast.static_id, ast.static_class),
+        compile_attributes(ast.attributes, ast.static_id, ast.static_class, ast.object_ref),
       ]
 
       if ast.oneline_child
@@ -223,15 +224,17 @@ module Faml
       ast.nuke_inner_whitespace || options[:preserve].include?(ast.tag_name)
     end
 
-    def compile_attributes(text, static_id, static_class)
-      if text.empty?
+    def compile_attributes(text, static_id, static_class, object_ref)
+      if !object_ref && text.empty?
         return compile_static_id_and_class(static_id, static_class)
       end
 
-      attrs = try_optimize_attributes(text, static_id, static_class)
-      if attrs
-        line_count = text.count("\n")
-        return [:multi, [:html, :attrs, *attrs]].concat([[:newline]] * line_count)
+      unless object_ref
+        attrs = try_optimize_attributes(text, static_id, static_class)
+        if attrs
+          line_count = text.count("\n")
+          return [:multi, [:html, :attrs, *attrs]].concat([[:newline]] * line_count)
+        end
       end
 
       # Slow version
@@ -244,13 +247,17 @@ module Faml
         h[:id] = static_id
       end
 
-      t =
-        if h.empty?
-          text
-        else
-          "#{h.inspect}, #{text}"
-        end
-      [:haml, :attrs, t]
+      codes = []
+      unless h.empty?
+        codes << h.inspect
+      end
+      if object_ref
+        codes << "::Faml::ObjectRef.render(#{object_ref})"
+      end
+      unless text.empty?
+        codes << text
+      end
+      [:haml, :attrs, codes.join(', ')]
     end
 
     def compile_static_id_and_class(static_id, static_class)

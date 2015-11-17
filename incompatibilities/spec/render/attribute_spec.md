@@ -459,3 +459,57 @@
 ...                               ^
 ```
 
+# [./spec/render/attribute_spec.rb:215](../../../spec/render/attribute_spec.rb#L215)
+## Input
+```haml
+%span[Faml::TestStruct.new(123)] hello
+```
+
+## Faml, Haml
+```html
+<span class='faml_test_struct' id='faml_test_struct_123'>hello</span>
+
+```
+
+## Hamlit
+```html
+<span>[Faml::TestStruct.new(123)] hello</span>
+
+```
+
+# [./spec/render/attribute_spec.rb:219](../../../spec/render/attribute_spec.rb#L219)
+## Input
+```haml
+%span[Faml::TestStruct.new(123), :hello] hello
+```
+
+## Faml, Haml
+```html
+<span class='hello_faml_test_struct' id='hello_faml_test_struct_123'>hello</span>
+
+```
+
+## Hamlit
+```html
+<span>[Faml::TestStruct.new(123), :hello] hello</span>
+
+```
+
+# [./spec/render/attribute_spec.rb:223](../../../spec/render/attribute_spec.rb#L223)
+## Input
+```haml
+%span[Faml::TestRefStruct.new(123)] hello
+```
+
+## Faml, Haml
+```html
+<span class='faml_test' id='faml_test_123'>hello</span>
+
+```
+
+## Hamlit
+```html
+<span>[Faml::TestRefStruct.new(123)] hello</span>
+
+```
+

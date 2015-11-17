@@ -45,6 +45,20 @@ RSpec.describe 'Faml with Rails', type: :request do
     expect(response.body).to include('&lt;marquee&gt;escape me&lt;/marquee&gt;')
   end
 
+  describe 'object reference' do
+    it 'works with new object' do
+      get '/books/object_ref'
+      expect(response).to be_ok
+      expect(response.body).to include("<div class='book' id='book_new'>")
+    end
+
+    it 'works with id' do
+      get '/books/object_ref', id: 123
+      expect(response).to be_ok
+      expect(response.body).to include("<div class='book' id='book_123'>")
+    end
+  end
+
   describe 'preserve helper' do
     it 'returns html_safe string' do
       get '/books/preserve'
