@@ -31,6 +31,15 @@ module RenderSpecHelper
   end
 end
 
+module Faml
+  TestStruct = Struct.new(:id)
+  TestRefStruct = Struct.new(:id) do
+    def haml_object_ref
+      'faml_test'
+    end
+  end
+end
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true

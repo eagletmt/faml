@@ -210,4 +210,18 @@ HAML
 %span{key => val}
 HAML
   end
+
+  describe 'object reference' do
+    it 'renders id and class attribute' do
+      expect(render_string('%span[Faml::TestStruct.new(123)] hello')).to eq("<span class='faml_test_struct' id='faml_test_struct_123'>hello</span>\n")
+    end
+
+    it 'renders id and class attribute with prefix' do
+      expect(render_string('%span[Faml::TestStruct.new(123), :hello] hello')).to eq("<span class='hello_faml_test_struct' id='hello_faml_test_struct_123'>hello</span>\n")
+    end
+
+    it 'renders id and class attribute with haml_object_ref' do
+      expect(render_string('%span[Faml::TestRefStruct.new(123)] hello')).to eq("<span class='faml_test' id='faml_test_123'>hello</span>\n")
+    end
+  end
 end

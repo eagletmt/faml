@@ -12,5 +12,6 @@ Rails.application.routes.draw do
     get :invalid_interpolation
     get :filter_not_found
     get :filter_invalid_interpolation
+    get :object_ref
   end
 end
