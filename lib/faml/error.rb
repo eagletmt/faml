@@ -7,4 +7,7 @@ module Faml
       @lineno = lineno
     end
   end
+
+  class UnparsableRubyCode < Error
+  end
 end

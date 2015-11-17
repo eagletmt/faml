@@ -102,7 +102,7 @@ HAML
   end
 
   it 'raises error when unparsable Ruby code is given' do
-    expect { render_string('%span{x ==== 2}') }.to raise_error(Faml::Compiler::UnparsableRubyCode)
+    expect { render_string('%span{x ==== 2}') }.to raise_error(Faml::UnparsableRubyCode)
   end
 
   context 'with xhtml format' do

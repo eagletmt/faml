@@ -84,7 +84,7 @@ RSpec.describe 'Faml with Rails', type: :request do
       end
     end
 
-    describe Faml::Compiler::UnparsableRubyCode do
+    describe Faml::UnparsableRubyCode do
       it 'has proper backtrace' do
         expect { get '/books/unparsable' }.to raise_error { |e|
           expect(e.backtrace[0]).to end_with('app/views/books/unparsable.html.haml:2')
