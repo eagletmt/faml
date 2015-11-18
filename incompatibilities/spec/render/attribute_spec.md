@@ -513,3 +513,21 @@
 
 ```
 
+# [./spec/render/attribute_spec.rb:227](../../../spec/render/attribute_spec.rb#L227)
+## Input
+```haml
+%span#baz[Faml::TestStruct.new(123)]{id: "foo"} hello
+```
+
+## Faml, Haml
+```html
+<span class='faml_test_struct' id='baz_foo_faml_test_struct_123'>hello</span>
+
+```
+
+## Hamlit
+```html
+<span id='baz'>[Faml::TestStruct.new(123)]{id: "foo"} hello</span>
+
+```
+

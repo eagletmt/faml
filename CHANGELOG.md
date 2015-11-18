@@ -1,3 +1,7 @@
+## 0.5.1 (2015-11-18)
+- Fix id ordering of object reference
+    - https://github.com/eagletmt/faml/issues/33
+
 ## 0.5.0 (2015-11-17)
 - Support object reference syntax
     - https://github.com/eagletmt/faml/pull/32
