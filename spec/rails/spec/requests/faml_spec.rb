@@ -60,6 +60,13 @@ RSpec.describe 'Faml with Rails', type: :request do
   end
 
   describe 'preserve helper' do
+    around do |example|
+      extend_helpers = Faml::Engine.options[:extend_helpers]
+      Faml::Engine.options[:extend_helpers] = true
+      example.run
+      Faml::Engine.options[:extend_helpers] = extend_helpers
+    end
+
     it 'returns html_safe string' do
       get '/books/preserve'
       expect(response).to be_ok

@@ -22,6 +22,7 @@ module Faml
       preserve: DEFAULT_PRESERVE_TAGS,
       use_html_safe: false,
       filename: nil,
+      extend_helpers: false,
     )
 
     def initialize(*)
@@ -78,9 +79,12 @@ module Faml
     end
 
     def compile_root(ast)
-      [:multi, [:code, "extend ::#{helper_module.name}"]].tap do |temple|
-        compile_children(ast, temple)
+      temple = [:multi]
+      if options[:extend_helpers]
+        temple << [:code, "extend ::#{helper_module.name}"]
       end
+      compile_children(ast, temple)
+      temple
     end
 
     def helper_module
