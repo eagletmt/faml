@@ -81,11 +81,13 @@ module Faml
       end
 
       codes = []
-      unless h.empty?
-        codes << h.inspect
-      end
       if object_ref
         codes << "::Faml::ObjectRef.render(#{object_ref})"
+      else
+        codes << 'nil'
+      end
+      unless h.empty?
+        codes << h.inspect
       end
       unless text.empty?
         codes << text

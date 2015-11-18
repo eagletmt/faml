@@ -165,19 +165,28 @@ normalize(VALUE hash)
 }
 
 static void
-merge(VALUE attributes, int argc, VALUE *argv)
+merge_one(VALUE attributes, VALUE arg)
+{
+  VALUE h;
+
+  Check_Type(arg, T_HASH);
+  h = stringify_keys(arg);
+  concat_array_attribute(attributes, h, rb_const_get(rb_mAttributeBuilder, id_class));
+  concat_array_attribute(attributes, h, rb_const_get(rb_mAttributeBuilder, id_id));
+  normalize(h);
+  rb_funcall(attributes, id_merge_bang, 1, h);
+}
+
+static void
+merge(VALUE attributes, VALUE object_ref, int argc, VALUE *argv)
 {
   int i;
 
   for (i = 0; i < argc; i++) {
-    VALUE h;
-
-    Check_Type(argv[i], T_HASH);
-    h = stringify_keys(argv[i]);
-    concat_array_attribute(attributes, h, rb_const_get(rb_mAttributeBuilder, id_class));
-    concat_array_attribute(attributes, h, rb_const_get(rb_mAttributeBuilder, id_id));
-    normalize(h);
-    rb_funcall(attributes, id_merge_bang, 1, h);
+    merge_one(attributes, argv[i]);
+  }
+  if (!NIL_P(object_ref)) {
+    merge_one(attributes, object_ref);
   }
 }
 
@@ -253,17 +262,18 @@ build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value
 static VALUE
 m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
 {
-  VALUE attr_quote, attributes, keys, buf;
+  VALUE attr_quote, object_ref, attributes, keys, buf;
   int is_html;
   long len, i;
 
-  rb_check_arity(argc, 2, UNLIMITED_ARGUMENTS);
+  rb_check_arity(argc, 3, UNLIMITED_ARGUMENTS);
   attr_quote = argv[0];
   is_html = RTEST(argv[1]);
+  object_ref = argv[2];
   attributes = rb_hash_new();
   rb_hash_aset(attributes, rb_const_get(rb_mAttributeBuilder, id_id), rb_ary_new());
   rb_hash_aset(attributes, rb_const_get(rb_mAttributeBuilder, id_class), rb_ary_new());
-  merge(attributes, argc-2, argv+2);
+  merge(attributes, object_ref, argc-3, argv+3);
 
   keys = rb_funcall(attributes, id_keys, 0);
   rb_funcall(keys, id_sort_bang, 0);
