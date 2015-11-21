@@ -30,8 +30,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'coffee-script'
   spec.add_development_dependency 'coveralls'
-  spec.add_development_dependency 'haml' # for benchmark
-  spec.add_development_dependency 'hamlit', '>= 0.6.0' # for benchmark
+  spec.add_development_dependency 'haml', '>= 4.1.0.beta.1' # for benchmark and compatibility check
+  spec.add_development_dependency 'hamlit', '>= 0.6.0' # for benchmark and compatibility check
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rake-compiler'
   spec.add_development_dependency 'redcarpet'

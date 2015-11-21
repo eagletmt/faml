@@ -43,13 +43,13 @@
 %span{class: []}
 ```
 
-## Faml, Haml
+## Faml
 ```html
 <span></span>
 
 ```
 
-## Hamlit
+## Haml, Hamlit
 ```html
 <span class=''></span>
 
@@ -117,13 +117,13 @@
 %span{id: []}
 ```
 
-## Faml, Haml
+## Faml
 ```html
 <span></span>
 
 ```
 
-## Hamlit
+## Haml, Hamlit
 ```html
 <span id=''></span>
 
@@ -643,177 +643,21 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:245](../../../spec/render/attribute_spec.rb#L245)
-## Input
-```haml
-%span{class: 1}(class=2)
-```
-
-## Faml, Hamlit
-```html
-<span class='1 2'></span>
-
-```
-
-## Haml
-```html
-<span class='1'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:245](../../../spec/render/attribute_spec.rb#L245)
-## Input
-```haml
-- v = 2
-%span{class: v-1}(class=v)
-```
-
-## Faml, Hamlit
-```html
-<span class='1 2'></span>
-
-```
-
-## Haml
-```html
-<span class='1'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:245](../../../spec/render/attribute_spec.rb#L245)
-## Input
-```haml
-- h = {class: 1}
-%span{h}(class=2)
-```
-
-## Faml, Hamlit
-```html
-<span class='1 2'></span>
-
-```
-
-## Haml
-```html
-<span class='1'></span>
-
-```
-
 # [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
 ## Input
 ```haml
 %span{id: 1}(id=2)
 ```
 
-## Faml
+## Faml, Haml
 ```html
 <span id='2_1'></span>
-
-```
-
-## Haml
-```html
-<span id='1'></span>
 
 ```
 
 ## Hamlit
 ```html
 <span id='1_2'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
-## Input
-```haml
-%span(id=2){id: 1}
-```
-
-## Faml, Hamlit
-```html
-<span id='2_1'></span>
-
-```
-
-## Haml
-```html
-<span id='1'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
-## Input
-```haml
-- v = 2
-%span{id: v-1}(id=v)
-```
-
-## Faml, Hamlit
-```html
-<span id='2_1'></span>
-
-```
-
-## Haml
-```html
-<span id='1'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
-## Input
-```haml
-- v = 2
-%span(id=v){id: v-1}
-```
-
-## Faml, Hamlit
-```html
-<span id='2_1'></span>
-
-```
-
-## Haml
-```html
-<span id='1'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
-## Input
-```haml
-- h = {id: 1}
-%span{h}(id=2)
-```
-
-## Faml, Hamlit
-```html
-<span id='2_1'></span>
-
-```
-
-## Haml
-```html
-<span id='1'></span>
-
-```
-
-# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
-## Input
-```haml
-- h = {id: 1}
-%span(id=2){h}
-```
-
-## Faml, Hamlit
-```html
-<span id='2_1'></span>
-
-```
-
-## Haml
-```html
-<span id='1'></span>
 
 ```
 
