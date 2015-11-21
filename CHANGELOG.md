@@ -1,3 +1,8 @@
+## 0.6.0 (2015-11-21)
+- Disable Faml::Helpers by default
+    - https://github.com/eagletmt/faml/pull/35
+    - Set `Faml::Engine.options[:extend_helpers] = true` to enable `preserve` helper method
+
 ## 0.5.1 (2015-11-18)
 - Fix id ordering of object reference
     - https://github.com/eagletmt/faml/issues/33
