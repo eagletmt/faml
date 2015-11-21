@@ -223,7 +223,7 @@ build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value
       for (i = 0; i < len; i++) {
         VALUE v = RARRAY_AREF(value, i);
         if (RTEST(v)) {
-          rb_ary_push(ary, rb_convert_type(v, T_STRING, "String", "to_s"));
+          rb_ary_concat(ary, rb_str_split(rb_convert_type(v, T_STRING, "String", "to_s"), " "));
         }
       }
       rb_funcall(ary, id_sort_bang, 0);

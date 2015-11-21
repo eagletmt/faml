@@ -60,9 +60,21 @@ HAML
   end
 
   it 'remove duplicated classes' do
-    expect(render_string('%span.foo{class: :foo}')).to eq("<span class='foo'></span>\n")
-    expect(render_string('%span.foo{class: "foo bar"}')).to eq("<span class='bar foo'></span>\n")
-    expect(render_string('%span.foo{class: %w[foo bar]}')).to eq("<span class='bar foo'></span>\n")
+    aggregate_failures do
+      expect(render_string('%span.foo{class: :foo}')).to eq("<span class='foo'></span>\n")
+      expect(render_string('%span.foo{class: "foo bar"}')).to eq("<span class='bar foo'></span>\n")
+      expect(render_string('%span.foo{class: %w[foo bar]}')).to eq("<span class='bar foo'></span>\n")
+    end
+    aggregate_failures do
+      expect(render_string("- v = :foo\n%span.foo{class: v}")).to eq("<span class='foo'></span>\n")
+      expect(render_string("- v = 'foo bar'\n%span.foo{class: v}")).to eq("<span class='bar foo'></span>\n")
+      expect(render_string("- v = %w[foo bar]\n%span.foo{class: v}")).to eq("<span class='bar foo'></span>\n")
+    end
+    aggregate_failures do
+      expect(render_string("- h = {class: :foo}\n%span.foo{h}")).to eq("<span class='foo'></span>\n")
+      expect(render_string("- h = {class: 'foo bar'}\n%span.foo{h}")).to eq("<span class='bar foo'></span>\n")
+      expect(render_string("- h = {class: %w[foo bar]}\n%span.foo{h}")).to eq("<span class='bar foo'></span>\n")
+    end
   end
 
   it 'skips empty array class' do

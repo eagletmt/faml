@@ -37,7 +37,45 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:68](../../../spec/render/attribute_spec.rb#L68)
+# [./spec/render/attribute_spec.rb:62](../../../spec/render/attribute_spec.rb#L62)
+## Input
+```haml
+- v = 'foo bar'
+%span.foo{class: v}
+```
+
+## Faml, Haml
+```html
+<span class='bar foo'></span>
+
+```
+
+## Hamlit
+```html
+<span class='foo foo bar'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:62](../../../spec/render/attribute_spec.rb#L62)
+## Input
+```haml
+- h = {class: 'foo bar'}
+%span.foo{h}
+```
+
+## Faml, Haml
+```html
+<span class='bar foo'></span>
+
+```
+
+## Hamlit
+```html
+<span class='foo foo bar'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:80](../../../spec/render/attribute_spec.rb#L80)
 ## Input
 ```haml
 %span{class: []}
@@ -55,7 +93,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:72](../../../spec/render/attribute_spec.rb#L72)
+# [./spec/render/attribute_spec.rb:84](../../../spec/render/attribute_spec.rb#L84)
 ## Input
 ```haml
 %span{class: [1, nil, false, true]}
@@ -73,7 +111,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:72](../../../spec/render/attribute_spec.rb#L72)
+# [./spec/render/attribute_spec.rb:84](../../../spec/render/attribute_spec.rb#L84)
 ## Input
 ```haml
 - v = [1, nil, false, true]
@@ -92,7 +130,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:72](../../../spec/render/attribute_spec.rb#L72)
+# [./spec/render/attribute_spec.rb:84](../../../spec/render/attribute_spec.rb#L84)
 ## Input
 ```haml
 - h = { class: [1, nil, false, true] }
@@ -111,7 +149,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:82](../../../spec/render/attribute_spec.rb#L82)
+# [./spec/render/attribute_spec.rb:94](../../../spec/render/attribute_spec.rb#L94)
 ## Input
 ```haml
 %span{id: []}
@@ -129,7 +167,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:86](../../../spec/render/attribute_spec.rb#L86)
+# [./spec/render/attribute_spec.rb:98](../../../spec/render/attribute_spec.rb#L98)
 ## Input
 ```haml
 %span{id: [1, nil, false, true]}
@@ -147,7 +185,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:86](../../../spec/render/attribute_spec.rb#L86)
+# [./spec/render/attribute_spec.rb:98](../../../spec/render/attribute_spec.rb#L98)
 ## Input
 ```haml
 - v = [1, nil, false, true]
@@ -166,7 +204,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:86](../../../spec/render/attribute_spec.rb#L86)
+# [./spec/render/attribute_spec.rb:98](../../../spec/render/attribute_spec.rb#L98)
 ## Input
 ```haml
 - h = { id: [1, nil, false, true] }
@@ -185,7 +223,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:92](../../../spec/render/attribute_spec.rb#L92)
+# [./spec/render/attribute_spec.rb:104](../../../spec/render/attribute_spec.rb#L104)
 ## Input
 ```haml
 %span{class: "x\"y'z"} hello
@@ -203,7 +241,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:110](../../../spec/render/attribute_spec.rb#L110)
+# [./spec/render/attribute_spec.rb:122](../../../spec/render/attribute_spec.rb#L122)
 ## Input (with options={:format=>:xhtml})
 ```haml
 - foo = true
@@ -222,7 +260,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:110](../../../spec/render/attribute_spec.rb#L110)
+# [./spec/render/attribute_spec.rb:122](../../../spec/render/attribute_spec.rb#L122)
 ## Input (with options={:format=>:xhtml})
 ```haml
 - h = {foo: true, bar: 1}
@@ -241,7 +279,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:117](../../../spec/render/attribute_spec.rb#L117)
+# [./spec/render/attribute_spec.rb:129](../../../spec/render/attribute_spec.rb#L129)
 ## Input
 ```haml
 %span{foo: {bar: 1+2}} hello
@@ -259,7 +297,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:121](../../../spec/render/attribute_spec.rb#L121)
+# [./spec/render/attribute_spec.rb:133](../../../spec/render/attribute_spec.rb#L133)
 ## Input
 ```haml
 - attrs = { foo: 1, bar: { hoge: :fuga }, baz: true }
@@ -285,7 +323,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:135](../../../spec/render/attribute_spec.rb#L135)
+# [./spec/render/attribute_spec.rb:147](../../../spec/render/attribute_spec.rb#L147)
 ## Input
 ```haml
 - data = { foo: 1 }
@@ -305,7 +343,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:149](../../../spec/render/attribute_spec.rb#L149)
+# [./spec/render/attribute_spec.rb:161](../../../spec/render/attribute_spec.rb#L161)
 ## Input
 ```haml
 %span{foo: {bar: 1+2}} hello
@@ -323,7 +361,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:172](../../../spec/render/attribute_spec.rb#L172)
+# [./spec/render/attribute_spec.rb:184](../../../spec/render/attribute_spec.rb#L184)
 ## Input
 ```haml
 %span{data: {foo: 1, bar: 'baz', :hoge => :fuga, k1: { k2: 'v3' }}} hello
@@ -341,7 +379,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:180](../../../spec/render/attribute_spec.rb#L180)
+# [./spec/render/attribute_spec.rb:192](../../../spec/render/attribute_spec.rb#L192)
 ## Input
 ```haml
 %span{data: {foo: 1, bar: 2+3}} hello
@@ -359,7 +397,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:184](../../../spec/render/attribute_spec.rb#L184)
+# [./spec/render/attribute_spec.rb:196](../../../spec/render/attribute_spec.rb#L196)
 ## Input
 ```haml
 - data = { foo: 1, bar: 2 }
@@ -379,7 +417,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:202](../../../spec/render/attribute_spec.rb#L202)
+# [./spec/render/attribute_spec.rb:214](../../../spec/render/attribute_spec.rb#L214)
 ## Input
 ```haml
 %span{b: __LINE__,
@@ -399,7 +437,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:209](../../../spec/render/attribute_spec.rb#L209)
+# [./spec/render/attribute_spec.rb:221](../../../spec/render/attribute_spec.rb#L221)
 ## Input
 ```haml
 %span{"foo\0bar" => "hello"}
@@ -417,7 +455,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:209](../../../spec/render/attribute_spec.rb#L209)
+# [./spec/render/attribute_spec.rb:221](../../../spec/render/attribute_spec.rb#L221)
 ## Input
 ```haml
 - val = "hello"
@@ -437,7 +475,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:209](../../../spec/render/attribute_spec.rb#L209)
+# [./spec/render/attribute_spec.rb:221](../../../spec/render/attribute_spec.rb#L221)
 ## Input
 ```haml
 - key = "foo\0bar"
@@ -459,7 +497,7 @@
 ...                               ^
 ```
 
-# [./spec/render/attribute_spec.rb:223](../../../spec/render/attribute_spec.rb#L223)
+# [./spec/render/attribute_spec.rb:235](../../../spec/render/attribute_spec.rb#L235)
 ## Input
 ```haml
 %span[Faml::TestStruct.new(123)] hello
@@ -477,7 +515,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:227](../../../spec/render/attribute_spec.rb#L227)
+# [./spec/render/attribute_spec.rb:239](../../../spec/render/attribute_spec.rb#L239)
 ## Input
 ```haml
 %span[Faml::TestStruct.new(123), :hello] hello
@@ -495,7 +533,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:231](../../../spec/render/attribute_spec.rb#L231)
+# [./spec/render/attribute_spec.rb:243](../../../spec/render/attribute_spec.rb#L243)
 ## Input
 ```haml
 %span[Faml::TestRefStruct.new(123)] hello
@@ -513,7 +551,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:235](../../../spec/render/attribute_spec.rb#L235)
+# [./spec/render/attribute_spec.rb:247](../../../spec/render/attribute_spec.rb#L247)
 ## Input
 ```haml
 %span#baz[Faml::TestStruct.new(123)]{id: "foo"} hello
@@ -531,7 +569,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:241](../../../spec/render/attribute_spec.rb#L241)
+# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
 ## Input
 ```haml
 %span{foo: 1}(foo=2)
@@ -549,7 +587,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:241](../../../spec/render/attribute_spec.rb#L241)
+# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
 ## Input
 ```haml
 %span(foo=2){foo: 1}
@@ -567,7 +605,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:241](../../../spec/render/attribute_spec.rb#L241)
+# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
 ## Input
 ```haml
 - v = 2
@@ -586,7 +624,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:241](../../../spec/render/attribute_spec.rb#L241)
+# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
 ## Input
 ```haml
 - v = 2
@@ -605,7 +643,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:241](../../../spec/render/attribute_spec.rb#L241)
+# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
 ## Input
 ```haml
 - h = {foo: 1}
@@ -624,7 +662,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:241](../../../spec/render/attribute_spec.rb#L241)
+# [./spec/render/attribute_spec.rb:253](../../../spec/render/attribute_spec.rb#L253)
 ## Input
 ```haml
 - h = {foo: 1}
@@ -643,7 +681,7 @@
 
 ```
 
-# [./spec/render/attribute_spec.rb:260](../../../spec/render/attribute_spec.rb#L260)
+# [./spec/render/attribute_spec.rb:272](../../../spec/render/attribute_spec.rb#L272)
 ## Input
 ```haml
 %span{id: 1}(id=2)
