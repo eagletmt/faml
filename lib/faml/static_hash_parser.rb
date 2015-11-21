@@ -65,7 +65,7 @@ module Faml
       end
     end
 
-    def try_static_value(key_static, node)
+    def try_static_value(key_static, node, force_static: false)
       case node.type
       when :sym, :int, :float, :str, :rational, :complex
         @static_attributes[key_static] = node.children[0]
@@ -76,9 +76,12 @@ module Faml
       when :nil
         @static_attributes[key_static] = nil
       when :dstr
+        if force_static
+          throw FAILURE_TAG
+        end
         @dynamic_attributes[key_static] = node.location.expression.source
       when :send
-        if SPECIAL_ATTRIBUTES.include?(key_static.to_s)
+        if force_static || SPECIAL_ATTRIBUTES.include?(key_static.to_s)
           throw FAILURE_TAG
         else
           @dynamic_attributes[key_static] = node.location.expression.source
@@ -117,7 +120,8 @@ module Faml
 
     def try_static_array_value(key_static, node)
       arr = node.children.map do |child|
-        try_static_value(key_static, child)
+        # TODO: Support dynamic_attributes?
+        try_static_value(key_static, child, force_static: true)
       end
       @static_attributes[key_static] = arr
     end
