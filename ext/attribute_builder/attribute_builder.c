@@ -83,7 +83,6 @@ normalize_data_i2(VALUE key, VALUE value, VALUE ptr)
     struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
     VALUE k = rb_str_dup(arg->key);
 
-    k = rb_str_dup(arg->key);
     rb_str_cat(k, "-", 1);
     rb_str_append(k, key);
     rb_hash_aset(arg->normalized, k, value);
