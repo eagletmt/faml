@@ -531,3 +531,289 @@
 
 ```
 
+# [./spec/render/attribute_spec.rb:233](../../../spec/render/attribute_spec.rb#L233)
+## Input
+```haml
+%span{foo: 1}(foo=2)
+```
+
+## Faml, Haml
+```html
+<span foo='1'></span>
+
+```
+
+## Hamlit
+```html
+<span foo='1' foo='2'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:233](../../../spec/render/attribute_spec.rb#L233)
+## Input
+```haml
+%span(foo=2){foo: 1}
+```
+
+## Faml, Haml
+```html
+<span foo='1'></span>
+
+```
+
+## Hamlit
+```html
+<span foo='2' foo='1'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:233](../../../spec/render/attribute_spec.rb#L233)
+## Input
+```haml
+- v = 2
+%span{foo: v-1}(foo=v)
+```
+
+## Faml, Haml
+```html
+<span foo='1'></span>
+
+```
+
+## Hamlit
+```html
+<span foo='1' foo='2'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:233](../../../spec/render/attribute_spec.rb#L233)
+## Input
+```haml
+- v = 2
+%span(foo=v){foo: v-1}
+```
+
+## Faml, Haml
+```html
+<span foo='1'></span>
+
+```
+
+## Hamlit
+```html
+<span foo='2' foo='1'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:233](../../../spec/render/attribute_spec.rb#L233)
+## Input
+```haml
+- h = {foo: 1}
+%span{h}(foo=2)
+```
+
+## Faml, Haml
+```html
+<span foo='1'></span>
+
+```
+
+## Hamlit
+```html
+<span foo='1' foo='2'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:233](../../../spec/render/attribute_spec.rb#L233)
+## Input
+```haml
+- h = {foo: 1}
+%span(foo=2){h}
+```
+
+## Faml, Haml
+```html
+<span foo='1'></span>
+
+```
+
+## Hamlit
+```html
+<span foo='1' foo='2'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:244](../../../spec/render/attribute_spec.rb#L244)
+## Input
+```haml
+%span{class: 1}(class=2)
+```
+
+## Faml, Hamlit
+```html
+<span class='1 2'></span>
+
+```
+
+## Haml
+```html
+<span class='1'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:244](../../../spec/render/attribute_spec.rb#L244)
+## Input
+```haml
+- v = 2
+%span{class: v-1}(class=v)
+```
+
+## Faml, Hamlit
+```html
+<span class='1 2'></span>
+
+```
+
+## Haml
+```html
+<span class='1'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:244](../../../spec/render/attribute_spec.rb#L244)
+## Input
+```haml
+- h = {class: 1}
+%span{h}(class=2)
+```
+
+## Faml, Hamlit
+```html
+<span class='1 2'></span>
+
+```
+
+## Haml
+```html
+<span class='1'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:252](../../../spec/render/attribute_spec.rb#L252)
+## Input
+```haml
+%span{id: 1}(id=2)
+```
+
+## Faml
+```html
+<span id='2_1'></span>
+
+```
+
+## Haml
+```html
+<span id='1'></span>
+
+```
+
+## Hamlit
+```html
+<span id='1_2'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:252](../../../spec/render/attribute_spec.rb#L252)
+## Input
+```haml
+%span(id=2){id: 1}
+```
+
+## Faml, Hamlit
+```html
+<span id='2_1'></span>
+
+```
+
+## Haml
+```html
+<span id='1'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:252](../../../spec/render/attribute_spec.rb#L252)
+## Input
+```haml
+- v = 2
+%span{id: v-1}(id=v)
+```
+
+## Faml, Hamlit
+```html
+<span id='2_1'></span>
+
+```
+
+## Haml
+```html
+<span id='1'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:252](../../../spec/render/attribute_spec.rb#L252)
+## Input
+```haml
+- v = 2
+%span(id=v){id: v-1}
+```
+
+## Faml, Hamlit
+```html
+<span id='2_1'></span>
+
+```
+
+## Haml
+```html
+<span id='1'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:252](../../../spec/render/attribute_spec.rb#L252)
+## Input
+```haml
+- h = {id: 1}
+%span{h}(id=2)
+```
+
+## Faml, Hamlit
+```html
+<span id='2_1'></span>
+
+```
+
+## Haml
+```html
+<span id='1'></span>
+
+```
+
+# [./spec/render/attribute_spec.rb:252](../../../spec/render/attribute_spec.rb#L252)
+## Input
+```haml
+- h = {id: 1}
+%span(id=2){h}
+```
+
+## Faml, Hamlit
+```html
+<span id='2_1'></span>
+
+```
+
+## Haml
+```html
+<span id='1'></span>
+
+```
+
