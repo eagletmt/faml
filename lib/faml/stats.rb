@@ -105,7 +105,7 @@ module Faml
         return
       end
 
-      if ast.attributes.empty?
+      if !ast.old_attributes && !ast.new_attributes
         if ast.static_class.empty? && ast.static_id.empty?
           info.empty_attribute_count += 1
         else
@@ -113,20 +113,22 @@ module Faml
         end
       else
         static_hash_parser = StaticHashParser.new
-        if static_hash_parser.parse("{#{ast.attributes}}")
+        if static_hash_parser.parse("{#{ast.new_attributes}#{ast.old_attributes}}")
           if static_hash_parser.dynamic_attributes.empty?
             info.static_attribute_count += 1
           else
             if static_hash_parser.dynamic_attributes.key?('data') || static_hash_parser.dynamic_attributes.key?(:data)
               info.dynamic_attribute_with_data_count += 1
-            elsif ast.attributes.include?("\n")
+            elsif ast.old_attributes && ast.old_attributes.include?("\n")
+              info.dynamic_attribute_with_newline_count += 1
+            elsif ast.new_attributes && ast.new_attributes.include?("\n")
               info.dynamic_attribute_with_newline_count += 1
             else
               info.dynamic_attribute_count += 1
             end
           end
         else
-          call_ast = Parser::CurrentRuby.parse("call(#{ast.attributes})")
+          call_ast = Parser::CurrentRuby.parse("call(#{ast.new_attributes}#{ast.old_attributes})")
           if call_ast.type == :send && call_ast.children[0].nil? && call_ast.children[1] == :call && !call_ast.children[3].nil?
             info.multi_attribute_count += 1
           else

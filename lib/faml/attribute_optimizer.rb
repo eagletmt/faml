@@ -4,15 +4,15 @@ require_relative 'static_hash_parser'
 
 module Faml
   class AttributeOptimizer
-    def try_optimize(text, static_id, static_class)
+    def try_optimize(old_attributes, new_attributes, static_id, static_class)
       parser = StaticHashParser.new
-      unless parser.parse("{#{text}}")
-        assert_valid_ruby_code!(text)
+      unless parser.parse("{#{new_attributes}#{old_attributes}}")
+        assert_valid_ruby_code!(old_attributes)
         return [nil, nil]
       end
 
       static_attributes, dynamic_attributes = build_optimized_attributes(parser, static_id, static_class)
-      if optimizable?(text, static_attributes, dynamic_attributes)
+      if optimizable?(old_attributes, new_attributes, static_attributes, dynamic_attributes)
         [static_attributes, dynamic_attributes]
       else
         [nil, nil]
@@ -78,7 +78,7 @@ module Faml
       dynamic_attributes
     end
 
-    def optimizable?(text, static_attributes, dynamic_attributes)
+    def optimizable?(old_attributes, new_attributes, static_attributes, dynamic_attributes)
       if static_attributes.nil?
         return false
       end
@@ -88,7 +88,9 @@ module Faml
         return false
       end
 
-      if text.include?("\n") && !dynamic_attributes.empty?
+      old_newline = old_attributes && old_attributes.include?("\n")
+      new_newline = new_attributes && new_attributes.include?("\n")
+      if (old_newline || new_newline) && !dynamic_attributes.empty?
         # XXX: Quit optimization to keep newlines
         # https://github.com/eagletmt/faml/issues/18
         return false

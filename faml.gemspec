@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.0.0'
 
   spec.add_dependency 'escape_utils'
-  spec.add_dependency 'haml_parser', '>= 0.3.0'
+  spec.add_dependency 'haml_parser', '>= 0.4.0'
   spec.add_dependency 'parser'
   spec.add_dependency 'temple', '>= 0.7.0'
   spec.add_dependency 'tilt'
