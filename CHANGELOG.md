@@ -1,3 +1,8 @@
+## 0.6.3 (2015-11-22)
+- Remove duplicated class in Ruby attribute case
+    - `%span.foo{h}` where `h = { class: 'foo bar' }` now renders `<span class='bar foo'></span>` .
+    - `%span.foo{class: 'foo bar'}` renders `<span class='bar foo'></span>` since v0.2.12 .
+
 ## 0.6.2 (2015-11-22)
 - Fix data-id and data-class attribute
     - https://github.com/eagletmt/faml/pull/39
