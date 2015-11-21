@@ -69,24 +69,23 @@ module Faml
     def try_static_value(key_static, node, force_static: false)
       case node.type
       when :sym, :int, :float, :str, :rational, :complex
-        @static_attributes[key_static] = node.children[0]
+        set_static_attribute(key_static, node.children[0])
       when :true
-        @static_attributes[key_static] = true
+        set_static_attribute(key_static, true)
       when :false
-        @static_attributes[key_static] = false
+        set_static_attribute(key_static, false)
       when :nil
-        @static_attributes[key_static] = nil
+        set_static_attribute(key_static, nil)
       when :dstr
         if force_static
           throw FAILURE_TAG
         end
-        @dynamic_attributes[key_static] = node.location.expression.source
+        set_dynamic_attributes(key_static, node.location.expression.source)
       when :send
-        if force_static || SPECIAL_ATTRIBUTES.include?(key_static.to_s)
+        if force_static
           throw FAILURE_TAG
-        else
-          @dynamic_attributes[key_static] = node.location.expression.source
         end
+        set_dynamic_attributes(key_static, node.location.expression.source)
       when :hash
         try_static_hash_value(key_static, node)
       when :array
@@ -95,6 +94,7 @@ module Faml
         throw FAILURE_TAG
       end
     end
+    protected :try_static_value
 
     def try_static_hash_value(key_static, node)
       parser = self.class.new
@@ -108,7 +108,7 @@ module Faml
 
     def merge_attributes(key_static, parser)
       unless parser.static_attributes.empty?
-        @static_attributes[key_static] = parser.static_attributes
+        set_static_attribute(key_static, parser.static_attributes)
       end
 
       unless parser.dynamic_attributes.empty?
@@ -120,11 +120,30 @@ module Faml
     end
 
     def try_static_array_value(key_static, node)
-      arr = node.children.map do |child|
+      parser = self.class.new
+      arr = node.children.map.with_index do |child, i|
         # TODO: Support dynamic_attributes?
-        try_static_value(key_static, child, force_static: true)
+        parser.try_static_value(i, child, force_static: true)
       end
-      @static_attributes[key_static] = arr
+      set_static_attribute(key_static, arr)
+    end
+
+    def set_static_attribute(key, val)
+      case key.to_s
+      when 'id', 'class'
+        @static_attributes[key] ||= []
+        @static_attributes[key].concat(Array(val))
+      else
+        @static_attributes[key] = val
+      end
+      val
+    end
+
+    def set_dynamic_attributes(key, val)
+      if SPECIAL_ATTRIBUTES.include?(key.to_s)
+        throw FAILURE_TAG
+      end
+      @dynamic_attributes[key] = val
     end
   end
 end

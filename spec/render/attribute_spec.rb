@@ -229,4 +229,36 @@ HAML
       expect(render_string('%span#baz[Faml::TestStruct.new(123)]{id: "foo"} hello')).to eq("<span class='faml_test_struct' id='baz_foo_faml_test_struct_123'>hello</span>\n")
     end
   end
+
+  context 'when old attributes and new attributes have the same key' do
+    it 'prefers old attributes' do
+      aggregate_failures do
+        expect(render_string('%span{foo: 1}(foo=2)')).to eq("<span foo='1'></span>\n")
+        expect(render_string('%span(foo=2){foo: 1}')).to eq("<span foo='1'></span>\n")
+        expect(render_string("- v = 2\n%span{foo: v-1}(foo=v)")).to eq("<span foo='1'></span>\n")
+        expect(render_string("- v = 2\n%span(foo=v){foo: v-1}")).to eq("<span foo='1'></span>\n")
+        expect(render_string("- h = {foo: 1}\n%span{h}(foo=2)")).to eq("<span foo='1'></span>\n")
+        expect(render_string("- h = {foo: 1}\n%span(foo=2){h}")).to eq("<span foo='1'></span>\n")
+      end
+    end
+
+    it 'merges class attribute' do
+      aggregate_failures do
+        expect(render_string('%span{class: 1}(class=2)')).to eq("<span class='1 2'></span>\n")
+        expect(render_string("- v = 2\n%span{class: v-1}(class=v)")).to eq("<span class='1 2'></span>\n")
+        expect(render_string("- h = {class: 1}\n%span{h}(class=2)")).to eq("<span class='1 2'></span>\n")
+      end
+    end
+
+    it 'merges id attribute' do
+      aggregate_failures do
+        expect(render_string('%span{id: 1}(id=2)')).to eq("<span id='2_1'></span>\n")
+        expect(render_string('%span(id=2){id: 1}')).to eq("<span id='2_1'></span>\n")
+        expect(render_string("- v = 2\n%span{id: v-1}(id=v)")).to eq("<span id='2_1'></span>\n")
+        expect(render_string("- v = 2\n%span(id=v){id: v-1}")).to eq("<span id='2_1'></span>\n")
+        expect(render_string("- h = {id: 1}\n%span{h}(id=2)")).to eq("<span id='2_1'></span>\n")
+        expect(render_string("- h = {id: 1}\n%span(id=2){h}")).to eq("<span id='2_1'></span>\n")
+      end
+    end
+  end
 end

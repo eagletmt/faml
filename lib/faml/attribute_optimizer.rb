@@ -41,11 +41,21 @@ module Faml
 
     def build_optimized_static_attributes(parser, static_id, static_class)
       static_attributes = {}
+      class_list = []
+      id_list = []
       parser.static_attributes.each do |k, v|
-        static_attributes[k.to_s] = v
+        k = k.to_s
+        case k
+        when 'id'
+          id_list.concat(Array(v))
+        when 'class'
+          class_list.concat(Array(v))
+        else
+          static_attributes[k] = v
+        end
       end
 
-      class_list = Array(static_attributes.delete('class')).select { |v| v }.flat_map { |c| c.to_s.split(/ +/) }
+      class_list = class_list.select { |v| v }.flat_map { |c| c.to_s.split(/ +/) }
       unless static_class.empty?
         class_list.concat(static_class.split(/ +/))
       end
@@ -53,7 +63,7 @@ module Faml
         static_attributes['class'] = class_list.uniq.sort.join(' ')
       end
 
-      id_list = Array(static_attributes.delete('id')).select { |v| v }
+      id_list = id_list.select { |v| v }
       unless static_id.empty?
         id_list = [static_id].concat(id_list)
       end
