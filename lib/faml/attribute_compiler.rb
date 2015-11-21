@@ -42,7 +42,7 @@ module Faml
     def try_optimize_attributes(old_attributes, new_attributes, static_id, static_class)
       static_attributes, dynamic_attributes = AttributeOptimizer.new.try_optimize(old_attributes, new_attributes, static_id, static_class)
       if static_attributes
-        (static_attributes.keys + dynamic_attributes.keys).sort.flat_map do |k|
+        (static_attributes.keys + dynamic_attributes.keys).sort.map do |k|
           if static_attributes.key?(k)
             compile_static_attribute(k, static_attributes[k])
           else
@@ -53,17 +53,6 @@ module Faml
     end
 
     def compile_static_attribute(key, value)
-      if value.is_a?(Hash) && key == 'data'
-        data = AttributeBuilder.normalize_data(value)
-        data.keys.sort.map do |k|
-          compile_static_simple_attribute("data-#{k}", data[k])
-        end
-      else
-        [compile_static_simple_attribute(key, value)]
-      end
-    end
-
-    def compile_static_simple_attribute(key, value)
       case
       when value == true
         [:haml, :attr, key, [:multi]]
@@ -75,13 +64,13 @@ module Faml
     end
 
     def compile_dynamic_attribute(key, value)
-      [[:haml, :attr, key, [:dvalue, value]]]
+      [:haml, :attr, key, [:dvalue, value]]
     end
 
     def compile_slow_attributes(old_attributes, new_attributes, static_id, static_class, object_ref)
       h = {}
       unless static_class.empty?
-        h[:class] = static_class.split(/ +/)
+        h[:class] = static_class
       end
       unless static_id.empty?
         h[:id] = static_id

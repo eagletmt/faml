@@ -313,6 +313,13 @@ m_normalize_data(RB_UNUSED_VAR(VALUE self), VALUE data)
   return normalize_data(data);
 }
 
+static VALUE
+m_merge(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
+{
+  rb_check_arity(argc, 1, UNLIMITED_ARGUMENTS);
+  return merge(argv[0], argc-1, argv+1);
+}
+
 void
 Init_attribute_builder(void)
 {
@@ -320,6 +327,7 @@ Init_attribute_builder(void)
   rb_mAttributeBuilder = rb_define_module_under(mFaml, "AttributeBuilder");
   rb_define_singleton_method(rb_mAttributeBuilder, "build", RUBY_METHOD_FUNC(m_build), -1);
   rb_define_singleton_method(rb_mAttributeBuilder, "normalize_data", RUBY_METHOD_FUNC(m_normalize_data), 1);
+  rb_define_singleton_method(rb_mAttributeBuilder, "merge", RUBY_METHOD_FUNC(m_merge), -1);
 
   id_keys = rb_intern("keys");
   id_sort_bang = rb_intern("sort!");

@@ -1,4 +1,5 @@
 # frozen-string-literal: true
+require 'faml/attribute_builder'
 require_relative 'error'
 require_relative 'ruby_syntax_checker'
 require_relative 'static_hash_parser'
@@ -44,38 +45,13 @@ module Faml
     end
 
     def build_optimized_static_attributes(parser, static_id, static_class)
-      static_attributes = {}
-      class_list = []
-      id_list = []
-      parser.static_attributes.each do |k, v|
-        k = k.to_s
-        case k
-        when 'id'
-          id_list.concat(Array(v))
-        when 'class'
-          class_list.concat(Array(v))
-        else
-          static_attributes[k] = v
-        end
+      if static_id.empty?
+        static_id = nil
       end
-
-      class_list = class_list.select { |v| v }.flat_map { |c| c.to_s.split(/ +/) }
-      unless static_class.empty?
-        class_list.concat(static_class.split(/ +/))
+      if static_class.empty?
+        static_class = nil
       end
-      unless class_list.empty?
-        static_attributes['class'] = class_list.uniq.sort.join(' ')
-      end
-
-      id_list = id_list.select { |v| v }
-      unless static_id.empty?
-        id_list = [static_id].concat(id_list)
-      end
-      unless id_list.empty?
-        static_attributes['id'] = id_list.join('_')
-      end
-
-      static_attributes
+      AttributeBuilder.merge(parser.static_attributes, id: static_id, class: static_class)
     end
 
     def build_optimized_dynamic_attributes(parser, static_attributes)
