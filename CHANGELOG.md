@@ -1,3 +1,9 @@
+## 0.6.1 (2015-11-21)
+- Fix handling duplicated old attributes and new attributes
+    - https://github.com/eagletmt/faml/pull/37
+    - `%span{class: 1}(class: 2)` now renders `<span class='1 2'></span>` . `class` and `id` are correctly merged.
+    - `%span{foo: 1}(foo: 2)` now renders `<span foo='1'></span>` . Old attributes has priority over new attributes.
+
 ## 0.6.0 (2015-11-21)
 - Disable Faml::Helpers by default
     - https://github.com/eagletmt/faml/pull/35
