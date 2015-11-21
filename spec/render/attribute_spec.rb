@@ -139,6 +139,13 @@ HAML
 HAML
   end
 
+  it 'renders data-id and data-class (#38)' do
+    aggregate_failures do
+      expect(render_string('%span{data: {id: 1}}')).to eq("<span data-id='1'></span>\n")
+      expect(render_string('%span{data: {class: 1}}')).to eq("<span data-class='1'></span>\n")
+    end
+  end
+
   it 'optimize send case' do
     expect(render_string('%span{foo: {bar: 1+2}} hello')).to eq("<span foo='{:bar=&gt;3}'>hello</span>\n")
   end
