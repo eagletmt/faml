@@ -11,6 +11,10 @@ module Faml
         assert_valid_ruby_code!(old_attributes)
         return [nil, nil]
       end
+      if old_attributes && new_attributes
+        # TODO: Quit optimization. Merge id and class correctly.
+        return [nil, nil]
+      end
 
       static_attributes, dynamic_attributes = build_optimized_attributes(parser, static_id, static_class)
       if optimizable?(old_attributes, new_attributes, static_attributes, dynamic_attributes)

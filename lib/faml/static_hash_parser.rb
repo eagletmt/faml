@@ -129,14 +129,7 @@ module Faml
     end
 
     def set_static_attribute(key, val)
-      case key.to_s
-      when 'id', 'class'
-        @static_attributes[key] ||= []
-        @static_attributes[key].concat(Array(val))
-      else
-        @static_attributes[key] = val
-      end
-      val
+      @static_attributes[key] = val
     end
 
     def set_dynamic_attributes(key, val)
