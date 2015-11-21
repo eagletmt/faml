@@ -7,22 +7,25 @@ module Faml
 
     desc 'render FILE', 'Render haml template'
     option :format, type: :string, default: :html, desc: 'HTML format'
+    option :extend_helpers, type: :boolean, default: false, desc: 'Extend Faml::Helpers or not'
     def render(file)
-      code = compile_file(file, format: options[:format].to_sym)
+      code = compile_file(file, format: options[:format].to_sym, extend_helpers: options[:extend_helpers])
       puts instance_eval(code, file)
     end
 
     desc 'compile FILE', 'Compile haml template'
     option :format, type: :string, default: :html, desc: 'HTML format'
+    option :extend_helpers, type: :boolean, default: false, desc: 'Extend Faml::Helpers or not'
     def compile(file)
-      puts compile_file(file, format: options[:format].to_sym)
+      puts compile_file(file, format: options[:format].to_sym, extend_helpers: options[:extend_helpers])
     end
 
     desc 'temple FILE', 'Render temple AST'
     option :format, type: :string, default: :html, desc: 'HTML format'
+    option :extend_helpers, type: :boolean, default: false, desc: 'Extend Faml::Helpers or not'
     def temple(file)
       require 'pp'
-      pp Faml::Compiler.new(filename: file, format: options[:format].to_sym).call(parse_file(file))
+      pp Faml::Compiler.new(filename: file, format: options[:format].to_sym, extend_helpers: options[:extend_helpers]).call(parse_file(file))
     end
 
     desc 'stats FILE/DIR ...', 'Show statistics'

@@ -1,5 +1,5 @@
 # [./spec/render/helpers_spec.rb:4](../../../spec/render/helpers_spec.rb#L4)
-## Input
+## Input (with options={:extend_helpers=>true})
 ```haml
 %span!= preserve "hello\nworld !"
 ```

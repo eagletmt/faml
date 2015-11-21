@@ -80,9 +80,12 @@ is always rendered as
 
 It's equivalent to haml's "ugly" mode.
 
-### No Haml::Helpers except for preserve
-I won't provide helper methods of Haml::Helpers except for `preserve` .
-If you really need other helper methods, please open an issue.
+### No Haml::Helpers by default
+I won't provide helper methods of Haml::Helpers.
+If you really need helper methods, please open an issue.
+
+Only `preserve` helper method is supported by engine option.
+You have to set `Faml::Engine.options[:extend_helpers] = true` to use `preserve` .
 
 ### Others
 If you find other incompatibility, please report it to me :-p.

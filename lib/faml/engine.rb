@@ -10,6 +10,7 @@ module Faml
     define_options(
       generator: Temple::Generators::ArrayBuffer,
       filename: nil,
+      extend_helpers: false,
     )
 
     use HamlParser::Parser
