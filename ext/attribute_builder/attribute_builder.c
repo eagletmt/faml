@@ -177,9 +177,62 @@ merge_one(VALUE attributes, VALUE arg)
 }
 
 static void
-merge(VALUE attributes, VALUE object_ref, int argc, VALUE *argv)
+join_class_attribute(VALUE attributes, VALUE key)
 {
+  long len;
+  VALUE val;
+
+  val = rb_hash_delete(attributes, key);
+  Check_Type(val, T_ARRAY);
+  len = RARRAY_LEN(val);
+  if (len != 0) {
+    long i;
+    VALUE ary = rb_ary_new_capa(len);
+    for (i = 0; i < len; i++) {
+      VALUE v = RARRAY_AREF(val, i);
+      if (RTEST(v)) {
+        rb_ary_concat(ary, rb_str_split(rb_convert_type(v, T_STRING, "String", "to_s"), " "));
+      }
+    }
+    rb_funcall(ary, id_sort_bang, 0);
+    rb_funcall(ary, id_uniq_bang, 0);
+    rb_hash_aset(attributes, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_space)));
+  }
+}
+
+static void
+join_id_attribute(VALUE attributes, VALUE key)
+{
+  long len;
+  VALUE val;
+
+  val = rb_hash_delete(attributes, key);
+  Check_Type(val, T_ARRAY);
+  len = RARRAY_LEN(val);
+  if (len != 0) {
+    long i;
+    VALUE ary = rb_ary_new_capa(len);
+    for (i = 0; i < len; i++) {
+      VALUE v = RARRAY_AREF(val, i);
+      if (RTEST(v)) {
+        rb_ary_push(ary, rb_convert_type(v, T_STRING, "String", "to_s"));
+      }
+    }
+    rb_hash_aset(attributes, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_underscore)));
+  }
+}
+
+static VALUE
+merge(VALUE object_ref, int argc, VALUE *argv)
+{
+  VALUE attributes, id_str, class_str;
   int i;
+
+  attributes = rb_hash_new();
+  id_str = rb_const_get(rb_mAttributeBuilder, id_id);
+  class_str = rb_const_get(rb_mAttributeBuilder, id_class);
+  rb_hash_aset(attributes, id_str, rb_ary_new());
+  rb_hash_aset(attributes, class_str, rb_ary_new());
 
   for (i = 0; i < argc; i++) {
     merge_one(attributes, argv[i]);
@@ -187,6 +240,11 @@ merge(VALUE attributes, VALUE object_ref, int argc, VALUE *argv)
   if (!NIL_P(object_ref)) {
     merge_one(attributes, object_ref);
   }
+
+  join_class_attribute(attributes, class_str);
+  join_id_attribute(attributes, id_str);
+
+  return attributes;
 }
 
 static void
@@ -212,41 +270,7 @@ static void
 build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value)
 {
   Check_Type(key, T_STRING);
-  if (RSTRING_LEN(key) == 5 && memcmp(RSTRING_PTR(key), "class", 5) == 0) {
-    long len;
-
-    Check_Type(value, T_ARRAY);
-    len = RARRAY_LEN(value);
-    if (len != 0) {
-      long i;
-      VALUE ary = rb_ary_new_capa(len);
-      for (i = 0; i < len; i++) {
-        VALUE v = RARRAY_AREF(value, i);
-        if (RTEST(v)) {
-          rb_ary_concat(ary, rb_str_split(rb_convert_type(v, T_STRING, "String", "to_s"), " "));
-        }
-      }
-      rb_funcall(ary, id_sort_bang, 0);
-      rb_funcall(ary, id_uniq_bang, 0);
-      put_attribute(buf, attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_space)));
-    }
-  } else if (RSTRING_LEN(key) == 2 && memcmp(RSTRING_PTR(key), "id", 2) == 0) {
-    long len = RARRAY_LEN(value);
-
-    Check_Type(value, T_ARRAY);
-    len = RARRAY_LEN(value);
-    if (len != 0) {
-      long i;
-      VALUE ary = rb_ary_new_capa(len);
-      for (i = 0; i < len; i++) {
-        VALUE v = RARRAY_AREF(value, i);
-        if (RTEST(v)) {
-          rb_ary_push(ary, rb_convert_type(v, T_STRING, "String", "to_s"));
-        }
-      }
-      put_attribute(buf, attr_quote, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_underscore)));
-    }
-  } else if (RB_TYPE_P(value, T_TRUE)) {
+  if (RB_TYPE_P(value, T_TRUE)) {
     if (is_html) {
       rb_ary_push(buf, rb_const_get(rb_mAttributeBuilder, id_space));
       rb_ary_push(buf, key);
@@ -269,10 +293,7 @@ m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
   attr_quote = argv[0];
   is_html = RTEST(argv[1]);
   object_ref = argv[2];
-  attributes = rb_hash_new();
-  rb_hash_aset(attributes, rb_const_get(rb_mAttributeBuilder, id_id), rb_ary_new());
-  rb_hash_aset(attributes, rb_const_get(rb_mAttributeBuilder, id_class), rb_ary_new());
-  merge(attributes, object_ref, argc-3, argv+3);
+  attributes = merge(object_ref, argc-3, argv+3);
 
   keys = rb_funcall(attributes, id_keys, 0);
   rb_funcall(keys, id_sort_bang, 0);
