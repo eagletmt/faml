@@ -1,3 +1,8 @@
+## 0.6.2 (2015-11-22)
+- Fix data-id and data-class attribute
+    - https://github.com/eagletmt/faml/pull/39
+    - It's regression in v0.6.1
+
 ## 0.6.1 (2015-11-21)
 - Fix handling duplicated old attributes and new attributes
     - https://github.com/eagletmt/faml/pull/37
