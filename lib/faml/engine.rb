@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require 'haml_parser/parser'
 require 'temple'
 require_relative 'compiler'

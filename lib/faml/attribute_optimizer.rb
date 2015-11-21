@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require_relative 'error'
 require_relative 'ruby_syntax_checker'
 require_relative 'static_hash_parser'

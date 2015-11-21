@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require 'pathname'
 require 'singleton'
 require 'hamlit/engine'
@@ -100,7 +101,7 @@ EOS
   def render_input_title(options)
     title = 'Input'
     unless options.empty?
-      title << " (with options=#{options.inspect})"
+      title += " (with options=#{options.inspect})"
     end
     title
   end

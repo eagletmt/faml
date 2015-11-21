@@ -1,4 +1,4 @@
-# [./spec/render/plain_spec.rb:8](../../../spec/render/plain_spec.rb#L8)
+# [./spec/render/plain_spec.rb:9](../../../spec/render/plain_spec.rb#L9)
 ## Input
 ```haml
 %span foo\\#{1 + 2}bar

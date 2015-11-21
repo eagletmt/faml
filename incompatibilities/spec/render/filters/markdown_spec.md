@@ -1,4 +1,4 @@
-# [./spec/render/filters/markdown_spec.rb:12](../../../../spec/render/filters/markdown_spec.rb#L12)
+# [./spec/render/filters/markdown_spec.rb:13](../../../../spec/render/filters/markdown_spec.rb#L13)
 ## Input
 ```haml
 :markdown

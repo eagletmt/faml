@@ -1,4 +1,4 @@
-# [./spec/render/filters/plain_spec.rb:4](../../../../spec/render/filters/plain_spec.rb#L4)
+# [./spec/render/filters/plain_spec.rb:5](../../../../spec/render/filters/plain_spec.rb#L5)
 ## Input
 ```haml
 %span
@@ -27,7 +27,7 @@ hello
 
 ```
 
-# [./spec/render/filters/plain_spec.rb:13](../../../../spec/render/filters/plain_spec.rb#L13)
+# [./spec/render/filters/plain_spec.rb:14](../../../../spec/render/filters/plain_spec.rb#L14)
 ## Input
 ```haml
 %span

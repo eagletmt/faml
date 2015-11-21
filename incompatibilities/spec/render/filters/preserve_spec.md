@@ -1,4 +1,4 @@
-# [./spec/render/filters/preserve_spec.rb:4](../../../../spec/render/filters/preserve_spec.rb#L4)
+# [./spec/render/filters/preserve_spec.rb:5](../../../../spec/render/filters/preserve_spec.rb#L5)
 ## Input
 ```haml
 %span start

@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require 'spec_helper'
 
 class LineVerifier < StandardError

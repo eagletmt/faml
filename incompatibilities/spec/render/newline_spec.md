@@ -1,4 +1,4 @@
-# [./spec/render/newline_spec.rb:19](../../../spec/render/newline_spec.rb#L19)
+# [./spec/render/newline_spec.rb:20](../../../spec/render/newline_spec.rb#L20)
 ## Input
 ```haml
 %div
@@ -20,7 +20,7 @@
 
 ```
 
-# [./spec/render/newline_spec.rb:27](../../../spec/render/newline_spec.rb#L27)
+# [./spec/render/newline_spec.rb:28](../../../spec/render/newline_spec.rb#L28)
 ## Input
 ```haml
 %div
@@ -46,7 +46,7 @@
 
 ```
 
-# [./spec/render/newline_spec.rb:36](../../../spec/render/newline_spec.rb#L36)
+# [./spec/render/newline_spec.rb:37](../../../spec/render/newline_spec.rb#L37)
 ## Input
 ```haml
 %div
@@ -72,7 +72,7 @@
 
 ```
 
-# [./spec/render/newline_spec.rb:71](../../../spec/render/newline_spec.rb#L71)
+# [./spec/render/newline_spec.rb:72](../../../spec/render/newline_spec.rb#L72)
 ## Input
 ```haml
 %div(foo="bar") <b>hello</b>

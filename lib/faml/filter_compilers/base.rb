@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require_relative '../text_compiler'
 
 module Faml

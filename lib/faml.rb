@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require_relative 'faml/engine'
 require_relative 'faml/tilt'
 require_relative 'faml/version'

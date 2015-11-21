@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 class Context
   def header
     'Colors'

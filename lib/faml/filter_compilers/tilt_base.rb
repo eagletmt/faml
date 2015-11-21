@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require 'temple'
 require 'tilt'
 require_relative 'base'

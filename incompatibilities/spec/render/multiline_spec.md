@@ -1,4 +1,4 @@
-# [./spec/render/multiline_spec.rb:22](../../../spec/render/multiline_spec.rb#L22)
+# [./spec/render/multiline_spec.rb:23](../../../spec/render/multiline_spec.rb#L23)
 ## Input
 ```haml
 %p
@@ -24,7 +24,7 @@ foo bar baz
 
 ```
 
-# [./spec/render/multiline_spec.rb:47](../../../spec/render/multiline_spec.rb#L47)
+# [./spec/render/multiline_spec.rb:48](../../../spec/render/multiline_spec.rb#L48)
 ## Input
 ```haml
 :javascript

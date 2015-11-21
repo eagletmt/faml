@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require 'spec_helper'
 
 RSpec.describe Faml::Helpers, type: :render do

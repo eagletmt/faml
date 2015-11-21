@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require 'minitest/autorun'
 require 'json'
 require 'faml'

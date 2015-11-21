@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 version = [Rails::VERSION::MAJOR, Rails::VERSION::MINOR]
 if version == [4, 0]
   TestApp::Application.configure do

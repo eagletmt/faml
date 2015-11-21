@@ -1,4 +1,4 @@
-# [./spec/render/silent_script_spec.rb:51](../../../spec/render/silent_script_spec.rb#L51)
+# [./spec/render/silent_script_spec.rb:52](../../../spec/render/silent_script_spec.rb#L52)
 ## Input
 ```haml
 %div

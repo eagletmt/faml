@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 class BooksController < ApplicationController
   def hello
   end

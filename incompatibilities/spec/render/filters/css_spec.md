@@ -1,4 +1,4 @@
-# [./spec/render/filters/css_spec.rb:24](../../../../spec/render/filters/css_spec.rb#L24)
+# [./spec/render/filters/css_spec.rb:25](../../../../spec/render/filters/css_spec.rb#L25)
 ## Input
 ```haml
 %div

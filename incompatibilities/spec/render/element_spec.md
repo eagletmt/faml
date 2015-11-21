@@ -1,4 +1,4 @@
-# [./spec/render/element_spec.rb:56](../../../spec/render/element_spec.rb#L56)
+# [./spec/render/element_spec.rb:57](../../../spec/render/element_spec.rb#L57)
 ## Input
 ```haml
 - @var = '</span>'

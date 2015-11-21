@@ -1,4 +1,4 @@
-# [./spec/render/doctype_spec.rb:9](../../../spec/render/doctype_spec.rb#L9)
+# [./spec/render/doctype_spec.rb:10](../../../spec/render/doctype_spec.rb#L10)
 ## Input
 ```haml
 !!! xml

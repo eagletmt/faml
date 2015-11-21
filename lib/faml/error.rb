@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 module Faml
   class Error < StandardError
     attr_accessor :lineno

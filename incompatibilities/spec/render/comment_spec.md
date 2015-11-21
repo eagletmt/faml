@@ -1,4 +1,4 @@
-# [./spec/render/comment_spec.rb:31](../../../spec/render/comment_spec.rb#L31)
+# [./spec/render/comment_spec.rb:32](../../../spec/render/comment_spec.rb#L32)
 ## Input
 ```haml
 / [if IE] hello

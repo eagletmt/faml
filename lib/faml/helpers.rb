@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 module Faml
   # Don't use these methods!
 

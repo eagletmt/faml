@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require 'haml_parser/utils'
 require 'strscan'
 require_relative 'error'

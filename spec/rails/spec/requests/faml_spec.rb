@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require 'rails_helper'
 
 RSpec.describe 'Faml with Rails', type: :request do

@@ -1,4 +1,4 @@
-# [./spec/render/filters/cdata_spec.rb:4](../../../../spec/render/filters/cdata_spec.rb#L4)
+# [./spec/render/filters/cdata_spec.rb:5](../../../../spec/render/filters/cdata_spec.rb#L5)
 ## Input
 ```haml
 :cdata

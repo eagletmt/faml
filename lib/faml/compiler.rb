@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require 'ripper'
 require 'temple'
 require 'haml_parser/ast'

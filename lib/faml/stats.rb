@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 require 'find'
 require 'pathname'
 require 'haml_parser/parser'
