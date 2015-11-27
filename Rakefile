@@ -20,8 +20,10 @@ namespace :benchmark do
   namespace :rendering do
     desc "Run rendering benchmark with Haml's standard template"
     task :haml do
-      haml_gem = Gem::Specification.find_by_name('haml')
-      standard_haml_path = File.join(haml_gem.gem_dir, 'test', 'templates', 'standard.haml')
+      faml_spec = Gem::Specification.find_by_name('faml')
+      haml_req = faml_spec.dependencies.find { |dep| dep.name == 'haml' }.requirement
+      haml_spec = Gem::Specification.find_by_name('haml', haml_req)
+      standard_haml_path = File.join(haml_spec.gem_dir, 'test', 'templates', 'standard.haml')
       sh 'ruby', 'benchmark/rendering.rb', standard_haml_path
     end
 
@@ -40,8 +42,10 @@ namespace :benchmark do
   namespace :compiling do
     desc "Run compiling benchmark with Haml's standard template"
     task :haml do
-      haml_gem = Gem::Specification.find_by_name('haml')
-      standard_haml_path = File.join(haml_gem.gem_dir, 'test', 'templates', 'standard.haml')
+      faml_spec = Gem::Specification.find_by_name('faml')
+      haml_req = faml_spec.dependencies.find { |dep| dep.name == 'haml' }.requirement
+      haml_spec = Gem::Specification.find_by_name('haml', haml_req)
+      standard_haml_path = File.join(haml_spec.gem_dir, 'test', 'templates', 'standard.haml')
       sh 'ruby', 'benchmark/compiling.rb', standard_haml_path
     end
 
