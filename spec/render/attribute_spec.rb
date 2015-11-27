@@ -87,6 +87,12 @@ HAML
     expect(render_string("- h = { class: [1, nil, false, true] }\n%span{h}")).to eq("<span class='1 true'></span>\n")
   end
 
+  it 'flattens array class' do
+    expect(render_string('%span{class: [1, [2]]}')).to eq("<span class='1 2'></span>\n")
+    expect(render_string("- v = [1, [2]]\n%span{class: v}")).to eq("<span class='1 2'></span>\n")
+    expect(render_string("- h = { class: [1, [2]] }\n%span{h}")).to eq("<span class='1 2'></span>\n")
+  end
+
   it 'strigify non-string ids' do
     expect(render_string('%span#foo{id: :bar} hello')).to eq("<span id='foo_bar'>hello</span>\n")
   end
@@ -99,6 +105,12 @@ HAML
     expect(render_string('%span{id: [1, nil, false, true]}')).to eq("<span id='1_true'></span>\n")
     expect(render_string("- v = [1, nil, false, true]\n%span{id: v}")).to eq("<span id='1_true'></span>\n")
     expect(render_string("- h = { id: [1, nil, false, true] }\n%span{h}")).to eq("<span id='1_true'></span>\n")
+  end
+
+  it 'flattens array id' do
+    expect(render_string('%span{id: [1, [2]]}')).to eq("<span id='1_2'></span>\n")
+    expect(render_string("- v = [1, [2]]\n%span{id: v}")).to eq("<span id='1_2'></span>\n")
+    expect(render_string("- h = { id: [1, [2]] }\n%span{h}")).to eq("<span id='1_2'></span>\n")
   end
 
   it 'escapes' do
