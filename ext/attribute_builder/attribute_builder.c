@@ -13,7 +13,7 @@
 #define FOREACH_FUNC(func) ((int (*)(ANYARGS))(func))
 
 VALUE rb_mAttributeBuilder;
-static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang;
+static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_flatten;
 static ID id_id, id_class, id_underscore, id_hyphen, id_space, id_equal;
 
 static void
@@ -26,7 +26,11 @@ concat_array_attribute(VALUE attributes, VALUE hash, VALUE key)
   if (!NIL_P(v)) {
     VALUE ary;
 
-    v = rb_Array(v);
+    if (RB_TYPE_P(v, T_ARRAY)) {
+      v = rb_funcall(v, id_flatten, 0);
+    } else {
+      v = rb_Array(v);
+    }
     ary = rb_hash_lookup(attributes, key);
     Check_Type(ary, T_ARRAY);
     rb_ary_concat(ary, v);
@@ -333,6 +337,7 @@ Init_attribute_builder(void)
   id_sort_bang = rb_intern("sort!");
   id_uniq_bang = rb_intern("uniq!");
   id_merge_bang = rb_intern("merge!");
+  id_flatten = rb_intern("flatten");
 
   id_id = rb_intern("ID");
   id_class = rb_intern("CLASS");
