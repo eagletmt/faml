@@ -59,10 +59,9 @@ module Faml
       parser.dynamic_attributes.each do |k, v|
         k = k.to_s
         if static_attributes.key?(k)
-          if StaticHashParser::SPECIAL_ATTRIBUTES.include?(k)
-            # XXX: Quit optimization
-            return nil
-          end
+          # XXX: Quit optimization.
+          # See also https://github.com/eagletmt/faml/issues/44
+          return nil
         end
         dynamic_attributes[k] = v
       end
