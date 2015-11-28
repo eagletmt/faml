@@ -29,11 +29,6 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string(%q|%span#main{class: "na#{'ni'}ka"} hello|)).to eq(%Q{<span class='nanika' id='main'>hello</span>\n})
   end
 
-  it 'renders array class' do
-    expect(render_string('%span.c2{class: "c1"}')).to eq("<span class='c1 c2'></span>\n")
-    expect(render_string('%span.c2{class: ["c1", "c3", :c2]}')).to eq("<span class='c1 c2 c3'></span>\n")
-  end
-
   it 'renders boolean attributes' do
     expect(render_string('%input{checked: true}')).to eq("<input checked>\n")
     expect(render_string('%input{checked: false}')).to eq("<input>\n")
@@ -46,71 +41,13 @@ RSpec.describe 'Attributes rendering', type: :render do
     expect(render_string("- h = {checked: nil}\n%input{h}")).to eq("<input>\n")
   end
 
-  it 'merges classes' do
-    expect(render_string(<<HAML)).to eq("<span class='c1 c2 content {}' id='main_id1_id3_id2'>hello</span>\n")
-- h1 = {class: 'c1', id: ['id1', 'id3']}
-- h2 = {class: [{}, 'c2'], id: 'id2'}
-%span#main.content{h1, h2} hello
-HAML
-  end
-
   it 'strigify non-string classes' do
     expect(render_string('%span.foo{class: :bar} hello')).to eq("<span class='bar foo'>hello</span>\n")
     expect(render_string('%span.foo{class: 1} hello')).to eq("<span class='1 foo'>hello</span>\n")
   end
 
-  it 'remove duplicated classes' do
-    aggregate_failures do
-      expect(render_string('%span.foo{class: :foo}')).to eq("<span class='foo'></span>\n")
-      expect(render_string('%span.foo{class: "foo bar"}')).to eq("<span class='bar foo'></span>\n")
-      expect(render_string('%span.foo{class: %w[foo bar]}')).to eq("<span class='bar foo'></span>\n")
-    end
-    aggregate_failures do
-      expect(render_string("- v = :foo\n%span.foo{class: v}")).to eq("<span class='foo'></span>\n")
-      expect(render_string("- v = 'foo bar'\n%span.foo{class: v}")).to eq("<span class='bar foo'></span>\n")
-      expect(render_string("- v = %w[foo bar]\n%span.foo{class: v}")).to eq("<span class='bar foo'></span>\n")
-    end
-    aggregate_failures do
-      expect(render_string("- h = {class: :foo}\n%span.foo{h}")).to eq("<span class='foo'></span>\n")
-      expect(render_string("- h = {class: 'foo bar'}\n%span.foo{h}")).to eq("<span class='bar foo'></span>\n")
-      expect(render_string("- h = {class: %w[foo bar]}\n%span.foo{h}")).to eq("<span class='bar foo'></span>\n")
-    end
-  end
-
-  it 'skips empty array class' do
-    expect(render_string('%span{class: []}')).to eq("<span></span>\n")
-  end
-
-  it 'skips falsey array elements in class' do
-    expect(render_string('%span{class: [1, nil, false, true]}')).to eq("<span class='1 true'></span>\n")
-    expect(render_string("- v = [1, nil, false, true]\n%span{class: v}")).to eq("<span class='1 true'></span>\n")
-    expect(render_string("- h = { class: [1, nil, false, true] }\n%span{h}")).to eq("<span class='1 true'></span>\n")
-  end
-
-  it 'flattens array class' do
-    expect(render_string('%span{class: [1, [2]]}')).to eq("<span class='1 2'></span>\n")
-    expect(render_string("- v = [1, [2]]\n%span{class: v}")).to eq("<span class='1 2'></span>\n")
-    expect(render_string("- h = { class: [1, [2]] }\n%span{h}")).to eq("<span class='1 2'></span>\n")
-  end
-
   it 'strigify non-string ids' do
     expect(render_string('%span#foo{id: :bar} hello')).to eq("<span id='foo_bar'>hello</span>\n")
-  end
-
-  it 'skips empty array class' do
-    expect(render_string('%span{id: []}')).to eq("<span></span>\n")
-  end
-
-  it 'skips falsey array elements in id' do
-    expect(render_string('%span{id: [1, nil, false, true]}')).to eq("<span id='1_true'></span>\n")
-    expect(render_string("- v = [1, nil, false, true]\n%span{id: v}")).to eq("<span id='1_true'></span>\n")
-    expect(render_string("- h = { id: [1, nil, false, true] }\n%span{h}")).to eq("<span id='1_true'></span>\n")
-  end
-
-  it 'flattens array id' do
-    expect(render_string('%span{id: [1, [2]]}')).to eq("<span id='1_2'></span>\n")
-    expect(render_string("- v = [1, [2]]\n%span{id: v}")).to eq("<span id='1_2'></span>\n")
-    expect(render_string("- h = { id: [1, [2]] }\n%span{h}")).to eq("<span id='1_2'></span>\n")
   end
 
   it 'escapes' do
@@ -138,89 +75,11 @@ HAML
     end
   end
 
-  it 'renders nested attributes' do
-    expect(render_string(%q|%span{foo: {bar: 1+2}} hello|)).to eq(%Q|<span foo='{:bar=&gt;3}'>hello</span>\n|)
-  end
-
-  it 'renders code attributes' do
-    expect(render_string(<<HAML)).to eq(%Q|<span bar='{:hoge=&gt;:fuga}' baz foo='1'>hello</span>\n|)
-- attrs = { foo: 1, bar: { hoge: :fuga }, baz: true }
-%span{attrs} hello
-HAML
-  end
-
   it 'renders dstr attributes' do
     expect(render_string(<<HAML)).to eq(%Q|<span data='x{:foo=&gt;1}y'>hello</span>\n|)
 - data = { foo: 1 }
 %span{data: "x\#{data}y"} hello
 HAML
-  end
-
-  it 'renders nested dstr attributes' do
-    expect(render_string(<<'HAML')).to eq(%Q|<span foo='{:bar=&gt;&quot;x1y&quot;}'>hello</span>\n|)
-- data = { foo: 1 }
-%span{foo: {bar: "x#{1}y"}} hello
-HAML
-  end
-
-  it 'renders data-id and data-class (#38)' do
-    aggregate_failures do
-      expect(render_string('%span{data: {id: 1}}')).to eq("<span data-id='1'></span>\n")
-      expect(render_string('%span{data: {class: 1}}')).to eq("<span data-class='1'></span>\n")
-    end
-  end
-
-  it 'optimize send case' do
-    expect(render_string('%span{foo: {bar: 1+2}} hello')).to eq("<span foo='{:bar=&gt;3}'>hello</span>\n")
-  end
-
-  it 'merges static id' do
-    expect(render_string('#foo{id: "bar"} baz')).to eq("<div id='foo_bar'>baz</div>\n")
-    expect(render_string('#foo{id: %w[bar baz]} hoge')).to eq("<div id='foo_bar_baz'>hoge</div>\n")
-  end
-
-  it 'merges static class' do
-    expect(render_string('.foo{class: "bar"} baz')).to eq("<div class='bar foo'>baz</div>\n")
-    expect(render_string(<<'HAML')).to eq("<div class='bar foo'>baz</div>\n")
-- bar = 'bar'
-.foo{class: "#{bar}"} baz
-HAML
-  end
-
-  it 'converts underscore to hyphen in data attributes' do
-    expect(render_string("%span{data: {foo_bar: 'baz'}}")).to eq("<span data-foo-bar='baz'></span>\n")
-    expect(render_string("- h = {foo_bar: 'baz'}\n%span{data: h}")).to eq("<span data-foo-bar='baz'></span>\n")
-  end
-
-  context 'with data attributes' do
-    it 'renders nested attributes' do
-      expect(render_string(%q|%span{data: {foo: 1, bar: 'baz', :hoge => :fuga, k1: { k2: 'v3' }}} hello|)).to eq(%Q{<span data-bar='baz' data-foo='1' data-hoge='fuga' data-k1-k2='v3'>hello</span>\n})
-    end
-
-    it 'renders nested dynamic attributes' do
-      expect(render_string(%q|%span{data: {foo: "b#{'a'}r"}} hello|)).to eq(%Q{<span data-foo='bar'>hello</span>\n})
-    end
-
-    it 'renders nested attributes' do
-      expect(render_string(%q|%span{data: {foo: 1, bar: 2+3}} hello|)).to eq(%Q{<span data-bar='5' data-foo='1'>hello</span>\n})
-    end
-
-    it 'renders nested code attributes' do
-      expect(render_string(<<HAML)).to eq(%Q{<span data-bar='2' data-foo='1'>hello</span>\n})
-- data = { foo: 1, bar: 2 }
-%span{data: data} hello
-HAML
-    end
-
-    it 'skips falsey data attributes' do
-      expect(render_string('%span{data: { foo: nil }}')).to eq("<span></span>\n")
-      expect(render_string("- v = nil\n%span{data: { foo: v }}")).to eq("<span></span>\n")
-    end
-
-    it 'renders true data attributes' do
-      expect(render_string('%span{data: { foo: true }}')).to eq("<span data-foo></span>\n")
-      expect(render_string("- v = true\n%span{data: { foo: v }}")).to eq("<span data-foo></span>\n")
-    end
   end
 
   it 'renders __LINE__ correctly' do
