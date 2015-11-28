@@ -83,14 +83,12 @@ substitute_underscores(VALUE str)
 static int
 normalize_data_i2(VALUE key, VALUE value, VALUE ptr)
 {
-  if (RTEST(value)) {
-    struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
-    VALUE k = rb_str_dup(arg->key);
+  struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
+  VALUE k = rb_str_dup(arg->key);
 
-    rb_str_cat(k, "-", 1);
-    rb_str_append(k, key);
-    rb_hash_aset(arg->normalized, k, value);
-  }
+  rb_str_cat(k, "-", 1);
+  rb_str_append(k, key);
+  rb_hash_aset(arg->normalized, k, value);
   return ST_CONTINUE;
 }
 
@@ -107,11 +105,9 @@ normalize_data_i(VALUE key, VALUE value, VALUE normalized)
     arg.key = key;
     arg.normalized = normalized;
     rb_hash_foreach(normalize_data(value), FOREACH_FUNC(normalize_data_i2), (VALUE)(&arg));
-  } else if (RB_TYPE_P(value, T_TRUE)) {
-    /* Keep Qtrue value */
+  } else if (RB_TYPE_P(value, T_TRUE) || !RTEST(value)) {
+    /* Keep Qtrue and falsey value */
     rb_hash_aset(normalized, key, value);
-  } else if (!RTEST(value)) {
-    /* Delete falsey values */
   } else {
     rb_hash_aset(normalized, key, rb_convert_type(value, T_STRING, "String", "to_s"));
   }
@@ -157,10 +153,8 @@ normalize(VALUE hash)
       rb_hash_delete(hash, key);
       data = normalize_data(value);
       rb_hash_foreach(data, FOREACH_FUNC(put_data_attribute), hash);
-    } else if (RB_TYPE_P(value, T_TRUE)) {
-      /* Keep Qtrue value */
-    } else if (!RTEST(value)) {
-      rb_hash_delete(hash, key);
+    } else if (RB_TYPE_P(value, T_TRUE) || !RTEST(value)) {
+      /* Keep Qtrue and falsey value */
     } else {
       rb_hash_aset(hash, key, rb_convert_type(value, T_STRING, "String", "to_s"));
     }
@@ -226,6 +220,22 @@ join_id_attribute(VALUE attributes, VALUE key)
   }
 }
 
+static int
+delete_falsey_values_i(RB_UNUSED_VAR(VALUE key), VALUE value, RB_UNUSED_VAR(VALUE arg))
+{
+  if (RTEST(value)) {
+    return ST_CONTINUE;
+  } else {
+    return ST_DELETE;
+  }
+}
+
+static void
+delete_falsey_values(VALUE attributes)
+{
+  rb_hash_foreach(attributes, FOREACH_FUNC(delete_falsey_values_i), Qnil);
+}
+
 static VALUE
 merge(VALUE object_ref, int argc, VALUE *argv)
 {
@@ -247,6 +257,7 @@ merge(VALUE object_ref, int argc, VALUE *argv)
 
   join_class_attribute(attributes, class_str);
   join_id_attribute(attributes, id_str);
+  delete_falsey_values(attributes);
 
   return attributes;
 }

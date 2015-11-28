@@ -41,6 +41,14 @@ RSpec.describe 'Attributes rendering', type: :render do
     end
   end
 
+  it 'skips falsey values after merging attributes' do
+    expect(render_string(<<HAML)).to eq("<a></a>\n")
+- h1 = { foo: 'should be overwritten' }
+- h2 = { foo: nil }
+%a{h1, h2}
+HAML
+  end
+
   it 'escapes' do
     with_each_attribute_type(:foo, %q|"x\"y'z"|, text: 'hello') do |str|
       expect(render_string(str)).to eq(%Q{<span foo='x&quot;y&#39;z'>hello</span>\n})
