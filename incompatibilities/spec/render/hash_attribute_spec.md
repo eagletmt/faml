@@ -118,3 +118,24 @@
 
 ```
 
+# [./spec/render/hash_attribute_spec.rb:61](../../../spec/render/hash_attribute_spec.rb#L61)
+## Input
+```haml
+- h1 = { new: true }
+- h2 = { data: { old: true } }
+%a(data=h1){ h2 , data: { new: nil, old: false } }
+
+```
+
+## Faml, Haml
+```html
+<a></a>
+
+```
+
+## Hamlit
+```html
+<a data-old data='{:new=&gt;true}'></a>
+
+```
+

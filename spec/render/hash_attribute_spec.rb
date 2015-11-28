@@ -58,6 +58,14 @@ HAML
       expect(render_string("- v = nil\n%span{data: { foo: v }}")).to eq("<span></span>\n")
     end
 
+    it 'skips falsey data attributes after merging attributes' do
+      expect(render_string(<<HAML)).to eq("<a></a>\n")
+- h1 = { new: true }
+- h2 = { data: { old: true } }
+%a(data=h1){ h2 , data: { new: nil, old: false } }
+HAML
+    end
+
     it 'renders true data attributes' do
       expect(render_string('%span{data: { foo: true }}')).to eq("<span data-foo></span>\n")
       expect(render_string("- v = true\n%span{data: { foo: v }}")).to eq("<span data-foo></span>\n")
