@@ -1,4 +1,4 @@
-# [./spec/render/array_attribute_spec.rb:11](../../../spec/render/array_attribute_spec.rb#L11)
+# [./spec/render/array_attribute_spec.rb:15](../../../spec/render/array_attribute_spec.rb#L15)
 ## Input
 ```haml
 - h1 = {class: 'c1', id: ['id1', 'id3']}
@@ -19,7 +19,7 @@
 
 ```
 
-# [./spec/render/array_attribute_spec.rb:19](../../../spec/render/array_attribute_spec.rb#L19)
+# [./spec/render/array_attribute_spec.rb:23](../../../spec/render/array_attribute_spec.rb#L23)
 ## Input
 ```haml
 %span.foo{class: "foo bar"}
@@ -37,10 +37,10 @@
 
 ```
 
-# [./spec/render/array_attribute_spec.rb:19](../../../spec/render/array_attribute_spec.rb#L19)
+# [./spec/render/array_attribute_spec.rb:23](../../../spec/render/array_attribute_spec.rb#L23)
 ## Input
 ```haml
-- v = 'foo bar'
+- v = "foo bar"
 %span.foo{class: v}
 ```
 
@@ -56,10 +56,10 @@
 
 ```
 
-# [./spec/render/array_attribute_spec.rb:19](../../../spec/render/array_attribute_spec.rb#L19)
+# [./spec/render/array_attribute_spec.rb:23](../../../spec/render/array_attribute_spec.rb#L23)
 ## Input
 ```haml
-- h = {class: 'foo bar'}
+- h = {class: "foo bar"}
 %span.foo{h}
 ```
 
@@ -75,10 +75,48 @@
 
 ```
 
-# [./spec/render/array_attribute_spec.rb:37](../../../spec/render/array_attribute_spec.rb#L37)
+# [./spec/render/array_attribute_spec.rb:35](../../../spec/render/array_attribute_spec.rb#L35)
 ## Input
 ```haml
 %span{class: []}
+```
+
+## Faml
+```html
+<span></span>
+
+```
+
+## Haml, Hamlit
+```html
+<span class=''></span>
+
+```
+
+# [./spec/render/array_attribute_spec.rb:35](../../../spec/render/array_attribute_spec.rb#L35)
+## Input
+```haml
+- v = []
+%span{class: v}
+```
+
+## Faml
+```html
+<span></span>
+
+```
+
+## Haml, Hamlit
+```html
+<span class=''></span>
+
+```
+
+# [./spec/render/array_attribute_spec.rb:35](../../../spec/render/array_attribute_spec.rb#L35)
+## Input
+```haml
+- h = {class: []}
+%span{h}
 ```
 
 ## Faml
@@ -133,7 +171,7 @@
 # [./spec/render/array_attribute_spec.rb:41](../../../spec/render/array_attribute_spec.rb#L41)
 ## Input
 ```haml
-- h = { class: [1, nil, false, true] }
+- h = {class: [1, nil, false, true]}
 %span{h}
 ```
 
@@ -149,10 +187,48 @@
 
 ```
 
-# [./spec/render/array_attribute_spec.rb:63](../../../spec/render/array_attribute_spec.rb#L63)
+# [./spec/render/array_attribute_spec.rb:61](../../../spec/render/array_attribute_spec.rb#L61)
 ## Input
 ```haml
 %span{id: []}
+```
+
+## Faml
+```html
+<span></span>
+
+```
+
+## Haml, Hamlit
+```html
+<span id=''></span>
+
+```
+
+# [./spec/render/array_attribute_spec.rb:61](../../../spec/render/array_attribute_spec.rb#L61)
+## Input
+```haml
+- v = []
+%span{id: v}
+```
+
+## Faml
+```html
+<span></span>
+
+```
+
+## Haml, Hamlit
+```html
+<span id=''></span>
+
+```
+
+# [./spec/render/array_attribute_spec.rb:61](../../../spec/render/array_attribute_spec.rb#L61)
+## Input
+```haml
+- h = {id: []}
+%span{h}
 ```
 
 ## Faml
@@ -207,7 +283,7 @@
 # [./spec/render/array_attribute_spec.rb:67](../../../spec/render/array_attribute_spec.rb#L67)
 ## Input
 ```haml
-- h = { id: [1, nil, false, true] }
+- h = {id: [1, nil, false, true]}
 %span{h}
 ```
 

@@ -62,25 +62,7 @@
 
 ```
 
-# [./spec/render/hash_attribute_spec.rb:30](../../../spec/render/hash_attribute_spec.rb#L30)
-## Input
-```haml
-%span{foo: {bar: 1+2}} hello
-```
-
-## Faml
-```html
-<span foo='{:bar=&gt;3}'>hello</span>
-
-```
-
-## Haml, Hamlit
-```html
-<span foo-bar='3'>hello</span>
-
-```
-
-# [./spec/render/hash_attribute_spec.rb:40](../../../spec/render/hash_attribute_spec.rb#L40)
+# [./spec/render/hash_attribute_spec.rb:37](../../../spec/render/hash_attribute_spec.rb#L37)
 ## Input
 ```haml
 %span{data: {foo: 1, bar: 'baz', :hoge => :fuga, k1: { k2: 'v3' }}} hello
@@ -98,7 +80,7 @@
 
 ```
 
-# [./spec/render/hash_attribute_spec.rb:48](../../../spec/render/hash_attribute_spec.rb#L48)
+# [./spec/render/hash_attribute_spec.rb:45](../../../spec/render/hash_attribute_spec.rb#L45)
 ## Input
 ```haml
 %span{data: {foo: 1, bar: 2+3}} hello
@@ -116,7 +98,7 @@
 
 ```
 
-# [./spec/render/hash_attribute_spec.rb:52](../../../spec/render/hash_attribute_spec.rb#L52)
+# [./spec/render/hash_attribute_spec.rb:49](../../../spec/render/hash_attribute_spec.rb#L49)
 ## Input
 ```haml
 - data = { foo: 1, bar: 2 }

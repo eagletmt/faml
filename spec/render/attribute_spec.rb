@@ -30,37 +30,27 @@ RSpec.describe 'Attributes rendering', type: :render do
   end
 
   it 'renders boolean attributes' do
-    expect(render_string('%input{checked: true}')).to eq("<input checked>\n")
-    expect(render_string('%input{checked: false}')).to eq("<input>\n")
-    expect(render_string('%input{checked: nil}')).to eq("<input>\n")
-    expect(render_string('%input{checked: "a" == "a"}')).to eq("<input checked>\n")
-    expect(render_string('%input{checked: "a" != "a"}')).to eq("<input>\n")
-    expect(render_string("- x = nil\n%input{checked: x}")).to eq("<input>\n")
-    expect(render_string("- h = {checked: true}\n%input{h}")).to eq("<input checked>\n")
-    expect(render_string("- h = {checked: false}\n%input{h}")).to eq("<input>\n")
-    expect(render_string("- h = {checked: nil}\n%input{h}")).to eq("<input>\n")
-  end
-
-  it 'strigify non-string classes' do
-    expect(render_string('%span.foo{class: :bar} hello')).to eq("<span class='bar foo'>hello</span>\n")
-    expect(render_string('%span.foo{class: 1} hello')).to eq("<span class='1 foo'>hello</span>\n")
-  end
-
-  it 'strigify non-string ids' do
-    expect(render_string('%span#foo{id: :bar} hello')).to eq("<span id='foo_bar'>hello</span>\n")
+    with_each_attribute_type(:checked, 'true', tag: 'input') do |str|
+      expect(render_string(str)).to eq("<input checked>\n")
+    end
+    with_each_attribute_type(:checked, 'false', tag: 'input') do |str|
+      expect(render_string(str)).to eq("<input>\n")
+    end
+    with_each_attribute_type(:checked, 'nil', tag: 'input') do |str|
+      expect(render_string(str)).to eq("<input>\n")
+    end
   end
 
   it 'escapes' do
-    expect(render_string(%q|%span{class: "x\"y'z"} hello|)).to eq(%Q{<span class='x&quot;y&#39;z'>hello</span>\n})
+    with_each_attribute_type(:foo, %q|"x\"y'z"|, text: 'hello') do |str|
+      expect(render_string(str)).to eq(%Q{<span foo='x&quot;y&#39;z'>hello</span>\n})
+    end
   end
 
   it 'does not escape slash' do
-    expect(render_string(%q|%a{ href: 'http://example.com/' }|)).to eq(%Q{<a href='http://example.com/'></a>\n})
-    expect(render_string(%q|%a{ {}, href: 'http://example.com/' }|)).to eq(%Q{<a href='http://example.com/'></a>\n})
-  end
-
-  it 'renders only name if value is true' do
-    expect(render_string(%q|%span{foo: true, bar: 1} hello|)).to eq(%Q{<span bar='1' foo>hello</span>\n})
+    with_each_attribute_type(:href, "'http://example.com/'", tag: 'a') do |str|
+      expect(render_string(str)).to eq(%Q{<a href='http://example.com/'></a>\n})
+    end
   end
 
   it 'raises error when unparsable Ruby code is given' do
@@ -69,9 +59,9 @@ RSpec.describe 'Attributes rendering', type: :render do
 
   context 'with xhtml format' do
     it 'renders name="name" if value is true' do
-      expect(render_string(%q|%span{foo: true, bar: 1} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='foo'>hello</span>\n})
-      expect(render_string(%Q|- foo = true\n%span{foo: foo, bar: 1} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='foo'>hello</span>\n})
-      expect(render_string(%Q|- h = {foo: true, bar: 1}\n%span{h} hello|, format: :xhtml)).to eq(%Q{<span bar='1' foo='foo'>hello</span>\n})
+      with_each_attribute_type(:foo, 'true', text: 'hello') do |str|
+        expect(render_string(str, format: :xhtml)).to eq(%Q{<span foo='foo'>hello</span>\n})
+      end
     end
   end
 

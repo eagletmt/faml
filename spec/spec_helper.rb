@@ -30,6 +30,20 @@ module RenderSpecHelper
       eval(Faml::Engine.new(options).call(str))
     end
   end
+
+  def with_each_attribute_type(key, val, tag: 'span', text: '', klass: nil, id: nil)
+    if id
+      tag = "#{tag}##{id}"
+    end
+    if klass
+      tag = "#{tag}.#{klass}"
+    end
+    aggregate_failures do
+      yield("%#{tag}{#{key}: #{val}}#{text}")
+      yield("- v = #{val}\n%#{tag}{#{key}: v}#{text}")
+      yield("- h = {#{key}: #{val}}\n%#{tag}{h}#{text}")
+    end
+  end
 end
 
 module Faml

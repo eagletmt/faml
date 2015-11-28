@@ -27,13 +27,10 @@ HAML
     end
   end
 
-  it 'optimize send case' do
-    expect(render_string('%span{foo: {bar: 1+2}} hello')).to eq("<span foo='{:bar=&gt;3}'>hello</span>\n")
-  end
-
   it 'converts underscore to hyphen in data attributes' do
-    expect(render_string("%span{data: {foo_bar: 'baz'}}")).to eq("<span data-foo-bar='baz'></span>\n")
-    expect(render_string("- h = {foo_bar: 'baz'}\n%span{data: h}")).to eq("<span data-foo-bar='baz'></span>\n")
+    with_each_attribute_type(:data, '{foo_bar: "baz"}') do |str|
+      expect(render_string(str)).to eq("<span data-foo-bar='baz'></span>\n")
+    end
   end
 
   describe 'data attributes' do
