@@ -1,3 +1,11 @@
+## 0.6.5 (2015-11-28)
+- Delete falsey values after merging all attributes
+    - `%span(foo=true){foo: false}` now renders `<span></span>`, because old attributes have priority even if the value is falsey.
+    - https://github.com/eagletmt/faml/pull/43
+- Fix duplicated attribute in dynamic attribute
+    - `%span{foo: 1, 'foo' => 1+1}` now renders `<span foo='2'></span>` correctly
+    - https://github.com/eagletmt/faml/pull/45
+
 ## 0.6.4 (2015-11-28)
 - Flatten `id` and `class` attributes
     - https://github.com/eagletmt/faml/pull/41
