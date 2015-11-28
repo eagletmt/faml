@@ -49,6 +49,12 @@ RSpec.describe 'Attributes rendering', type: :render do
 HAML
   end
 
+  it 'renders duplicated keys correctly' do
+    expect(render_string("%span{foo: 1, 'foo' => 2}")).to eq("<span foo='2'></span>\n")
+    expect(render_string("- v = 2\n%span{foo: 1, 'foo' => v}")).to eq("<span foo='2'></span>\n")
+    expect(render_string("- h = {foo: 1, 'foo' => 2}\n%span{h}")).to eq("<span foo='2'></span>\n")
+  end
+
   it 'escapes' do
     with_each_attribute_type(:foo, %q|"x\"y'z"|, text: 'hello') do |str|
       expect(render_string(str)).to eq(%Q{<span foo='x&quot;y&#39;z'>hello</span>\n})
