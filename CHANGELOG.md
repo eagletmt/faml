@@ -1,3 +1,7 @@
+## 0.6.4 (2015-11-28)
+- Flatten `id` and `class` attributes
+    - https://github.com/eagletmt/faml/pull/41
+
 ## 0.6.3 (2015-11-22)
 - Remove duplicated class in Ruby attribute case
     - `%span.foo{h}` where `h = { class: 'foo bar' }` now renders `<span class='bar foo'></span>` .
