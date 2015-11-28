@@ -56,8 +56,6 @@ module Faml
       case
       when value == true
         [:haml, :attr, key, [:multi]]
-      when value == false || value.nil?
-        [:multi]
       else
         [:haml, :attr, key, [:static, Temple::Utils.escape_html(value)]]
       end
