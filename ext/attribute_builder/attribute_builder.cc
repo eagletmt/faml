@@ -1,5 +1,4 @@
 #include <ruby.h>
-#include <ruby/encoding.h>
 #include <ruby/version.h>
 #include "houdini.h"
 #include <algorithm>
@@ -9,10 +8,15 @@
 #include <string>
 #include <vector>
 
-#if (RUBY_API_VERSION_MAJOR > 2) || (RUBY_API_VERSION_MAJOR == 2 && RUBY_API_VERSION_MINOR >= 1)
-/* define nothing */
-#else
+/* faml requires Ruby >= 2.0.0 */
+/* RARRAY_AREF() is available since Ruby 2.1 */
+#if RUBY_API_VERSION_MAJOR == 2 && RUBY_API_VERSION_MINOR < 1
 # define RARRAY_AREF(a, i) RARRAY_PTR(a)[i]
+#endif
+/* rb_utf8_str_new() is available since Ruby 2.2 */
+#if RUBY_API_VERSION_MAJOR == 2 && RUBY_API_VERSION_MINOR < 2
+# include <ruby/encoding.h>
+# define rb_utf8_str_new(ptr, len) rb_enc_str_new(ptr, len, rb_utf8_encoding())
 #endif
 
 #define FOREACH_FUNC(func) reinterpret_cast<int (*)(ANYARGS)>(func)
@@ -82,7 +86,7 @@ to_value(const attributes_type& m)
 {
   VALUE h = rb_hash_new();
   for (attributes_type::const_iterator it = m.begin(); it != m.end(); ++it) {
-    VALUE k = rb_enc_str_new(it->first.data(), it->first.size(), rb_utf8_encoding());
+    VALUE k = rb_utf8_str_new(it->first.data(), it->first.size());
     VALUE v = Qnil;
     switch (it->second.type_) {
       case ATTRIBUTE_TYPE_TRUE:
@@ -92,7 +96,7 @@ to_value(const attributes_type& m)
         v = Qnil;
         break;
       case ATTRIBUTE_TYPE_VALUE:
-        v = rb_enc_str_new(it->second.str_.data(), it->second.str_.size(), rb_utf8_encoding());
+        v = rb_utf8_str_new(it->second.str_.data(), it->second.str_.size());
         break;
     }
     rb_hash_aset(h, k, v);
@@ -326,7 +330,7 @@ m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
     build_attribute(oss, attr_quote, is_html, it->first, it->second);
   }
 
-  return rb_enc_str_new(oss.str().data(), oss.str().size(), rb_utf8_encoding());
+  return rb_utf8_str_new(oss.str().data(), oss.str().size());
 }
 
 static VALUE
