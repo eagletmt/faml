@@ -17,40 +17,24 @@ static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_flatten;
 static ID id_id, id_class, id_underscore, id_hyphen, id_space, id_equal;
 
 static void
-concat_array_attribute(VALUE attributes, VALUE hash, VALUE key)
+concat_array_attribute(VALUE attributes, VALUE key, VALUE value)
 {
-  VALUE v;
+  VALUE ary;
 
-  Check_Type(hash, T_HASH);
-  v = rb_hash_delete(hash, key);
-  if (!NIL_P(v)) {
-    VALUE ary;
-
-    if (RB_TYPE_P(v, T_ARRAY)) {
-      v = rb_funcall(v, id_flatten, 0);
-    } else {
-      v = rb_Array(v);
-    }
-    ary = rb_hash_lookup(attributes, key);
-    Check_Type(ary, T_ARRAY);
-    rb_ary_concat(ary, v);
+  if (RB_TYPE_P(value, T_ARRAY)) {
+    value = rb_funcall(value, id_flatten, 0);
+  } else {
+    value = rb_Array(value);
   }
+  ary = rb_hash_lookup(attributes, key);
+  Check_Type(ary, T_ARRAY);
+  rb_ary_concat(ary, value);
 }
 
 static int
-stringify_keys_i(VALUE key, VALUE value, VALUE arg)
+cstr_equal(VALUE rbstr, const char *cstr, long len)
 {
-  key = rb_convert_type(key, T_STRING, "String", "to_s");
-  rb_hash_aset(arg, key, value);
-  return ST_CONTINUE;
-}
-
-static VALUE
-stringify_keys(VALUE hash)
-{
-  VALUE h = rb_hash_new();
-  rb_hash_foreach(hash, FOREACH_FUNC(stringify_keys_i), h);
-  return h;
+  return RSTRING_LEN(rbstr) == len && memcmp(RSTRING_PTR(rbstr), cstr, len) == 0;
 }
 
 struct normalize_data_i2_arg {
@@ -135,43 +119,31 @@ put_data_attribute(VALUE key, VALUE val, VALUE hash)
   return ST_CONTINUE;
 }
 
-static void
-normalize(VALUE hash)
+static int
+merge_one_i(VALUE key, VALUE value, VALUE attributes)
 {
-  VALUE keys = rb_funcall(hash, id_keys, 0);
-  const long len = RARRAY_LEN(keys);
-  long i;
-  for (i = 0; i < len; i++) {
-    VALUE key = RARRAY_AREF(keys, i);
-    VALUE value = rb_hash_lookup(hash, key);
-
-    /* key must be String because it is already stringified by stringify_keys */
-    Check_Type(key, T_STRING);
-    if (RB_TYPE_P(value, T_HASH) && RSTRING_LEN(key) == 4 && memcmp(RSTRING_PTR(key), "data", 4) == 0) {
-      VALUE data;
-
-      rb_hash_delete(hash, key);
-      data = normalize_data(value);
-      rb_hash_foreach(data, FOREACH_FUNC(put_data_attribute), hash);
-    } else if (RB_TYPE_P(value, T_TRUE) || !RTEST(value)) {
-      /* Keep Qtrue and falsey value */
-    } else {
-      rb_hash_aset(hash, key, rb_convert_type(value, T_STRING, "String", "to_s"));
-    }
+  key = rb_convert_type(key, T_STRING, "String", "to_s");
+  if (cstr_equal(key, "class", 5)) {
+    concat_array_attribute(attributes, key, value);
+  } else if (cstr_equal(key, "id", 2)) {
+    concat_array_attribute(attributes, key, value);
+  } else if (cstr_equal(key, "data", 4) && RB_TYPE_P(value, T_HASH)) {
+    VALUE data = normalize_data(value);
+    rb_hash_foreach(data, FOREACH_FUNC(put_data_attribute), attributes);
+  } else if (RB_TYPE_P(value, T_TRUE) || !RTEST(value)) {
+    /* Keep Qtrue, Qfalse and Qnil */
+    rb_hash_aset(attributes, key, value);
+  } else {
+    rb_hash_aset(attributes, key, rb_convert_type(value, T_STRING, "String", "to_s"));
   }
+  return ST_CONTINUE;
 }
 
 static void
-merge_one(VALUE attributes, VALUE arg)
+merge_one(VALUE attributes, VALUE h)
 {
-  VALUE h;
-
-  Check_Type(arg, T_HASH);
-  h = stringify_keys(arg);
-  concat_array_attribute(attributes, h, rb_const_get(rb_mAttributeBuilder, id_class));
-  concat_array_attribute(attributes, h, rb_const_get(rb_mAttributeBuilder, id_id));
-  normalize(h);
-  rb_funcall(attributes, id_merge_bang, 1, h);
+  Check_Type(h, T_HASH);
+  rb_hash_foreach(h, FOREACH_FUNC(merge_one_i), attributes);
 }
 
 static void
