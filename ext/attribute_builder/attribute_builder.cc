@@ -22,6 +22,12 @@ VALUE rb_mAttributeBuilder;
 static ID id_flatten;
 static ID id_hyphen;
 
+static inline std::string
+string_from_value(VALUE v)
+{
+  return std::string(RSTRING_PTR(v), RSTRING_LEN(v));
+}
+
 enum attribute_value_type
 {
   ATTRIBUTE_TYPE_TRUE,
@@ -46,7 +52,7 @@ struct attribute_value
       return attribute_value(ATTRIBUTE_TYPE_FALSE);
     } else {
       value = rb_convert_type(value, T_STRING, "String", "to_s");
-      return attribute_value(RSTRING_PTR(value), RSTRING_LEN(value));
+      return attribute_value(string_from_value(value));
     }
   }
 };
@@ -180,7 +186,7 @@ static int
 put_data_attribute(VALUE key, VALUE val, VALUE arg)
 {
   attribute_holder *attributes = reinterpret_cast<attribute_holder *>(arg);
-  attributes->insert("data-" + std::string(RSTRING_PTR(key), RSTRING_LEN(key)), attribute_value::from_value(val));
+  attributes->insert("data-" + string_from_value(key), attribute_value::from_value(val));
   return ST_CONTINUE;
 }
 
@@ -190,7 +196,7 @@ merge_one_i(VALUE key, VALUE value, VALUE arg)
   attribute_holder *attributes = reinterpret_cast<attribute_holder *>(arg);
 
   key = rb_convert_type(key, T_STRING, "String", "to_s");
-  const std::string key_(RSTRING_PTR(key), RSTRING_LEN(key));
+  const std::string key_ = string_from_value(key);
   if (key_ == "class") {
     concat_array_attribute(attributes->classes_, value);
   } else if (key_ == "id") {
@@ -354,7 +360,7 @@ m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
 
   rb_check_arity(argc, 3, UNLIMITED_ARGUMENTS);
   Check_Type(argv[0], T_STRING);
-  const std::string attr_quote(RSTRING_PTR(argv[0]), RSTRING_LEN(argv[0]));
+  const std::string attr_quote = string_from_value(argv[0]);
   is_html = RTEST(argv[1]);
   object_ref = argv[2];
   const attributes_type attributes = merge(object_ref, argc-3, argv+3);
