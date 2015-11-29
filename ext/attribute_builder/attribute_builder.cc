@@ -2,6 +2,12 @@
 #include <ruby/encoding.h>
 #include <ruby/version.h>
 #include "houdini.h"
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #if (RUBY_API_VERSION_MAJOR > 2) || (RUBY_API_VERSION_MAJOR == 2 && RUBY_API_VERSION_MINOR >= 1)
 /* define nothing */
@@ -13,28 +19,89 @@
 #define FOREACH_FUNC(func) ((int (*)(ANYARGS))(func))
 
 VALUE rb_mAttributeBuilder;
-static ID id_keys, id_sort_bang, id_uniq_bang, id_merge_bang, id_flatten;
-static ID id_id, id_class, id_underscore, id_hyphen, id_space, id_equal;
+static ID id_flatten;
+static ID id_hyphen;
+
+enum attribute_value_type
+{
+  ATTRIBUTE_TYPE_TRUE,
+  ATTRIBUTE_TYPE_FALSE,
+  ATTRIBUTE_TYPE_VALUE,
+};
+
+struct attribute_value
+{
+  attribute_value_type type_;
+  std::string str_;
+
+  attribute_value(attribute_value_type type) : type_(type) {}
+  attribute_value(const char *cstr, long len) : type_(ATTRIBUTE_TYPE_VALUE), str_(cstr, len) {}
+  attribute_value(const std::string& str) : type_(ATTRIBUTE_TYPE_VALUE), str_(str) {}
+
+  static attribute_value from_value(VALUE value)
+  {
+    if (RB_TYPE_P(value, T_TRUE)) {
+      return attribute_value(ATTRIBUTE_TYPE_TRUE);
+    } else if (!RTEST(value)) {
+      return attribute_value(ATTRIBUTE_TYPE_FALSE);
+    } else {
+      value = rb_convert_type(value, T_STRING, "String", "to_s");
+      return attribute_value(RSTRING_PTR(value), RSTRING_LEN(value));
+    }
+  }
+};
+
+typedef std::map<std::string, attribute_value> attributes_type;
+
+struct attribute_holder
+{
+  std::vector<attribute_value> ids_, classes_;
+  attributes_type m_;
+
+  void insert(const std::string& key, const attribute_value& value)
+  {
+    const std::pair<attributes_type::iterator, bool> r = m_.insert(std::make_pair(key, value));
+    if (!r.second) {
+      r.first->second = value;
+    }
+  }
+};
+
+static VALUE
+to_value(const attributes_type& m)
+{
+  VALUE h = rb_hash_new();
+  for (attributes_type::const_iterator it = m.begin(); it != m.end(); ++it) {
+    VALUE k = rb_enc_str_new(it->first.data(), it->first.size(), rb_utf8_encoding());
+    VALUE v = Qnil;
+    switch (it->second.type_) {
+      case ATTRIBUTE_TYPE_TRUE:
+        v = Qtrue;
+        break;
+      case ATTRIBUTE_TYPE_FALSE:
+        v = Qnil;
+        break;
+      case ATTRIBUTE_TYPE_VALUE:
+        v = rb_enc_str_new(it->second.str_.data(), it->second.str_.size(), rb_utf8_encoding());
+        break;
+    }
+    rb_hash_aset(h, k, v);
+  }
+  return h;
+}
 
 static void
-concat_array_attribute(VALUE attributes, VALUE key, VALUE value)
+concat_array_attribute(std::vector<attribute_value>& ary, VALUE value)
 {
-  VALUE ary;
-
   if (RB_TYPE_P(value, T_ARRAY)) {
     value = rb_funcall(value, id_flatten, 0);
   } else {
     value = rb_Array(value);
   }
-  ary = rb_hash_lookup(attributes, key);
-  Check_Type(ary, T_ARRAY);
-  rb_ary_concat(ary, value);
-}
-
-static int
-cstr_equal(VALUE rbstr, const char *cstr, long len)
-{
-  return RSTRING_LEN(rbstr) == len && memcmp(RSTRING_PTR(rbstr), cstr, len) == 0;
+  const long len = RARRAY_LEN(value);
+  for (long i = 0; i < len; i++) {
+    ary.push_back(attribute_value::from_value(RARRAY_AREF(value, i)));
+  }
 }
 
 struct normalize_data_i2_arg {
@@ -110,115 +177,131 @@ normalize_data(VALUE data)
 }
 
 static int
-put_data_attribute(VALUE key, VALUE val, VALUE hash)
+put_data_attribute(VALUE key, VALUE val, VALUE arg)
 {
-  VALUE k = rb_str_buf_new(5 + RSTRING_LEN(key));
-  rb_str_buf_cat(k, "data-", 5);
-  rb_str_buf_append(k, key);
-  rb_hash_aset(hash, k, val);
+  attribute_holder *attributes = (attribute_holder *)arg;
+  attributes->insert("data-" + std::string(RSTRING_PTR(key), RSTRING_LEN(key)), attribute_value::from_value(val));
   return ST_CONTINUE;
 }
 
 static int
-merge_one_i(VALUE key, VALUE value, VALUE attributes)
+merge_one_i(VALUE key, VALUE value, VALUE arg)
 {
+  attribute_holder *attributes = (attribute_holder *)arg;
+
   key = rb_convert_type(key, T_STRING, "String", "to_s");
-  if (cstr_equal(key, "class", 5)) {
-    concat_array_attribute(attributes, key, value);
-  } else if (cstr_equal(key, "id", 2)) {
-    concat_array_attribute(attributes, key, value);
-  } else if (cstr_equal(key, "data", 4) && RB_TYPE_P(value, T_HASH)) {
+  const std::string key_(RSTRING_PTR(key), RSTRING_LEN(key));
+  if (key_ == "class") {
+    concat_array_attribute(attributes->classes_, value);
+  } else if (key_ == "id") {
+    concat_array_attribute(attributes->ids_, value);
+  } else if (key_ == "data" && RB_TYPE_P(value, T_HASH)) {
     VALUE data = normalize_data(value);
-    rb_hash_foreach(data, FOREACH_FUNC(put_data_attribute), attributes);
-  } else if (RB_TYPE_P(value, T_TRUE) || !RTEST(value)) {
-    /* Keep Qtrue, Qfalse and Qnil */
-    rb_hash_aset(attributes, key, value);
+    rb_hash_foreach(data, FOREACH_FUNC(put_data_attribute), arg);
   } else {
-    rb_hash_aset(attributes, key, rb_convert_type(value, T_STRING, "String", "to_s"));
+    attributes->insert(key_, attribute_value::from_value(value));
   }
   return ST_CONTINUE;
 }
 
 static void
-merge_one(VALUE attributes, VALUE h)
+merge_one(attribute_holder& attributes, VALUE h)
 {
   Check_Type(h, T_HASH);
-  rb_hash_foreach(h, FOREACH_FUNC(merge_one_i), attributes);
+  rb_hash_foreach(h, FOREACH_FUNC(merge_one_i), (VALUE)&attributes);
 }
 
 static void
-join_class_attribute(VALUE attributes, VALUE key)
+join_class_attribute(attribute_holder& attributes)
 {
-  long len;
-  VALUE val;
+  const std::vector<attribute_value>& classes = attributes.classes_;
+  std::vector<std::string> ary;
 
-  val = rb_hash_delete(attributes, key);
-  Check_Type(val, T_ARRAY);
-  len = RARRAY_LEN(val);
-  if (len != 0) {
-    long i;
-    VALUE ary = rb_ary_new_capa(len);
-    for (i = 0; i < len; i++) {
-      VALUE v = RARRAY_AREF(val, i);
-      if (RTEST(v)) {
-        rb_ary_concat(ary, rb_str_split(rb_convert_type(v, T_STRING, "String", "to_s"), " "));
-      }
+  for (std::vector<attribute_value>::const_iterator it = classes.begin(); it != classes.end(); ++it) {
+    switch (it->type_) {
+      case ATTRIBUTE_TYPE_FALSE:
+        break;
+      case ATTRIBUTE_TYPE_TRUE:
+        ary.push_back("true");
+        break;
+      case ATTRIBUTE_TYPE_VALUE:
+        size_t prev = 0, pos;
+        while ((pos = it->str_.find_first_of(' ', prev)) != std::string::npos) {
+          if (pos != prev) {
+            ary.push_back(std::string(it->str_, prev, pos - prev));
+          }
+          prev = pos+1;
+        }
+        ary.push_back(std::string(it->str_, prev, it->str_.size() - prev));
+        break;
     }
-    rb_funcall(ary, id_sort_bang, 0);
-    rb_funcall(ary, id_uniq_bang, 0);
-    rb_hash_aset(attributes, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_space)));
   }
-}
+  if (ary.empty()) {
+    return;
+  }
 
-static void
-join_id_attribute(VALUE attributes, VALUE key)
-{
-  long len;
-  VALUE val;
-
-  val = rb_hash_delete(attributes, key);
-  Check_Type(val, T_ARRAY);
-  len = RARRAY_LEN(val);
-  if (len != 0) {
-    long i;
-    VALUE ary = rb_ary_new_capa(len);
-    for (i = 0; i < len; i++) {
-      VALUE v = RARRAY_AREF(val, i);
-      if (RTEST(v)) {
-        rb_ary_push(ary, rb_convert_type(v, T_STRING, "String", "to_s"));
-      }
+  std::sort(ary.begin(), ary.end());
+  ary.erase(std::unique(ary.begin(), ary.end()), ary.end());
+  std::ostringstream oss;
+  for (std::vector<std::string>::const_iterator it = ary.begin(); it != ary.end(); ++it) {
+    if (it != ary.begin()) {
+      oss << ' ';
     }
-    rb_hash_aset(attributes, key, rb_ary_join(ary, rb_const_get(rb_mAttributeBuilder, id_underscore)));
+    oss << *it;
   }
-}
-
-static int
-delete_falsey_values_i(RB_UNUSED_VAR(VALUE key), VALUE value, RB_UNUSED_VAR(VALUE arg))
-{
-  if (RTEST(value)) {
-    return ST_CONTINUE;
-  } else {
-    return ST_DELETE;
-  }
+  attributes.insert("class", attribute_value(oss.str()));
 }
 
 static void
-delete_falsey_values(VALUE attributes)
+join_id_attribute(attribute_holder& attributes)
 {
-  rb_hash_foreach(attributes, FOREACH_FUNC(delete_falsey_values_i), Qnil);
+  const std::vector<attribute_value>& ids = attributes.ids_;
+  std::ostringstream oss;
+
+  for (std::vector<attribute_value>::const_iterator it = ids.begin(); it != ids.end(); ++it) {
+    switch (it->type_) {
+      case ATTRIBUTE_TYPE_FALSE:
+        break;
+      case ATTRIBUTE_TYPE_TRUE:
+        if (!oss.str().empty()) {
+          oss << '_';
+        }
+        oss << "true";
+        break;
+      case ATTRIBUTE_TYPE_VALUE:
+        if (!oss.str().empty()) {
+          oss << '_';
+        }
+        oss << it->str_;
+        break;
+    }
+  }
+  if (oss.str().empty()) {
+    return;
+  }
+
+  attributes.insert("id", attribute_value(oss.str()));
 }
 
-static VALUE
+static void
+delete_falsey_values(attributes_type& m)
+{
+  for (attributes_type::iterator it = m.begin(); it != m.end();) {
+    if (it->second.type_ == ATTRIBUTE_TYPE_FALSE) {
+      attributes_type::iterator jt = it;
+      ++it;
+      m.erase(jt);
+    } else {
+      ++it;
+    }
+  }
+}
+
+static attributes_type
 merge(VALUE object_ref, int argc, VALUE *argv)
 {
-  VALUE attributes, id_str, class_str;
   int i;
-
-  attributes = rb_hash_new();
-  id_str = rb_const_get(rb_mAttributeBuilder, id_id);
-  class_str = rb_const_get(rb_mAttributeBuilder, id_class);
-  rb_hash_aset(attributes, id_str, rb_ary_new());
-  rb_hash_aset(attributes, class_str, rb_ary_new());
+  attribute_holder attributes;
 
   for (i = 0; i < argc; i++) {
     merge_one(attributes, argv[i]);
@@ -227,71 +310,61 @@ merge(VALUE object_ref, int argc, VALUE *argv)
     merge_one(attributes, object_ref);
   }
 
-  join_class_attribute(attributes, class_str);
-  join_id_attribute(attributes, id_str);
-  delete_falsey_values(attributes);
+  join_class_attribute(attributes);
+  join_id_attribute(attributes);
+  delete_falsey_values(attributes.m_);
 
-  return attributes;
+  return attributes.m_;
 }
 
 static void
-put_attribute(VALUE buf, VALUE attr_quote, VALUE key, VALUE value)
+put_attribute(std::ostringstream& oss, const std::string& attr_quote, const std::string& key, const std::string& value)
 {
+  oss << " " << key << "=" << attr_quote;
+
   gh_buf ob = GH_BUF_INIT;
-
-  Check_Type(value, T_STRING);
-  if (houdini_escape_html0(&ob, (const uint8_t *)RSTRING_PTR(value), RSTRING_LEN(value), 0)) {
-    value = rb_enc_str_new(ob.ptr, ob.size, rb_utf8_encoding());
+  if (houdini_escape_html0(&ob, (const uint8_t *)value.data(), value.size(), 0)) {
+    oss << std::string(ob.ptr, ob.size);
     gh_buf_free(&ob);
+  } else {
+    oss << value;
   }
-
-  rb_ary_push(buf, rb_const_get(rb_mAttributeBuilder, id_space));
-  rb_ary_push(buf, key);
-  rb_ary_push(buf, rb_const_get(rb_mAttributeBuilder, id_equal));
-  rb_ary_push(buf, attr_quote);
-  rb_ary_push(buf, value);
-  rb_ary_push(buf, attr_quote);
+  oss << attr_quote;
 }
 
 static void
-build_attribute(VALUE buf, VALUE attr_quote, int is_html, VALUE key, VALUE value)
+build_attribute(std::ostringstream& oss, const std::string& attr_quote, int is_html, const std::string& key, const attribute_value& value)
 {
-  Check_Type(key, T_STRING);
-  if (RB_TYPE_P(value, T_TRUE)) {
+  if (value.type_ == ATTRIBUTE_TYPE_TRUE) {
     if (is_html) {
-      rb_ary_push(buf, rb_const_get(rb_mAttributeBuilder, id_space));
-      rb_ary_push(buf, key);
+      oss << ' ' << key;
     } else {
-      put_attribute(buf, attr_quote, key, key);
+      put_attribute(oss, attr_quote, key, key);
     }
   } else {
-    put_attribute(buf, attr_quote, key, value);
+    put_attribute(oss, attr_quote, key, value.str_);
   }
 }
 
 static VALUE
 m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
 {
-  VALUE attr_quote, object_ref, attributes, keys, buf;
+  VALUE object_ref;
   int is_html;
-  long len, i;
 
   rb_check_arity(argc, 3, UNLIMITED_ARGUMENTS);
-  attr_quote = argv[0];
+  Check_Type(argv[0], T_STRING);
+  const std::string attr_quote(RSTRING_PTR(argv[0]), RSTRING_LEN(argv[0]));
   is_html = RTEST(argv[1]);
   object_ref = argv[2];
-  attributes = merge(object_ref, argc-3, argv+3);
+  const attributes_type attributes = merge(object_ref, argc-3, argv+3);
 
-  keys = rb_funcall(attributes, id_keys, 0);
-  rb_funcall(keys, id_sort_bang, 0);
-  len = RARRAY_LEN(keys);
-  buf = rb_ary_new();
-  for (i = 0; i < len; i++) {
-    VALUE k = RARRAY_AREF(keys, i);
-    build_attribute(buf, attr_quote, is_html, k, rb_hash_lookup(attributes, k));
+  std::ostringstream oss;
+  for (attributes_type::const_iterator it = attributes.begin(); it != attributes.end(); ++it) {
+    build_attribute(oss, attr_quote, is_html, it->first, it->second);
   }
 
-  return rb_ary_join(buf, Qnil);
+  return rb_enc_str_new(oss.str().data(), oss.str().size(), rb_utf8_encoding());
 }
 
 static VALUE
@@ -304,7 +377,7 @@ static VALUE
 m_merge(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
 {
   rb_check_arity(argc, 1, UNLIMITED_ARGUMENTS);
-  return merge(argv[0], argc-1, argv+1);
+  return to_value(merge(argv[0], argc-1, argv+1));
 }
 
 extern "C" {
@@ -317,24 +390,8 @@ Init_attribute_builder(void)
   rb_define_singleton_method(rb_mAttributeBuilder, "normalize_data", RUBY_METHOD_FUNC(m_normalize_data), 1);
   rb_define_singleton_method(rb_mAttributeBuilder, "merge", RUBY_METHOD_FUNC(m_merge), -1);
 
-  id_keys = rb_intern("keys");
-  id_sort_bang = rb_intern("sort!");
-  id_uniq_bang = rb_intern("uniq!");
-  id_merge_bang = rb_intern("merge!");
   id_flatten = rb_intern("flatten");
-
-  id_id = rb_intern("ID");
-  id_class = rb_intern("CLASS");
-  id_underscore = rb_intern("UNDERSCORE");
   id_hyphen = rb_intern("HYPHEN");
-  id_space = rb_intern("SPACE");
-  id_equal = rb_intern("EQUAL");
-
-  rb_const_set(rb_mAttributeBuilder, id_id, rb_obj_freeze(rb_str_new_cstr("id")));
-  rb_const_set(rb_mAttributeBuilder, id_class, rb_obj_freeze(rb_str_new_cstr("class")));
-  rb_const_set(rb_mAttributeBuilder, id_underscore, rb_obj_freeze(rb_str_new_cstr("_")));
   rb_const_set(rb_mAttributeBuilder, id_hyphen, rb_obj_freeze(rb_str_new_cstr("-")));
-  rb_const_set(rb_mAttributeBuilder, id_space, rb_obj_freeze(rb_str_new_cstr(" ")));
-  rb_const_set(rb_mAttributeBuilder, id_equal, rb_obj_freeze(rb_str_new_cstr("=")));
 }
 };
