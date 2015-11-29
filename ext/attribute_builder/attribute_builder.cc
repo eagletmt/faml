@@ -2,7 +2,6 @@
 #include <ruby/version.h>
 #include "houdini.h"
 #include <algorithm>
-#include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
