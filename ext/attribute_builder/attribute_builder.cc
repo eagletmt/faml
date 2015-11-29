@@ -16,7 +16,7 @@
 # define rb_ary_new_capa rb_ary_new2
 #endif
 
-#define FOREACH_FUNC(func) ((int (*)(ANYARGS))(func))
+#define FOREACH_FUNC(func) reinterpret_cast<int (*)(ANYARGS)>(func)
 
 VALUE rb_mAttributeBuilder;
 static ID id_flatten;
@@ -155,7 +155,7 @@ normalize_data_i(VALUE key, VALUE value, VALUE normalized)
     struct normalize_data_i2_arg arg;
     arg.key = key;
     arg.normalized = normalized;
-    rb_hash_foreach(normalize_data(value), FOREACH_FUNC(normalize_data_i2), (VALUE)(&arg));
+    rb_hash_foreach(normalize_data(value), FOREACH_FUNC(normalize_data_i2), reinterpret_cast<VALUE>(&arg));
   } else if (RB_TYPE_P(value, T_TRUE) || !RTEST(value)) {
     /* Keep Qtrue and falsey value */
     rb_hash_aset(normalized, key, value);
@@ -179,7 +179,7 @@ normalize_data(VALUE data)
 static int
 put_data_attribute(VALUE key, VALUE val, VALUE arg)
 {
-  attribute_holder *attributes = (attribute_holder *)arg;
+  attribute_holder *attributes = reinterpret_cast<attribute_holder *>(arg);
   attributes->insert("data-" + std::string(RSTRING_PTR(key), RSTRING_LEN(key)), attribute_value::from_value(val));
   return ST_CONTINUE;
 }
@@ -187,7 +187,7 @@ put_data_attribute(VALUE key, VALUE val, VALUE arg)
 static int
 merge_one_i(VALUE key, VALUE value, VALUE arg)
 {
-  attribute_holder *attributes = (attribute_holder *)arg;
+  attribute_holder *attributes = reinterpret_cast<attribute_holder *>(arg);
 
   key = rb_convert_type(key, T_STRING, "String", "to_s");
   const std::string key_(RSTRING_PTR(key), RSTRING_LEN(key));
@@ -208,7 +208,7 @@ static void
 merge_one(attribute_holder& attributes, VALUE h)
 {
   Check_Type(h, T_HASH);
-  rb_hash_foreach(h, FOREACH_FUNC(merge_one_i), (VALUE)&attributes);
+  rb_hash_foreach(h, FOREACH_FUNC(merge_one_i), reinterpret_cast<VALUE>(&attributes));
 }
 
 static void
