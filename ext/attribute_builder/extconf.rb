@@ -2,10 +2,11 @@
 require 'mkmf'
 
 $CFLAGS << ' -Wall -W'
+$CXXFLAGS << ' -Wall -W -std=c++03'
 houdini_dir = File.expand_path('../../vendor/houdini', __dir__)
 $INCFLAGS << " -I#{houdini_dir}"
 
-$srcs = %w[attribute_builder.c]
+$srcs = %w[attribute_builder.cc]
 %w[
   buffer.c
   houdini_html_e.c
