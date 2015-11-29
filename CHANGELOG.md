@@ -1,3 +1,7 @@
+## 0.7.0 (2015-11-30)
+- Rewrite AttributeBuilder in C++
+    - It improves performance,  memory usage, and readability
+
 ## 0.6.5 (2015-11-28)
 - Delete falsey values after merging all attributes
     - `%span(foo=true){foo: false}` now renders `<span></span>`, because old attributes have priority even if the value is falsey.
