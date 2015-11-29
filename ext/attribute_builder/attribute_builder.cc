@@ -59,17 +59,22 @@ struct attribute_value
 
 typedef std::map<std::string, attribute_value> attributes_type;
 
+void upsert_attribute(attributes_type& m, const std::string& key, const attribute_value& value)
+{
+  const std::pair<attributes_type::iterator, bool> r = m.insert(std::make_pair(key, value));
+  if (!r.second) {
+    r.first->second = value;
+  }
+}
+
 struct attribute_holder
 {
   std::vector<attribute_value> ids_, classes_;
   attributes_type m_;
 
-  void insert(const std::string& key, const attribute_value& value)
+  inline void upsert(const std::string& key, const attribute_value& value)
   {
-    const std::pair<attributes_type::iterator, bool> r = m_.insert(std::make_pair(key, value));
-    if (!r.second) {
-      r.first->second = value;
-    }
+    return upsert_attribute(m_, key, value);
   }
 };
 
@@ -110,84 +115,34 @@ concat_array_attribute(std::vector<attribute_value>& ary, VALUE value)
   }
 }
 
-struct normalize_data_i2_arg {
-  VALUE key, normalized;
-};
-
-static VALUE
-substitute_underscores(VALUE str)
-{
-  int frozen;
-  long i, len;
-
-  /* gsub('_', '-') */
-  Check_Type(str, T_STRING);
-  len = RSTRING_LEN(str);
-  frozen = OBJ_FROZEN(str);
-  for (i = 0; i < len; i++) {
-    if (RSTRING_PTR(str)[i] == '_') {
-      if (frozen) {
-        str = rb_str_dup(str);
-        frozen = 0;
-      }
-      rb_str_update(str, i, 1, rb_const_get(rb_mAttributeBuilder, id_hyphen));
-    }
-  }
-
-  return str;
-}
+static attributes_type normalize_data(VALUE data);
 
 static int
-normalize_data_i2(VALUE key, VALUE value, VALUE ptr)
+normalize_data_i(VALUE key, VALUE value, VALUE arg)
 {
-  struct normalize_data_i2_arg *arg = (struct normalize_data_i2_arg *)ptr;
-  VALUE k = rb_str_dup(arg->key);
-
-  rb_str_cat(k, "-", 1);
-  rb_str_append(k, key);
-  rb_hash_aset(arg->normalized, k, value);
-  return ST_CONTINUE;
-}
-
-static VALUE normalize_data(VALUE data);
-
-static int
-normalize_data_i(VALUE key, VALUE value, VALUE normalized)
-{
+  attributes_type *normalized = reinterpret_cast<attributes_type *>(arg);
   key = rb_convert_type(key, T_STRING, "String", "to_s");
-  key = substitute_underscores(key);
+  std::string key_ = string_from_value(key);
+  std::replace(key_.begin(), key_.end(), '_', '-');
 
   if (RB_TYPE_P(value, T_HASH)) {
-    struct normalize_data_i2_arg arg;
-    arg.key = key;
-    arg.normalized = normalized;
-    rb_hash_foreach(normalize_data(value), FOREACH_FUNC(normalize_data_i2), reinterpret_cast<VALUE>(&arg));
-  } else if (RB_TYPE_P(value, T_TRUE) || !RTEST(value)) {
-    /* Keep Qtrue and falsey value */
-    rb_hash_aset(normalized, key, value);
+    const attributes_type sub = normalize_data(value);
+    for (attributes_type::const_iterator it = sub.begin(); it != sub.end(); ++it) {
+      upsert_attribute(*normalized, key_ + "-" + it->first, it->second);
+    }
   } else {
-    rb_hash_aset(normalized, key, rb_convert_type(value, T_STRING, "String", "to_s"));
+    upsert_attribute(*normalized, key_, attribute_value::from_value(value));
   }
   return ST_CONTINUE;
 }
 
-static VALUE
+static attributes_type
 normalize_data(VALUE data)
 {
-  VALUE normalized;
-
   Check_Type(data, T_HASH);
-  normalized = rb_hash_new();
-  rb_hash_foreach(data, FOREACH_FUNC(normalize_data_i), normalized);
-  return normalized;
-}
-
-static int
-put_data_attribute(VALUE key, VALUE val, VALUE arg)
-{
-  attribute_holder *attributes = reinterpret_cast<attribute_holder *>(arg);
-  attributes->insert("data-" + string_from_value(key), attribute_value::from_value(val));
-  return ST_CONTINUE;
+  attributes_type m;
+  rb_hash_foreach(data, FOREACH_FUNC(normalize_data_i), reinterpret_cast<VALUE>(&m));
+  return m;
 }
 
 static int
@@ -202,10 +157,12 @@ merge_one_i(VALUE key, VALUE value, VALUE arg)
   } else if (key_ == "id") {
     concat_array_attribute(attributes->ids_, value);
   } else if (key_ == "data" && RB_TYPE_P(value, T_HASH)) {
-    VALUE data = normalize_data(value);
-    rb_hash_foreach(data, FOREACH_FUNC(put_data_attribute), arg);
+    const attributes_type data = normalize_data(value);
+    for (attributes_type::const_iterator it = data.begin(); it != data.end(); ++it) {
+      attributes->upsert("data-" + it->first, it->second);
+    }
   } else {
-    attributes->insert(key_, attribute_value::from_value(value));
+    attributes->upsert(key_, attribute_value::from_value(value));
   }
   return ST_CONTINUE;
 }
@@ -255,7 +212,7 @@ join_class_attribute(attribute_holder& attributes)
     }
     oss << *it;
   }
-  attributes.insert("class", attribute_value(oss.str()));
+  attributes.upsert("class", attribute_value(oss.str()));
 }
 
 static void
@@ -286,7 +243,7 @@ join_id_attribute(attribute_holder& attributes)
     return;
   }
 
-  attributes.insert("id", attribute_value(oss.str()));
+  attributes.upsert("id", attribute_value(oss.str()));
 }
 
 static void
@@ -376,7 +333,7 @@ m_build(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
 static VALUE
 m_normalize_data(RB_UNUSED_VAR(VALUE self), VALUE data)
 {
-  return normalize_data(data);
+  return to_value(normalize_data(data));
 }
 
 static VALUE
