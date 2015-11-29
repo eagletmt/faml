@@ -13,7 +13,6 @@
 /* define nothing */
 #else
 # define RARRAY_AREF(a, i) RARRAY_PTR(a)[i]
-# define rb_ary_new_capa rb_ary_new2
 #endif
 
 #define FOREACH_FUNC(func) reinterpret_cast<int (*)(ANYARGS)>(func)
