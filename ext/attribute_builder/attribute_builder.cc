@@ -23,7 +23,6 @@
 
 VALUE rb_mAttributeBuilder;
 static ID id_flatten;
-static ID id_hyphen;
 
 static inline std::string
 string_from_value(VALUE v)
@@ -357,7 +356,5 @@ Init_attribute_builder(void)
   rb_define_singleton_method(rb_mAttributeBuilder, "merge", RUBY_METHOD_FUNC(m_merge), -1);
 
   id_flatten = rb_intern("flatten");
-  id_hyphen = rb_intern("HYPHEN");
-  rb_const_set(rb_mAttributeBuilder, id_hyphen, rb_obj_freeze(rb_str_new_cstr("-")));
 }
 };
