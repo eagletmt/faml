@@ -307,6 +307,7 @@ m_merge(int argc, VALUE *argv, RB_UNUSED_VAR(VALUE self))
   return merge(argv[0], argc-1, argv+1);
 }
 
+extern "C" {
 void
 Init_attribute_builder(void)
 {
@@ -336,3 +337,4 @@ Init_attribute_builder(void)
   rb_const_set(rb_mAttributeBuilder, id_space, rb_obj_freeze(rb_str_new_cstr(" ")));
   rb_const_set(rb_mAttributeBuilder, id_equal, rb_obj_freeze(rb_str_new_cstr("=")));
 }
+};
