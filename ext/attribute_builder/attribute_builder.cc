@@ -209,6 +209,7 @@ static void join_class_attribute(attribute_holder& attributes) {
 static void join_id_attribute(attribute_holder& attributes) {
   const std::vector<attribute_value>& ids = attributes.ids_;
   std::ostringstream oss;
+  bool first = true;
 
   for (std::vector<attribute_value>::const_iterator it = ids.begin();
        it != ids.end(); ++it) {
@@ -216,20 +217,22 @@ static void join_id_attribute(attribute_holder& attributes) {
       case ATTRIBUTE_TYPE_FALSE:
         break;
       case ATTRIBUTE_TYPE_TRUE:
-        if (!oss.str().empty()) {
+        if (!first) {
           oss << '_';
         }
         oss << "true";
+        first = false;
         break;
       case ATTRIBUTE_TYPE_VALUE:
-        if (!oss.str().empty()) {
+        if (!first) {
           oss << '_';
         }
         oss << it->str_;
+        first = false;
         break;
     }
   }
-  if (oss.str().empty()) {
+  if (first) {
     return;
   }
 
@@ -314,7 +317,8 @@ static VALUE m_build(int argc, VALUE* argv, RB_UNUSED_VAR(VALUE self)) {
     build_attribute(oss, attr_quote, is_html, it->first, it->second);
   }
 
-  return rb_utf8_str_new(oss.str().data(), oss.str().size());
+  const std::string str = oss.str();
+  return rb_utf8_str_new(str.data(), str.size());
 }
 
 static VALUE m_normalize_data(RB_UNUSED_VAR(VALUE self), VALUE data) {
