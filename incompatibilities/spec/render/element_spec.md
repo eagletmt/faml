@@ -7,7 +7,7 @@
 
 ```
 
-## Faml
+## Faml, Hamlit
 ```html
 <span>
 hello <span> &lt;/span&gt; </span>
@@ -15,7 +15,7 @@ hello <span> &lt;/span&gt; </span>
 
 ```
 
-## Haml, Hamlit
+## Haml
 ```html
 <span>
 hello <span> #@var </span>

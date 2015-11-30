@@ -15,17 +15,10 @@
 
 ```
 
-## Haml
+## Haml, Hamlit
 ```html
 1 1 1
 <span>4</span>
-
-```
-
-## Hamlit
-```html
-1 1 1
-<span>2</span>
 
 ```
 

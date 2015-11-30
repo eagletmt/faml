@@ -4,13 +4,13 @@
 %span{foo: {bar: 1+2}} hello
 ```
 
-## Faml
+## Faml, Hamlit
 ```html
 <span foo='{:bar=&gt;3}'>hello</span>
 
 ```
 
-## Haml, Hamlit
+## Haml
 ```html
 <span foo-bar='3'>hello</span>
 
@@ -38,7 +38,7 @@
 
 ## Hamlit
 ```html
-<span foo='1' bar-hoge='fuga' baz>hello</span>
+<span bar='{:hoge=&gt;:fuga}' baz='true' foo='1'>hello</span>
 
 ```
 
@@ -50,92 +50,15 @@
 
 ```
 
-## Faml
+## Faml, Hamlit
 ```html
 <span foo='{:bar=&gt;&quot;x1y&quot;}'>hello</span>
 
 ```
 
-## Haml, Hamlit
+## Haml
 ```html
 <span foo-bar='x1y'>hello</span>
-
-```
-
-# [./spec/render/hash_attribute_spec.rb:37](../../../spec/render/hash_attribute_spec.rb#L37)
-## Input
-```haml
-%span{data: {foo: 1, bar: 'baz', :hoge => :fuga, k1: { k2: 'v3' }}} hello
-```
-
-## Faml, Haml
-```html
-<span data-bar='baz' data-foo='1' data-hoge='fuga' data-k1-k2='v3'>hello</span>
-
-```
-
-## Hamlit
-```html
-<span data-foo='1' data-bar='baz' data-hoge='fuga' data-k1-k2='v3'>hello</span>
-
-```
-
-# [./spec/render/hash_attribute_spec.rb:45](../../../spec/render/hash_attribute_spec.rb#L45)
-## Input
-```haml
-%span{data: {foo: 1, bar: 2+3}} hello
-```
-
-## Faml, Haml
-```html
-<span data-bar='5' data-foo='1'>hello</span>
-
-```
-
-## Hamlit
-```html
-<span data-foo='1' data-bar='5'>hello</span>
-
-```
-
-# [./spec/render/hash_attribute_spec.rb:49](../../../spec/render/hash_attribute_spec.rb#L49)
-## Input
-```haml
-- data = { foo: 1, bar: 2 }
-%span{data: data} hello
-
-```
-
-## Faml, Haml
-```html
-<span data-bar='2' data-foo='1'>hello</span>
-
-```
-
-## Hamlit
-```html
-<span data-foo='1' data-bar='2'>hello</span>
-
-```
-
-# [./spec/render/hash_attribute_spec.rb:61](../../../spec/render/hash_attribute_spec.rb#L61)
-## Input
-```haml
-- h1 = { new: true }
-- h2 = { data: { old: true } }
-%a(data=h1){ h2 , data: { new: nil, old: false } }
-
-```
-
-## Faml, Haml
-```html
-<a></a>
-
-```
-
-## Hamlit
-```html
-<a data-old data='{:new=&gt;true}'></a>
 
 ```
 

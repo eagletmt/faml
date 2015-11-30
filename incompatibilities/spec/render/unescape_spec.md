@@ -31,7 +31,9 @@
 
 ## Hamlit
 ```html
-!~ "<p>hello\n<pre>pre\nworld</pre></p>"
+<p>hello
+<pre>pre
+world</pre></p>
 
 ```
 
@@ -50,7 +52,9 @@
 
 ## Hamlit
 ```html
-<span>~ "<p>hello\n<pre>pre\nworld</pre></p>"</span>
+<span><p>hello
+<pre>pre
+world</pre></p></span>
 
 ```
 

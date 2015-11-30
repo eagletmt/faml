@@ -20,6 +20,6 @@
 
 ## Hamlit (Error)
 ```html
-Filter "cdata" is not defined.
+uninitialized constant Hamlit::Compiler::Error
 ```
 

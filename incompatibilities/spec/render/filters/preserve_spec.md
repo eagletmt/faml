@@ -21,9 +21,34 @@ hello&#x000A;  <p>wor&#x000A;ld</p>&#x000A;<span>hello</span>
 ## Hamlit
 ```html
 <span>start</span>
-hello&#x000A;  &lt;p&gt;wor
-ld&lt;/p&gt;&#x000A;<span>hello</span>
+hello&#x000A;  <p>wor
+ld</p>&#x000A;<span>hello</span>&#x000A;
 <span>end</span>
+
+```
+
+# [./spec/render/filters/preserve_spec.rb:16](../../../../spec/render/filters/preserve_spec.rb#L16)
+## Input
+```haml
+:preserve
+  hello
+
+
+%p
+
+```
+
+## Faml, Haml
+```html
+hello&#x000A;&#x000A;
+<p></p>
+
+```
+
+## Hamlit
+```html
+hello&#x000A;
+<p></p>
 
 ```
 

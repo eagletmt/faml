@@ -29,7 +29,7 @@
 ```html
 <div>
 <script>
-
+  
 </script>
 <span>world</span>
 </div>
