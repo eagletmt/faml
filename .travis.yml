@@ -13,6 +13,8 @@ gemfile:
 branches:
   only:
     - master
+before_script:
+  - ruby -e 'puts RbConfig::CONFIG.map { |k, v| "#{k}=#{v}" }.sort'
 after_script:
   - bundle exec rake benchmark
 matrix:
