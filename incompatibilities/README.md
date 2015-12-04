@@ -1,7 +1,7 @@
 # Incompatibilities
 ## Versions
 - Haml 4.1.0.beta.1
-- Faml 0.7.0
+- Faml 0.7.1
 - Hamlit 2.0.1
 
 ## Table of contents

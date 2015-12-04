@@ -1,3 +1,6 @@
+## 0.7.1 (2015-12-04)
+- Fix compiler options for old compilers
+
 ## 0.7.0 (2015-11-30)
 - Rewrite AttributeBuilder in C++
     - It improves performance,  memory usage, and readability
