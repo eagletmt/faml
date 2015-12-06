@@ -190,7 +190,7 @@ HAML
 HAML
       end
 
-      it 'keeps newlines in ruby attributes' do
+      it 'keeps newlines in runtime attributes' do
         expect { render_string(<<HAML) }.to raise_error(LineVerifier, raised_at(2))
 %span{[1,
   raise(LineVerifier)]}

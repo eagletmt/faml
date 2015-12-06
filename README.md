@@ -90,7 +90,7 @@ You have to set `Faml::Engine.options[:extend_helpers] = true` to use `preserve`
 ### Others
 If you find other incompatibility, please report it to me :-p.
 
-## Why faml is faster?
+## Why is faml faster?
 ### Temple backend
 I use [temple](https://github.com/judofyr/temple) to achieve faster template rendering.
 It's used by [slim](https://github.com/slim-template/slim) template language & engine which is known as fast.
@@ -120,18 +120,18 @@ The runtime hash merging is implemented by C extension in faml.
 Internally, attributes are categolized into three types.
 
 1. Static attributes
-    - Both the key and the value are literal.
+    - Both the key and the value are static.
     - Compiled into string literals.
     - Fastest.
     - e.g. `%input{checked: false}`
 2. Dynamic attributes
-    - The key is literal but the value isn't.
+    - The key is static but the value isn't.
     - The key is compiled into string literal. The value is interpolated at run-time.
     - Relatively fast.
     - e.g. `%input{checked: helper_method(@record)}`
-3. Ruby attributes
-    - Both the key and the value are non-literal expression.
-    - The attributes are stringified at run-time.
+3. Runtime attributes
+    - Both the key and the value are non-static expression.
+    - The attributes are stringified at runtime.
     - Slow.
     - e.g. `%input{helper_method(@record)}`
 
