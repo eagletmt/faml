@@ -3,7 +3,6 @@
 #include "houdini.h"
 #include <algorithm>
 #include <map>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -194,20 +193,20 @@ static void join_class_attribute(attribute_holder& attributes) {
 
   std::sort(ary.begin(), ary.end());
   ary.erase(std::unique(ary.begin(), ary.end()), ary.end());
-  std::ostringstream oss;
+  std::string buf;
   for (std::vector<std::string>::const_iterator it = ary.begin();
        it != ary.end(); ++it) {
     if (it != ary.begin()) {
-      oss << ' ';
+      buf.push_back(' ');
     }
-    oss << *it;
+    buf.append(*it);
   }
-  attributes.upsert("class", attribute_value(oss.str()));
+  attributes.upsert("class", attribute_value(buf));
 }
 
 static void join_id_attribute(attribute_holder& attributes) {
   const std::vector<attribute_value>& ids = attributes.ids_;
-  std::ostringstream oss;
+  std::string buf;
   bool first = true;
 
   for (std::vector<attribute_value>::const_iterator it = ids.begin();
@@ -217,16 +216,16 @@ static void join_id_attribute(attribute_holder& attributes) {
         break;
       case ATTRIBUTE_TYPE_TRUE:
         if (!first) {
-          oss << '_';
+          buf.push_back('_');
         }
-        oss << "true";
+        buf.append("true");
         first = false;
         break;
       case ATTRIBUTE_TYPE_VALUE:
         if (!first) {
-          oss << '_';
+          buf.push_back('_');
         }
-        oss << it->str_;
+        buf.append(it->str_);
         first = false;
         break;
     }
@@ -235,7 +234,7 @@ static void join_id_attribute(attribute_holder& attributes) {
     return;
   }
 
-  attributes.upsert("id", attribute_value(oss.str()));
+  attributes.upsert("id", attribute_value(buf));
 }
 
 static void delete_falsey_values(attributes_type& m) {
@@ -268,34 +267,35 @@ static attributes_type merge(VALUE object_ref, int argc, VALUE* argv) {
   return attributes.m_;
 }
 
-static void put_attribute(std::ostringstream& oss,
+static void put_attribute(std::string& buf,
                           const std::string& attr_quote, const std::string& key,
                           const std::string& value) {
-  oss << " " << key << "=" << attr_quote;
+  buf.append(" ").append(key).append("=").append(attr_quote);
 
   gh_buf ob = GH_BUF_INIT;
   if (houdini_escape_html0(&ob, (const uint8_t*)value.data(), value.size(),
                            0)) {
-    oss << std::string(ob.ptr, ob.size);
+    buf.append(std::string(ob.ptr, ob.size));
     gh_buf_free(&ob);
   } else {
-    oss << value;
+    buf.append(value);
   }
-  oss << attr_quote;
+  buf.append(attr_quote);
 }
 
-static void build_attribute(std::ostringstream& oss,
+static void build_attribute(std::string& buf,
                             const std::string& attr_quote, int is_html,
                             const std::string& key,
                             const attribute_value& value) {
   if (value.type_ == ATTRIBUTE_TYPE_TRUE) {
     if (is_html) {
-      oss << ' ' << key;
+      buf.push_back(' ');
+      buf.append(key);
     } else {
-      put_attribute(oss, attr_quote, key, key);
+      put_attribute(buf, attr_quote, key, key);
     }
   } else {
-    put_attribute(oss, attr_quote, key, value.str_);
+    put_attribute(buf, attr_quote, key, value.str_);
   }
 }
 
@@ -310,14 +310,13 @@ static VALUE m_build(int argc, VALUE* argv, RB_UNUSED_VAR(VALUE self)) {
   object_ref = argv[2];
   const attributes_type attributes = merge(object_ref, argc - 3, argv + 3);
 
-  std::ostringstream oss;
+  std::string buf;
   for (attributes_type::const_iterator it = attributes.begin();
        it != attributes.end(); ++it) {
-    build_attribute(oss, attr_quote, is_html, it->first, it->second);
+    build_attribute(buf, attr_quote, is_html, it->first, it->second);
   }
 
-  const std::string str = oss.str();
-  return rb_utf8_str_new(str.data(), str.size());
+  return rb_utf8_str_new(buf.data(), buf.size());
 }
 
 static VALUE m_normalize_data(RB_UNUSED_VAR(VALUE self), VALUE data) {
