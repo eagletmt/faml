@@ -1,3 +1,8 @@
+## 0.7.2 (2015-12-13)
+- Improve AttributeBuilder performance
+    - Replace std::ostringstream with std::string
+- Fix compile error in some platforms
+
 ## 0.7.1 (2015-12-04)
 - Fix compiler options for old compilers
 
