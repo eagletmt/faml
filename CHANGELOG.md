@@ -1,3 +1,6 @@
+## 0.8.0 (2016-01-22)
+- Drop Ruby 2.0.0 support
+
 ## 0.7.3 (2016-01-22)
 - Fix build error when `$CXXFLAGS` is unavailable
 - Fix StaticHashParser for parser 2.3.0.0
