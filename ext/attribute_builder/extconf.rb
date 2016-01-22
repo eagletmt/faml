@@ -2,7 +2,11 @@
 require 'mkmf'
 
 $CFLAGS << ' -Wall -W'
-$CXXFLAGS << ' -Wall -W'
+if $CXXFLAGS
+  # $CXXFLAGS might be undefined
+  # https://github.com/ruby/ruby/pull/492
+  $CXXFLAGS << ' -Wall -W'
+end
 houdini_dir = File.expand_path('../../vendor/houdini', __dir__)
 $INCFLAGS << " -I#{houdini_dir}"
 
