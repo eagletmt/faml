@@ -6,11 +6,7 @@
 #include <string>
 #include <vector>
 
-/* faml requires Ruby >= 2.0.0 */
-/* RARRAY_AREF() is available since Ruby 2.1 */
-#if RUBY_API_VERSION_MAJOR == 2 && RUBY_API_VERSION_MINOR < 1
-#define RARRAY_AREF(a, i) RARRAY_PTR(a)[i]
-#endif
+/* faml requires Ruby >= 2.1 */
 /* rb_utf8_str_new() is available since Ruby 2.2 */
 #if RUBY_API_VERSION_MAJOR == 2 && RUBY_API_VERSION_MINOR < 2
 #include <ruby/encoding.h>
