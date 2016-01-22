@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'escape_utils'
   spec.add_dependency 'haml_parser', '>= 0.4.0'
-  spec.add_dependency 'parser', '< 2.3.0'
+  spec.add_dependency 'parser'
   spec.add_dependency 'temple', '>= 0.7.0'
   spec.add_dependency 'tilt'
   spec.add_development_dependency 'appraisal'
