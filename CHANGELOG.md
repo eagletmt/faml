@@ -1,3 +1,7 @@
+## 0.7.3 (2016-01-22)
+- Fix build error when `$CXXFLAGS` is unavailable
+- Fix StaticHashParser for parser 2.3.0.0
+
 ## 0.7.2 (2015-12-13)
 - Improve AttributeBuilder performance
     - Replace std::ostringstream with std::string
