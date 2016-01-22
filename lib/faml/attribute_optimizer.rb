@@ -1,4 +1,4 @@
-# frozen-string-literal: true
+# frozen_string_literal: true
 require 'faml/attribute_builder'
 require_relative 'error'
 require_relative 'ruby_syntax_checker'

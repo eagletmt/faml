@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# frozen-string-literal: true
+# frozen_string_literal: true
 require 'benchmark/ips'
 require 'haml'
 require 'faml'

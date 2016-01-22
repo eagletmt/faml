@@ -1,4 +1,4 @@
-# frozen-string-literal: true
+# frozen_string_literal: true
 require 'tilt'
 # Load tilt/haml only when haml is available
 begin

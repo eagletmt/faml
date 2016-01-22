@@ -1,4 +1,4 @@
-# frozen-string-literal: true
+# frozen_string_literal: true
 require_relative 'attribute_optimizer'
 require_relative 'object_ref'
 

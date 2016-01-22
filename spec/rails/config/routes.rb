@@ -1,4 +1,4 @@
-# frozen-string-literal: true
+# frozen_string_literal: true
 Rails.application.routes.draw do
   namespace :books do
     get :hello

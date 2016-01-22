@@ -1,4 +1,4 @@
-# frozen-string-literal: true
+# frozen_string_literal: true
 module Faml
   class Railtie < ::Rails::Railtie
     initializer :faml do

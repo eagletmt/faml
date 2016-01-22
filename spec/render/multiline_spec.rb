@@ -1,4 +1,4 @@
-# frozen-string-literal: true
+# frozen_string_literal: true
 require 'spec_helper'
 
 RSpec.describe 'Multiline rendering', type: :render do

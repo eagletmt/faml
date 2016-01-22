@@ -1,4 +1,4 @@
-# frozen-string-literal: true
+# frozen_string_literal: true
 module Faml
   module ObjectRef
     class << self
