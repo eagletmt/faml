@@ -5,7 +5,7 @@ module Faml
   module Helpers
     def self.preserve(input)
       # Taken from the original haml code
-      input.to_s.chomp("\n").gsub(/\n/, '&#x000A;').gsub(/\r/, '')
+      input.to_s.chomp("\n").gsub(/\n/, '&#x000A;').delete("\r")
     end
 
     def preserve(input)

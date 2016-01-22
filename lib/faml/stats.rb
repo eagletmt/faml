@@ -117,16 +117,14 @@ module Faml
         if static_hash_parser.parse("{#{ast.new_attributes}#{ast.old_attributes}}")
           if static_hash_parser.dynamic_attributes.empty?
             info.static_attribute_count += 1
+          elsif static_hash_parser.dynamic_attributes.key?('data') || static_hash_parser.dynamic_attributes.key?(:data)
+            info.dynamic_attribute_with_data_count += 1
+          elsif ast.old_attributes && ast.old_attributes.include?("\n")
+            info.dynamic_attribute_with_newline_count += 1
+          elsif ast.new_attributes && ast.new_attributes.include?("\n")
+            info.dynamic_attribute_with_newline_count += 1
           else
-            if static_hash_parser.dynamic_attributes.key?('data') || static_hash_parser.dynamic_attributes.key?(:data)
-              info.dynamic_attribute_with_data_count += 1
-            elsif ast.old_attributes && ast.old_attributes.include?("\n")
-              info.dynamic_attribute_with_newline_count += 1
-            elsif ast.new_attributes && ast.new_attributes.include?("\n")
-              info.dynamic_attribute_with_newline_count += 1
-            else
-              info.dynamic_attribute_count += 1
-            end
+            info.dynamic_attribute_count += 1
           end
         else
           call_ast = Parser::CurrentRuby.parse("call(#{ast.new_attributes}#{ast.old_attributes})")

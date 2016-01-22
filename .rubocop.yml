@@ -46,7 +46,13 @@ Style/RaiseArgs:
 Style/SignalException:
   Enabled: false
 
-Style/TrailingComma:
+Style/TrailingCommaInLiteral:
+  Enabled: false
+
+Style/TrailingCommaInArguments:
+  Enabled: false
+
+Style/ConditionalAssignment:
   Enabled: false
 
 Style/TrailingWhitespace:

@@ -14,8 +14,8 @@ module Faml
     DEFAULT_AUTO_CLOSE_TAGS = %w[
       area base basefont br col command embed frame hr img input isindex keygen
       link menuitem meta param source track wbr
-    ]
-    DEFAULT_PRESERVE_TAGS = %w[pre textarea code]
+    ].freeze
+    DEFAULT_PRESERVE_TAGS = %w[pre textarea code].freeze
 
     define_options(
       autoclose: DEFAULT_AUTO_CLOSE_TAGS,
