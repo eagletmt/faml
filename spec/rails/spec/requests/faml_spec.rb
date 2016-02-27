@@ -46,6 +46,13 @@ RSpec.describe 'Faml with Rails', type: :request do
     expect(response.body).to include('&lt;marquee&gt;escape me&lt;/marquee&gt;')
   end
 
+  it 'escapes html_safe string in attribute values' do
+    get '/books/html_safe_attribute'
+    expect(response).to be_ok
+    html = Nokogiri::HTML.parse(response.body)
+    expect(html.at_css('span')['data-html']).to eq(%q{<b>"don't skip escape"</b>})
+  end
+
   describe 'object reference' do
     it 'works with new object' do
       get '/books/object_ref'

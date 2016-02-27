@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     get :with_capture
     get :escaped
     get :preserve
+    get :html_safe_attribute
 
     get :syntax_error
     get :indent_error

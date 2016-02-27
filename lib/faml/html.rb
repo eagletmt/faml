@@ -33,7 +33,7 @@ module Faml
           ['false, nil', [:multi]],
           [:else, [:multi,
                    [:static, " #{name}=#{options[:attr_quote]}"],
-                   [:escape, true, [:dynamic, sym]],
+                   [:dynamic, "::Temple::Utils.escape_html(#{sym})"],
                    [:static, options[:attr_quote]],
                   ]],
          ],
