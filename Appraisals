@@ -18,6 +18,14 @@ appraise 'rails-4.2' do
   gem 'sqlite3'
 end
 
+appraise 'rails-5.0' do
+  gem 'rails', '~> 5.0.0.beta3'
+  gem 'rspec-rails', '>= 3.5.0.beta1'
+  gem 'rspec', '>= 3.5.0.beta1'
+  gem 'rails-controller-testing'
+  gem 'sqlite3'
+end
+
 appraise 'rails-edge' do
   gem 'rails', git: 'https://github.com/rails/rails'
   gem 'arel', git: 'https://github.com/rails/arel'
