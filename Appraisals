@@ -22,7 +22,12 @@ appraise 'rails-edge' do
   gem 'rails', git: 'https://github.com/rails/rails'
   gem 'arel', git: 'https://github.com/rails/arel'
   gem 'rack', git: 'https://github.com/rack/rack'
-  gem 'rspec-rails', '>= 3.2.0'
+  gem 'rspec-rails', git: 'https://github.com/rspec/rspec-rails'
+  gem 'rspec-core', git: 'https://github.com/rspec/rspec-core'
+  gem 'rspec-expectations', git: 'https://github.com/rspec/rspec-expectations'
+  gem 'rspec-mocks', git: 'https://github.com/rspec/rspec-mocks'
+  gem 'rspec-support', git: 'https://github.com/rspec/rspec-support'
+  gem 'rspec', git: 'https://github.com/rspec/rspec'
   gem 'sqlite3'
 end
 
