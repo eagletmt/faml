@@ -1,5 +1,10 @@
+## 0.8.1 (2016-02-28)
+- Fix attribute escaping of html_safe string
+    - https://github.com/eagletmt/faml/issues/48
+
 ## 0.8.0 (2016-01-22)
 - Drop Ruby 2.0.0 support
+    - Ruby 2.0.0 is End of Life http://www.ruby-lang.org/en/news/2016/02/24/support-plan-of-ruby-2-0-0-and-2-1/
 
 ## 0.7.3 (2016-01-22)
 - Fix build error when `$CXXFLAGS` is unavailable

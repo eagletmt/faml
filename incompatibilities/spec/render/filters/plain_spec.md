@@ -51,25 +51,13 @@ abc
 
 ```
 
-## Haml
+## Haml, Hamlit
 ```html
 <span>
 hello
 
 abc
 
-
-<span>world</span>
-</span>
-
-```
-
-## Hamlit
-```html
-<span>
-hello
-
-abc
 
 <span>world</span>
 </span>
