@@ -19,7 +19,7 @@ appraise 'rails-4.2' do
 end
 
 appraise 'rails-5.0' do
-  gem 'rails', '~> 5.0.0.beta3'
+  gem 'rails', '~> 5.0.0.rc1'
   gem 'rspec-rails', '>= 3.5.0.beta1'
   gem 'rspec', '>= 3.5.0.beta1'
   gem 'rails-controller-testing'
