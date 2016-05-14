@@ -53,8 +53,7 @@ module Faml
     end
 
     def compile_static_attribute(key, value)
-      case
-      when value == true
+      if value == true
         [:haml, :attr, key, [:multi]]
       else
         [:haml, :attr, key, [:static, Temple::Utils.escape_html(value)]]

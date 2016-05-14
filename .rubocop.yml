@@ -37,6 +37,9 @@ Style/HashSyntax:
 Style/IfUnlessModifier:
   Enabled: false
 
+Style/MultilineArrayBraceLayout:
+  Enabled: false
+
 Style/PercentLiteralDelimiters:
   Enabled: false
 

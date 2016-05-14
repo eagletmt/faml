@@ -13,12 +13,11 @@ class IncompatibilitiesGenerator
     end
 
     def grouped_difference
-      case
-      when faml_result != haml_result && faml_result != hamlit_result && haml_result != hamlit_result
+      if faml_result != haml_result && faml_result != hamlit_result && haml_result != hamlit_result
         { 'Faml' => faml_result, 'Haml' => haml_result, 'Hamlit' => hamlit_result }
-      when faml_result == haml_result
+      elsif faml_result == haml_result
         { 'Faml, Haml' => faml_result, 'Hamlit' => hamlit_result }
-      when faml_result == hamlit_result
+      elsif faml_result == hamlit_result
         { 'Faml, Hamlit' => faml_result, 'Haml' => haml_result }
       else
         { 'Faml' => faml_result, 'Haml, Hamlit' => haml_result }
@@ -67,7 +66,8 @@ class IncompatibilitiesGenerator
     render_toc(markdown_root, incompatibilities)
   end
 
-  private
+  # XXX: rubocop bug?
+  private # rubocop:disable Lint/UselessAccessModifier
 
   def render_haml(template, options)
     obj = Object.new
