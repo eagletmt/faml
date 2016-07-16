@@ -66,8 +66,7 @@ class IncompatibilitiesGenerator
     render_toc(markdown_root, incompatibilities)
   end
 
-  # XXX: https://github.com/bbatsov/rubocop/issues/3120
-  private # rubocop:disable Lint/UselessAccessModifier
+  private
 
   def render_haml(template, options)
     obj = Object.new
