@@ -42,13 +42,13 @@ Style/MultilineArrayBraceLayout:
   Enabled: false
 
 Style/PercentLiteralDelimiters:
-  Enabled: false
+  PreferredDelimiters:
+    '%w': '[]'
+    '%Q': '{}'
+    '%q': '{}'
 
 Style/RaiseArgs:
   EnforcedStyle: compact
-
-Style/SignalException:
-  Enabled: false
 
 Style/TrailingCommaInLiteral:
   Enabled: false
@@ -62,6 +62,3 @@ Style/ConditionalAssignment:
 Style/TrailingWhitespace:
   Exclude:
     - 'spec/render/multiline_spec.rb'
-
-Style/UnneededPercentQ:
-  Enabled: false  # buggy

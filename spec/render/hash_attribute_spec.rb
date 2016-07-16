@@ -3,18 +3,18 @@ require 'spec_helper'
 
 RSpec.describe 'Hash attributes rendering', type: :render do
   it 'renders nested attributes' do
-    expect(render_string(%q|%span{foo: {bar: 1+2}} hello|)).to eq(%Q|<span foo='{:bar=&gt;3}'>hello</span>\n|)
+    expect(render_string('%span{foo: {bar: 1+2}} hello')).to eq("<span foo='{:bar=&gt;3}'>hello</span>\n")
   end
 
   it 'renders code attributes' do
-    expect(render_string(<<HAML)).to eq(%Q|<span bar='{:hoge=&gt;:fuga}' baz foo='1'>hello</span>\n|)
+    expect(render_string(<<HAML)).to eq("<span bar='{:hoge=&gt;:fuga}' baz foo='1'>hello</span>\n")
 - attrs = { foo: 1, bar: { hoge: :fuga }, baz: true }
 %span{attrs} hello
 HAML
   end
 
   it 'renders nested dstr attributes' do
-    expect(render_string(<<'HAML')).to eq(%Q|<span foo='{:bar=&gt;&quot;x1y&quot;}'>hello</span>\n|)
+    expect(render_string(<<'HAML')).to eq("<span foo='{:bar=&gt;&quot;x1y&quot;}'>hello</span>\n")
 - data = { foo: 1 }
 %span{foo: {bar: "x#{1}y"}} hello
 HAML
@@ -35,19 +35,19 @@ HAML
 
   describe 'data attributes' do
     it 'renders nested attributes' do
-      expect(render_string(%q|%span{data: {foo: 1, bar: 'baz', :hoge => :fuga, k1: { k2: 'v3' }}} hello|)).to eq(%Q{<span data-bar='baz' data-foo='1' data-hoge='fuga' data-k1-k2='v3'>hello</span>\n})
+      expect(render_string("%span{data: {foo: 1, bar: 'baz', :hoge => :fuga, k1: { k2: 'v3' }}} hello")).to eq("<span data-bar='baz' data-foo='1' data-hoge='fuga' data-k1-k2='v3'>hello</span>\n")
     end
 
     it 'renders nested dynamic attributes' do
-      expect(render_string(%q|%span{data: {foo: "b#{'a'}r"}} hello|)).to eq(%Q{<span data-foo='bar'>hello</span>\n})
+      expect(render_string(%q|%span{data: {foo: "b#{'a'}r"}} hello|)).to eq("<span data-foo='bar'>hello</span>\n")
     end
 
     it 'renders nested attributes' do
-      expect(render_string(%q|%span{data: {foo: 1, bar: 2+3}} hello|)).to eq(%Q{<span data-bar='5' data-foo='1'>hello</span>\n})
+      expect(render_string('%span{data: {foo: 1, bar: 2+3}} hello')).to eq("<span data-bar='5' data-foo='1'>hello</span>\n")
     end
 
     it 'renders nested code attributes' do
-      expect(render_string(<<HAML)).to eq(%Q{<span data-bar='2' data-foo='1'>hello</span>\n})
+      expect(render_string(<<HAML)).to eq("<span data-bar='2' data-foo='1'>hello</span>\n")
 - data = { foo: 1, bar: 2 }
 %span{data: data} hello
 HAML

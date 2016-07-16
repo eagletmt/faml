@@ -3,11 +3,11 @@ require 'spec_helper'
 
 RSpec.describe 'Attributes rendering', type: :render do
   it 'parses attributes' do
-    expect(render_string('%span{class: "x"} hello')).to eq(%Q{<span class='x'>hello</span>\n})
+    expect(render_string('%span{class: "x"} hello')).to eq("<span class='x'>hello</span>\n")
   end
 
   it 'parses attributes' do
-    expect(render_string('%span{class: "x", "old" => 2} hello')).to eq(%Q{<span class='x' old='2'>hello</span>\n})
+    expect(render_string('%span{class: "x", "old" => 2} hello')).to eq("<span class='x' old='2'>hello</span>\n")
   end
 
   it 'renders attributes with symbol literal' do
@@ -20,13 +20,13 @@ RSpec.describe 'Attributes rendering', type: :render do
     it 'renders attributes with 2.2-style symbol literals' do
       expect(render_string(%q|%span{"foo": 'bar'}|)).to eq("<span foo='bar'></span>\n")
       expect(render_string(%Q|- x = 'bar'\n%span{"foo": x}|)).to eq("<span foo='bar'></span>\n")
-      expect(render_string(%q|%span{'foo': 'bar'}|)).to eq("<span foo='bar'></span>\n")
-      expect(render_string(%Q|- x = 'bar'\n%span{'foo': x}|)).to eq("<span foo='bar'></span>\n")
+      expect(render_string("%span{'foo': 'bar'}")).to eq("<span foo='bar'></span>\n")
+      expect(render_string("- x = 'bar'\n%span{'foo': x}")).to eq("<span foo='bar'></span>\n")
     end
   end
 
   it 'renders dynamic attributes' do
-    expect(render_string(%q|%span#main{class: "na#{'ni'}ka"} hello|)).to eq(%Q{<span class='nanika' id='main'>hello</span>\n})
+    expect(render_string(%q|%span#main{class: "na#{'ni'}ka"} hello|)).to eq("<span class='nanika' id='main'>hello</span>\n")
   end
 
   it 'renders boolean attributes' do
@@ -56,14 +56,14 @@ HAML
   end
 
   it 'escapes' do
-    with_each_attribute_type(:foo, %q|"x\"y'z"|, text: 'hello') do |str|
-      expect(render_string(str)).to eq(%Q{<span foo='x&quot;y&#39;z'>hello</span>\n})
+    with_each_attribute_type(:foo, %q{"x\"y'z"}, text: 'hello') do |str|
+      expect(render_string(str)).to eq("<span foo='x&quot;y&#39;z'>hello</span>\n")
     end
   end
 
   it 'does not escape slash' do
     with_each_attribute_type(:href, "'http://example.com/'", tag: 'a') do |str|
-      expect(render_string(str)).to eq(%Q{<a href='http://example.com/'></a>\n})
+      expect(render_string(str)).to eq("<a href='http://example.com/'></a>\n")
     end
   end
 
@@ -74,13 +74,13 @@ HAML
   context 'with xhtml format' do
     it 'renders name="name" if value is true' do
       with_each_attribute_type(:foo, 'true', text: 'hello') do |str|
-        expect(render_string(str, format: :xhtml)).to eq(%Q{<span foo='foo'>hello</span>\n})
+        expect(render_string(str, format: :xhtml)).to eq("<span foo='foo'>hello</span>\n")
       end
     end
   end
 
   it 'renders dstr attributes' do
-    expect(render_string(<<HAML)).to eq(%Q|<span data='x{:foo=&gt;1}y'>hello</span>\n|)
+    expect(render_string(<<HAML)).to eq("<span data='x{:foo=&gt;1}y'>hello</span>\n")
 - data = { foo: 1 }
 %span{data: "x\#{data}y"} hello
 HAML

@@ -35,23 +35,23 @@ HAML
   end
 
   it 'parses classes' do
-    expect(render_string('%span.foo.bar hello')).to eq(%Q{<span class='foo bar'>hello</span>\n})
+    expect(render_string('%span.foo.bar hello')).to eq("<span class='foo bar'>hello</span>\n")
   end
 
   it 'parses id' do
-    expect(render_string('%span#foo-bar hello')).to eq(%Q{<span id='foo-bar'>hello</span>\n})
+    expect(render_string('%span#foo-bar hello')).to eq("<span id='foo-bar'>hello</span>\n")
   end
 
   it 'parses classes and id' do
-    expect(render_string('%span.foo#foo-bar.bar hello')).to eq(%Q{<span class='foo bar' id='foo-bar'>hello</span>\n})
+    expect(render_string('%span.foo#foo-bar.bar hello')).to eq("<span class='foo bar' id='foo-bar'>hello</span>\n")
   end
 
   it 'parses #' do
-    expect(render_string('#main')).to eq(%Q{<div id='main'></div>\n})
+    expect(render_string('#main')).to eq("<div id='main'></div>\n")
   end
 
   it 'parses .' do
-    expect(render_string('.wrapper.main')).to eq(%Q{<div class='wrapper main'></div>\n})
+    expect(render_string('.wrapper.main')).to eq("<div class='wrapper main'></div>\n")
   end
 
   it 'parses string interpolation' do
