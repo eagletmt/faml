@@ -14,7 +14,7 @@ module Faml
             depth -= 1
             exprs.delete_at(i)
           else
-            exprs[i] = [:code, 'end'.freeze]
+            exprs[i] = [:code, 'end']
           end
         when [:rmend]
           depth += 1
