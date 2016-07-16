@@ -2,10 +2,10 @@
 
 source "https://rubygems.org"
 
-gem "rails", "~> 5.0.0.rc1"
-gem "rspec-rails", ">= 3.5.0.beta1"
+gem "rails", "~> 5.0"
+gem "rspec-rails", ">= 3.5.0"
 gem "sqlite3"
-gem "rspec", ">= 3.5.0.beta1"
+gem "rspec", ">= 3.5.0"
 gem "rails-controller-testing"
 
 gemspec :path => "../"
