@@ -18,7 +18,7 @@ module Faml
         end
         texts.each_with_index do |text, i|
           temple << [:static, tabs] << text_compiler.compile(text, lineno + i + 1)
-          unless texts.last.equal?(text)
+          if i != texts.size-1
             temple << [:static, "\n"] << [:newline]
           end
         end
