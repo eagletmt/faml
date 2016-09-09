@@ -88,4 +88,42 @@ RSpec.configure do |config|
       IncompatibilitiesGenerator.instance.write_to('incompatibilities')
     end
   end
+
+  config.before(:suite) do
+    @records = Hash.new { |h, k| h[k] = Set.new }
+    @trace = TracePoint.new(:call) do |tp|
+      meth =
+        begin
+          tp.defined_class.instance_method(tp.method_id)
+        rescue NameError => e
+          puts "Cannot get method: #{e}: #{tp.inspect}"
+          nil
+        end
+      if meth
+        tp.defined_class.instance_method(tp.method_id).parameters.each do |_, arg_name|
+          signature = "#{tp.defined_class}##{tp.method_id}(#{arg_name})"
+          if arg_name && signature.start_with?('Faml::')
+            @records[signature].add(tp.binding.local_variable_get(arg_name).class)
+          end
+        end
+      end
+    end
+    @trace.enable
+  end
+
+  config.after(:suite) do
+    @trace.disable
+    @records.each do |sig, types|
+      case
+      when types.size == 1
+        puts "#{sig} has type #{types.first}"
+      when types.size == 2 && types.member?(NilClass)
+        puts "#{sig} has type #{types.find { |t| t != NilClass }} (nullable)"
+      when types.size == 2 && types.member?(TrueClass) && types.member?(FalseClass)
+        puts "#{sig} has type boolean"
+      else
+        puts "#{sig} has these types: #{types.to_a}"
+      end
+    end
+  end
 end
