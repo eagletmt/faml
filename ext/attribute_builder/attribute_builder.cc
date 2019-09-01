@@ -13,7 +13,12 @@
 #define rb_utf8_str_new(ptr, len) rb_enc_str_new(ptr, len, rb_utf8_encoding())
 #endif
 
+/* https://github.com/ruby/ruby/commit/50f5a0a8d6e7ad89d6caff695a08dbd38edb7a6e */
+#if RUBY_API_VERSION_MAJOR == 2 && RUBY_API_VERSION_MINOR < 7
 #define FOREACH_FUNC(func) reinterpret_cast<int (*)(ANYARGS)>(func)
+#else
+#define FOREACH_FUNC(func) func
+#endif
 
 VALUE rb_mAttributeBuilder;
 static ID id_flatten;
