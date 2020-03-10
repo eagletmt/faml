@@ -61,7 +61,7 @@ RSpec.describe 'Faml with Rails', type: :request do
     end
 
     it 'works with id' do
-      get '/books/object_ref', id: 123
+      get '/books/object_ref', params: { id: 123 }
       expect(response).to be_ok
       expect(response.body).to include("<div class='book' id='book_123'>")
     end
